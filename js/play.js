@@ -1,7 +1,13 @@
+
 const VICTORY_POINTS = 500;
 const PLAYER_VELOCITY = 150;
 
 let fireButton;
+let buttonA;
+let buttonD;
+let buttonS;
+let buttonW;
+let anglePlayer = 0;
 
 let playState = {
     preload: loadAssets,
@@ -23,6 +29,7 @@ function loadAssets() {
 
     game.load.image('sky', 'assets/sky.png');
     game.load.image('player','assets/nave_inicial_0.png' );
+    game.load.image('bullet','assets/pixil-frame-0.png')
 }
 
 
@@ -30,12 +37,22 @@ function loadAssets() {
  * Initialise the stage
  */
 function initialiseGame() {
+    game.add.sprite(0,0,'sky');
     createPlayer();
-    
+    onmousemove=(pointer) =>{
+        anglePlayer = Phaser.Math.angleBetween(player.x, player.y, pointer.x, pointer.y);
+        player.rotation = anglePlayer;
+       // console.log("angle deg"+anglePlayer);    
+     }
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
-    fireButton = game.input.keyboard.addKey(
-        Phaser.Keyboard.SPACEBAR);
+    fireButton = game.input.keyboard.addKey( Phaser.Keyboard.SPACEBAR);
+    buttonW = game.input.keyboard.addKey(Phaser.Keyboard.W);
+    buttonA = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    buttonS = game.input.keyboard.addKey(Phaser.Keyboard.S);
+    buttonD = game.input.keyboard.addKey(Phaser.Keyboard.D);
+
+    
 }
 
 /**
@@ -56,24 +73,36 @@ function playerMovement(){
      //  Reset the players velocity (movement)
      player.body.velocity.x = 0;
      player.body.velocity.y = 0;
+     anglePlayer = 0;
+    
  
-     if (cursors.left.isDown) {
+     if (cursors.left.isDown||buttonA.isDown) {
          //  Move to the left
          player.body.velocity.x = -PLAYER_VELOCITY;
-         console.log("left, pos "+ player.body.x);
+
  
-     } else if (cursors.right.isDown) {
+     } else if (cursors.right.isDown||buttonD.isDown) {
          //  Move to the right
          player.body.velocity.x = PLAYER_VELOCITY;
-         console.log("right, pos "+ player.body.x);
-     } else if(cursors.up.isDown){
+
+     } else if(cursors.up.isDown||buttonW.isDown){
          player.body.velocity.y = -PLAYER_VELOCITY;
-         console.log("up, pos "+ player.body.y);
+
      }
-     else if(cursors.down.isDown){
+     else if(cursors.down.isDown||buttonS.isDown){
          player.body.velocity.y = PLAYER_VELOCITY;
-         console.log("down, pos "+ player.body.y);
+
      }
+     if(fireButton.justDown){
+        console.log("FIRE");
+        let bullet = game.add.sprite(player.x,player.y,'bullet');
+        game.physics.arcade.enable(bullet);
+        
+   
+    }
+
+
+
 }
 
 function endGame() {
@@ -116,7 +145,7 @@ function endGame() {
 
 function createPlayer(){
     let x = game.world.centerX;
-    let y = game.world.height;
+    let y = game.world.centerY;
     
     player = game.add.sprite(x, y, 'player');
     player.anchor.setTo(0.5, 0.5);
