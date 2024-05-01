@@ -26,13 +26,13 @@ function createTutorial() {
         btnDer = game.add.button(600, 500, 'flechaDer', clickDer);
         btnDer.anchor.setTo(0.5, 0.5);
         btnDer.scale.setTo(0.5);
-        btnIzq = game.add.button(400, 500, 'flechaIzq', clickIzq);
+        btnIzq = game.add.button(450, 500, 'flechaIzq', clickIzq);
         btnIzq.anchor.setTo(0.5, 0.5);
         btnIzq.scale.setTo(0.5);
     }
     else if(numTutorial == 2){
         game.add.image(0, 0, 'tuto3');
-        btnIzq = game.add.button(400, 500, 'flechaIzq', clickIzq);
+        btnIzq = game.add.button(450, 500, 'flechaIzq', clickIzq);
         btnIzq.anchor.setTo(0.5, 0.5);
         btnIzq.scale.setTo(0.5);
         btnFin = game.add.button(600, 500, 'flechaDer', clickFin);
