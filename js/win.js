@@ -1,4 +1,3 @@
-
 let winState = {
     preload: preloadWin,
     create: createWin,
