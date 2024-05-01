@@ -17,21 +17,16 @@ function loadAssets() {
 }
 
 function createInit() {
+    
+    game.add.image(0, 0, 'mainMenu');
 
-    let posX = game.world.width-800;
-    let posY = game.world.height-600;
-    game.add.image(posX, posY, 'mainMenu');
 
-    //let button1 = game.add.image(700, 500, 'playButton');
-    //button1.scale.setTo(1.5);
-
-    //background.anchor.setTo(0.5, 0.5);
-    //background.scale.setTo(1.0);
     /*
-    textI = 'Despres de posar el fons\n';
+    textI = 'prueba texto\n';
     styleI = {font:'20px Arial', fill:'#FFFFFF'};
     instructions = game.add.text(40, 80, textI, styleI);
     */
+
     btnStart = game.add.button(200, 500, 'playButton', clickStart);
     btnStart.anchor.setTo(0.5, 0.5);
     btnStart.scale.setTo(1.0);
