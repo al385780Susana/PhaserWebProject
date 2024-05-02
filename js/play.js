@@ -1,9 +1,10 @@
 
 const VICTORY_POINTS = 500;
 const PLAYER_VELOCITY = 150;
+const ENEMY_VELOCITY = 100;
 
-
-
+//CONTROLES
+let cursors;
 let buttonA;
 let buttonD;
 let buttonS;
@@ -16,17 +17,23 @@ let playState = {
     update: gameUpdate
 };
 
+
 let player;
 let enemy;
 let enemies;
 let blast;
 let moneda;
+let monedasList;
 
-let cursors;
+let municionActual;
+
 let score = 0;
 let dineroTotal = 0;
+let killCount = 0;
+let killText;
 let dineroTotalText;
 let scoreText;
+
 
 
 
@@ -52,11 +59,17 @@ function initialiseGame() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.add.sprite(0,0,'sky');
     createPlayer();
+
+    municionActual = 5;
+
+    monedasList = [];
     enemies = [];
     click = game.input.mousePointer;
     control = false;
     contador = 0;
     dineroTotal = 0;
+    killCount = 0;
+    score = 0;
     //createEnemy();
     timeEnemy(3000);
 
@@ -67,7 +80,12 @@ function initialiseGame() {
         });
 
 
-
+        /*TEXTO EN MEDIO, SERÍA CAMBIAR EL TIPO DE FUENTE Y COLOR */
+    /*killText = game.add.text(GAME_STAGE_HEIGHT/2 + 55, GAME_STAGE_HEIGHT/2 - 100,
+        killCount, {
+            fontSize: '150px',
+            fill: '#008080'
+        });*/
 
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
@@ -106,24 +124,32 @@ function gameUpdate() {
 
 function updateText(){
         dineroTotalText.setText(dineroTotal);
+       // scoreText.setText(score);
 }
 
 function enemiesMovement(){
     if(enemy){
         enemies.forEach(function(enemy) {
             rotateEnemy(enemy);   
+            moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
         });
     }
+
+
 }
 
 function manageColision(){
     for (let i = 0; i <= enemies.length; i++){
         if(blast){game.physics.arcade.overlap(blast, enemies[i], enemyBlastCollide, null, this);}
+        game.physics.arcade.overlap(player, enemies[i], playerEnemyCollide, null, this);
     }
 
     if(moneda){
-        game.physics.arcade.overlap(moneda, player, recogerMonedas, null, this)
+        for (let i = 0; i <= monedasList.length; i++){
+            game.physics.arcade.overlap(monedasList[i], player, recogerMonedas, null, this);
+        }
     }
+
 
 }
 
@@ -222,6 +248,8 @@ function createBlast(){
 function spawnMoneda(xSpawn,ySpawn){
     moneda = game.add.sprite(xSpawn, ySpawn, 'moneda');
     game.physics.arcade.enable(moneda);
+
+    monedasList.push(moneda);
 }
 
 function rotatePlayer(){
@@ -284,12 +312,14 @@ function moveTo(object, targetX, targetY, speed) {
 }
 
 function disparar(){
-    if(click.isDown && control == false){
+    if(click.isDown && control == false && municionActual>0){
         createBlast();
         moveTo(blast, game.input.mousePointer.x, game.input.mousePointer.y, 500);
         control = true;
         cooldownDisparo(1000);
         destroyBlast(1000);
+
+        municionActual -= 1;
 
     }
 
@@ -309,7 +339,6 @@ function destroyBlast(tiempo){
 function recogerMonedas(moneda, player){
     moneda.kill();
     dineroTotal += 1;
-    console.log("RECOGIDO MONEDA, DINERO "+dineroTotal);
 }
 
 function enemyBlastCollide(blast, enemy) {
@@ -322,6 +351,15 @@ function enemyBlastCollide(blast, enemy) {
     enemy.kill();
 
     spawnMoneda(xSpawn,ySpawn)
+
+    killCount += 1;
     //AQUI SE PONE LA PUNTUACION Y LO QUE OCURRA AL MATAR
+
+}
+
+function playerEnemyCollide(player, enemy){
+    console.log("Colisión detectada: jugador y enemigo");
+    enemy.kill();
+    
 
 }
