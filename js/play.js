@@ -2,7 +2,8 @@
 const VICTORY_POINTS = 500;
 const PLAYER_VELOCITY = 150;
 
-let fireButton;
+
+
 let buttonA;
 let buttonD;
 let buttonS;
@@ -18,8 +19,13 @@ let playState = {
 let player;
 let enemy;
 let enemies;
+let blast;
+let moneda;
+
 let cursors;
 let score = 0;
+let dineroTotal = 0;
+let dineroTotalText;
 let scoreText;
 
 
@@ -32,7 +38,6 @@ function loadAssets() {
 
     game.load.image('sky', 'assets/sky.png');
     game.load.image('player','assets/nave_inicial_0.png' );
-    game.load.image('bullet','assets/pixil-frame-0.png');
     game.load.image('enemy', 'assets/enemigo.png');
     game.load.image('moneda','assets/moneda.png' );
     game.load.image('blast', 'assets/pixil-frame-0.png')
@@ -51,22 +56,21 @@ function initialiseGame() {
     click = game.input.mousePointer;
     control = false;
     contador = 0;
+    dineroTotal = 0;
     //createEnemy();
     timeEnemy(3000);
 
+    dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
+        dineroTotal, {
+            fontSize: '32px',
+            fill: '#fff'
+        });
 
 
 
-    /*
-    onmousemove=(pointer) =>{
-        anglePlayer = Phaser.Math.angleBetween(player.x, player.y, pointer.x, pointer.y);
-        player.rotation = anglePlayer;
-       // console.log("angle deg"+anglePlayer);
-     }
-    */
+
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
-    fireButton = game.input.keyboard.addKey( Phaser.Keyboard.SPACEBAR);
     buttonW = game.input.keyboard.addKey(Phaser.Keyboard.W);
     buttonA = game.input.keyboard.addKey(Phaser.Keyboard.A);
     buttonS = game.input.keyboard.addKey(Phaser.Keyboard.S);
@@ -84,24 +88,11 @@ function gameUpdate() {
     }*/
     playerMovement();
     rotatePlayer();
-
-
     disparar();
+    manageColision();
+    enemiesMovement(); //aqui está lo de rotar los enemigos que estaba antes aquí
 
-
-    if(enemy){
-        enemies.forEach(function(enemy) {
-            rotateEnemy(enemy);
-
-        });
-    }
-
-    /*
-    if(enemy){
-        rotateEnemy();
-    }
-*/
-
+    updateText();
 
     //ESTA SOLUCION ES BASTANTE CUTRE, PERO DE MOMENTO LA TENEMOS AHI PARA QUE FUNCIONE.
     contador++;
@@ -110,6 +101,29 @@ function gameUpdate() {
         contador = 0;
     };
     //----------------------------------------------------------------------------------
+
+}
+
+function updateText(){
+        dineroTotalText.setText(dineroTotal);
+}
+
+function enemiesMovement(){
+    if(enemy){
+        enemies.forEach(function(enemy) {
+            rotateEnemy(enemy);   
+        });
+    }
+}
+
+function manageColision(){
+    for (let i = 0; i <= enemies.length; i++){
+        if(blast){game.physics.arcade.overlap(blast, enemies[i], enemyBlastCollide, null, this);}
+    }
+
+    if(moneda){
+        game.physics.arcade.overlap(moneda, player, recogerMonedas, null, this)
+    }
 
 }
 
@@ -137,13 +151,6 @@ function playerMovement(){
          player.body.velocity.y = PLAYER_VELOCITY;
 
      }
-     if(fireButton.justDown){
-        console.log("FIRE");
-        let bullet = game.add.sprite(player.x,player.y,'bullet');
-        game.physics.arcade.enable(bullet);
-        
-   
-    }
 
 
 
@@ -207,9 +214,14 @@ function createBlast(){
     game.physics.arcade.enable(blast);
     blast.body.collideWorldBounds = false;
 
+
     console.log("Proyectil creado");
 
-    //game.physics.arcade.overlap(blast, enemies, collisionHandler, null, game);
+}
+
+function spawnMoneda(xSpawn,ySpawn){
+    moneda = game.add.sprite(xSpawn, ySpawn, 'moneda');
+    game.physics.arcade.enable(moneda);
 }
 
 function rotatePlayer(){
@@ -230,6 +242,7 @@ function createEnemy(){
 
     enemy = game.add.sprite(x, y, 'enemy');
     enemy.anchor.setTo(0.5, 0.5);
+    enemy.enableBody = true;
     game.physics.arcade.enable(enemy);
     enemy.body.collideWorldBounds = true;
 
@@ -237,7 +250,7 @@ function createEnemy(){
 
     rotateEnemy(enemy);
     enemies.push(enemy);
-    //player.enableBody = true;
+
 }
 
 function rotateEnemy(enemy) {
@@ -277,6 +290,7 @@ function disparar(){
         control = true;
         cooldownDisparo(1000);
         destroyBlast(1000);
+
     }
 
 }
@@ -286,21 +300,28 @@ function cooldownDisparo(tiempo){
         control = false;
     }, game);
 }
-
-
 function destroyBlast(tiempo){
     game.time.events.add(tiempo, function() {
         blast.destroy();
     }, game);
 }
 
-function collisionHandler(blast, enemy) {
+function recogerMonedas(moneda, player){
+    moneda.kill();
+    dineroTotal += 1;
+    console.log("RECOGIDO MONEDA, DINERO "+dineroTotal);
+}
 
+function enemyBlastCollide(blast, enemy) {
+
+    let xSpawn = enemy.x;
+    let ySpawn = enemy.y;
 
     console.log("Colisión detectada: proyectil y enemigo");
     blast.kill();
     enemy.kill();
 
+    spawnMoneda(xSpawn,ySpawn)
     //AQUI SE PONE LA PUNTUACION Y LO QUE OCURRA AL MATAR
-    moneda = game.physics.add.sprite(enemy.x, enemy.y, 'moneda');
+
 }

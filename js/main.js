@@ -12,6 +12,5 @@ function startGame() {
     game.state.add('gameOver', gameOverState);
     game.state.add('win', winState);
     game.state.add('tutorial', tutorialState);
-    //game.state.start('play');
     game.state.start('init');
 }
