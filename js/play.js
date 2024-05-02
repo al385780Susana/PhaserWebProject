@@ -39,11 +39,18 @@ function loadAssets() {
 function initialiseGame() {
     game.add.sprite(0,0,'sky');
     createPlayer();
+    click = game.input.mousePointer;
+    control = false;
+
+
+
+    /*
     onmousemove=(pointer) =>{
         anglePlayer = Phaser.Math.angleBetween(player.x, player.y, pointer.x, pointer.y);
         player.rotation = anglePlayer;
-       // console.log("angle deg"+anglePlayer);    
+       // console.log("angle deg"+anglePlayer);
      }
+    */
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = game.input.keyboard.addKey( Phaser.Keyboard.SPACEBAR);
@@ -52,7 +59,6 @@ function initialiseGame() {
     buttonS = game.input.keyboard.addKey(Phaser.Keyboard.S);
     buttonD = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
-    
 }
 
 /**
@@ -63,10 +69,9 @@ function gameUpdate() {
    /* if (gameOver) {
         return;
     }*/
-   
     playerMovement();
-   
-
+    rotatePlayer();
+    disparar();
 }
 
 function playerMovement(){
@@ -146,12 +151,67 @@ function endGame() {
 function createPlayer(){
     let x = game.world.centerX;
     let y = game.world.centerY;
-    
+
     player = game.add.sprite(x, y, 'player');
     player.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     //player.enableBody = true;
+}
 
-   
+function createBlast(){
+    let x = player.x;
+    let y = player.y;
+
+    blast = game.add.sprite(x, y, 'blast');
+    blast.anchor.setTo(0.5, 0.5);
+    game.physics.arcade.enable(blast);
+    blast.body.collideWorldBounds = true;
+}
+
+function rotatePlayer(){
+    var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+        player.x, player.y,
+        game.input.activePointer.x, game.input.activePointer.y);
+
+      if(targetAngle < 0)
+          targetAngle += 360;
+
+    player.angle = targetAngle;
+}
+
+function moveTo(object, targetX, targetY, speed) {
+    // Calcular el ángulo entre la posición actual del objeto y la posición objetivo
+    let angle = Phaser.Math.angleBetween(object.x, object.y, targetX, targetY);
+
+    // Calcular las componentes x e y del vector de dirección utilizando el ángulo
+    let velocityX = Math.cos(angle) * speed;
+    let velocityY = Math.sin(angle) * speed;
+
+    // Asignar la velocidad al objeto para que se desplace hacia la posición objetivo
+    object.body.velocity.setTo(velocityX, velocityY);
+}
+
+function disparar(){
+    if(click.isDown && control == false){
+        createBlast();
+        moveTo(blast, game.input.mousePointer.x, game.input.mousePointer.y, 500);
+        control = true;
+        cooldownDisparo(1000);
+        destroyBlast(1000);
+    }
+
+}
+
+function cooldownDisparo(tiempo){
+    game.time.events.add(tiempo, function() {
+        control = false;
+    }, game);
+}
+
+
+function destroyBlast(tiempo){
+    game.time.events.add(tiempo, function() {
+        blast.destroy();
+    }, game);
 }
