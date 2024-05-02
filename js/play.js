@@ -16,9 +16,12 @@ let playState = {
 };
 
 let player;
+let enemy;
+let enemies;
 let cursors;
 let score = 0;
 let scoreText;
+
 
 
 // methods
@@ -29,7 +32,10 @@ function loadAssets() {
 
     game.load.image('sky', 'assets/sky.png');
     game.load.image('player','assets/nave_inicial_0.png' );
-    game.load.image('bullet','assets/pixil-frame-0.png')
+    game.load.image('bullet','assets/pixil-frame-0.png');
+    game.load.image('enemy', 'assets/enemigo.png');
+    game.load.image('moneda','assets/moneda.png' );
+    game.load.image('blast', 'assets/pixil-frame-0.png')
 }
 
 
@@ -37,10 +43,17 @@ function loadAssets() {
  * Initialise the stage
  */
 function initialiseGame() {
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
     game.add.sprite(0,0,'sky');
     createPlayer();
+    enemies = [];
     click = game.input.mousePointer;
     control = false;
+    contador = 0;
+    //createEnemy();
+    timeEnemy(3000);
+
 
 
 
@@ -71,7 +84,33 @@ function gameUpdate() {
     }*/
     playerMovement();
     rotatePlayer();
+
+
     disparar();
+
+
+    if(enemy){
+        enemies.forEach(function(enemy) {
+            rotateEnemy(enemy);
+
+        });
+    }
+
+    /*
+    if(enemy){
+        rotateEnemy();
+    }
+*/
+
+
+    //ESTA SOLUCION ES BASTANTE CUTRE, PERO DE MOMENTO LA TENEMOS AHI PARA QUE FUNCIONE.
+    contador++;
+    if(contador == 500){
+        timeEnemy(2000);
+        contador = 0;
+    };
+    //----------------------------------------------------------------------------------
+
 }
 
 function playerMovement(){
@@ -166,7 +205,11 @@ function createBlast(){
     blast = game.add.sprite(x, y, 'blast');
     blast.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(blast);
-    blast.body.collideWorldBounds = true;
+    blast.body.collideWorldBounds = false;
+
+    console.log("Proyectil creado");
+
+    //game.physics.arcade.overlap(blast, enemies, collisionHandler, null, game);
 }
 
 function rotatePlayer(){
@@ -179,6 +222,41 @@ function rotatePlayer(){
 
     player.angle = targetAngle;
 }
+
+function createEnemy(){
+
+    let x = Phaser.Math.random(50, 751);
+    let y = Phaser.Math.random(50, 550);
+
+    enemy = game.add.sprite(x, y, 'enemy');
+    enemy.anchor.setTo(0.5, 0.5);
+    game.physics.arcade.enable(enemy);
+    enemy.body.collideWorldBounds = true;
+
+    //game.physics.arcade.collide(enemy, player, collisionHandler, null, game);
+
+    rotateEnemy(enemy);
+    enemies.push(enemy);
+    //player.enableBody = true;
+}
+
+function rotateEnemy(enemy) {
+    var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+        enemy.x, enemy.y,
+        player.x, player.y);
+
+    if (targetAngle < 0)
+        targetAngle += 360;
+
+    enemy.angle = targetAngle;
+}
+
+function timeEnemy(tiempo){
+    game.time.events.add(tiempo, function() {
+        createEnemy();
+    }, game);
+}
+
 
 function moveTo(object, targetX, targetY, speed) {
     // Calcular el ángulo entre la posición actual del objeto y la posición objetivo
@@ -214,4 +292,15 @@ function destroyBlast(tiempo){
     game.time.events.add(tiempo, function() {
         blast.destroy();
     }, game);
+}
+
+function collisionHandler(blast, enemy) {
+
+
+    console.log("Colisión detectada: proyectil y enemigo");
+    blast.kill();
+    enemy.kill();
+
+    //AQUI SE PONE LA PUNTUACION Y LO QUE OCURRA AL MATAR
+    moneda = game.physics.add.sprite(enemy.x, enemy.y, 'moneda');
 }
