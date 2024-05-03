@@ -1,4 +1,5 @@
 let numTutorial = 0;
+let timerEvent;
 
 let tutorialState = {
     preload: loadAssets,
@@ -14,7 +15,14 @@ function loadAssets() {
     game.load.image('flechaIzq', 'assets/flechaIzq.png');
 }
 
+
+
 function createTutorial() {
+
+    if (timerEvent) {
+        game.time.events.remove(timerEvent);
+    }
+
     if (numTutorial == 0){
         game.add.image(0, 0, 'tuto1');
         btnDer = game.add.button(725, 550, 'flechaDer', clickDer);
@@ -39,6 +47,12 @@ function createTutorial() {
         btnFin.anchor.setTo(0.5, 0.5);
         btnFin.scale.setTo(0.5);
     }
+    if (numTutorial < 2) {
+        timerEvent = game.time.events.add(Phaser.Timer.SECOND * 10, changeTutorial, game);
+    }
+    else if(numTutorial == 2){
+        timerEvent = game.time.events.add(Phaser.Timer.SECOND * 10, changeTutorial, game);
+    }
 }
 function clickDer() {
     btnDer.inputEnabled = false;
@@ -56,6 +70,16 @@ function clickFin() {
     btnIzq.inputEnabled = false;
     numTutorial = 0;
     game.state.start('init');
+}
+
+function changeTutorial() {
+    numTutorial++;
+    if (numTutorial <= 2) {
+        createTutorial();
+    } else {
+        game.state.start('init');
+        numTutorial = 0;
+    }
 }
 
 function updateTutorial(){
