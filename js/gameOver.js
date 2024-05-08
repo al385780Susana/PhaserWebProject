@@ -26,5 +26,5 @@ function updategameOver(){
 }
 
 function restartGame() {
-    game.state.start('init');
+    window.location.reload();
 }
