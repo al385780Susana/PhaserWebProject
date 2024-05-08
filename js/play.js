@@ -71,6 +71,7 @@ function loadAssets() {
     game.load.image('blast', 'assets/proyectil.png');
     game.load.image('bullet', 'assets/municion.png');
     game.load.image('bulletHUD', 'assets/municionHUD.png');
+    game.load.image('fondoGrande', 'assets/fondoGrande.jpg');
     //game.load.audio('victory', 'assets/snds/victory.wav');
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
@@ -85,12 +86,17 @@ function loadAssets() {
 function initialiseGame() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
+    //CARGAMOS Y CONFIGURAMOS EL MUNDO 
+    game.world.setBounds(0, 0, 1920, 1080);
+    let bg = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'fondoGrande');
+    bg.scrollFactorX = 0.7;
+    bg.scrollFactorY = 0.7;
     //CARGAMOS LOS ASSETS EN LE JUEGO
 
-    game.add.sprite(0,0,'sky');
     bulletHUD = game.add.sprite(725,525, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
+
+
     const soundDefeat =  game.sound.add('soundDefeat');
     //const soundVictory;
 
@@ -126,7 +132,7 @@ function initialiseGame() {
             fontSize: '32px',
             fill: '#fff'
         });
-
+  
     bulletTotalText = game.add.text(700, GAME_STAGE_HEIGHT - 50,
         municionActual, {
             fontSize: '32px',
@@ -149,6 +155,9 @@ function initialiseGame() {
     buttonS = game.input.keyboard.addKey(Phaser.Keyboard.S);
     buttonD = game.input.keyboard.addKey(Phaser.Keyboard.D);
     buttonShift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+
+    //CAMERA
+    game.camera.follow(player);
 }
 
 // REFRESCO DE PANTALLA A CADA FRAME
@@ -434,7 +443,7 @@ function spawnMoneda(xSpawn,ySpawn){//                                          
 function rotatePlayer(){//                                                          Permite que lel jugador rote donde aputna el ratón
     var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
         player.x, player.y,
-        game.input.activePointer.x, game.input.activePointer.y);
+        game.input.mousePointer.worldX, game.input.mousePointer.worldY);
 
       if(targetAngle < 0)
           targetAngle += 360;
