@@ -1,7 +1,10 @@
 
+// VAriables CONSTANTES
+
 const VICTORY_POINTS = 500;
 const PLAYER_VELOCITY = 150;
 const ENEMY_VELOCITY = 100;
+const BLAST_VELOCITY = 200;
 const ENEMY_SHOOT_CADENCY = 3000;
 const PLAYER_HEALTH = 10;
 
@@ -19,8 +22,10 @@ let buttonS;
 let buttonW;
 let anglePlayer = 0;
 
+//SALUD DEL JUGADOR
 let playerHealth;
 
+//PLAYSTATE
 let playState = {
     preload: loadAssets,
     create: initialiseGame,
@@ -28,6 +33,7 @@ let playState = {
 };
 
 
+//VARIABLES
 let player;
 let enemy;
 let enemies;
@@ -53,10 +59,7 @@ let scoreText;
 
 
 
-// methods
-/**
- * Load the assets
- */
+//CARGAR IMAGENES
 function loadAssets() {
 
     game.load.image('sky', 'assets/sky.png');
@@ -75,12 +78,13 @@ function loadAssets() {
 }
 
 
-/**
- * Initialise the stage
- */
+//INICIO DEL JUEGO
+
 function initialiseGame() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    //CARGAMOS LOS ASSETS EN LE JUEGO
 
     game.add.sprite(0,0,'sky');
     bulletHUD = game.add.sprite(725,525, 'bulletHUD');
@@ -90,24 +94,31 @@ function initialiseGame() {
 
     createPlayer();
 
+    //DAMOS LOS VALORES
     playerHealth = PLAYER_HEALTH;
+    click = game.input.mousePointer;
 
-    municionActual = 5;
-
+    //LISTAS
     monedasList = [];
     bulletList = [];
     enemieBlastList = [];
     enemies = [];
-    click = game.input.mousePointer;
-    control = false;
+
+    //NUMERICO
+    municionActual = 5;
     contador = 0;
+    contador2 = 0;
     dineroTotal = 0;
     killCount = 0;
     score = 0;
-    //createEnemy();
+
+    //BOOL
+    control = false;
+
+    //CREACION DE ENEMIGOS
     timeEnemy(3000);
 
-
+    //HUD---------------------------------------------------------------
     dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
         dineroTotal, {
             fontSize: '32px',
@@ -119,106 +130,128 @@ function initialiseGame() {
             fontSize: '32px',
             fill: '#fff'
         });
-
+    //------------------------------------------------------------------
 
         /*TEXTO EN MEDIO, SERÍA CAMBIAR EL TIPO DE FUENTE Y COLOR */
-    /*killText = game.add.text(GAME_STAGE_HEIGHT/2 + 55, GAME_STAGE_HEIGHT/2 - 100,
+        /*killText = game.add.text(GAME_STAGE_HEIGHT/2 + 55, GAME_STAGE_HEIGHT/2 - 100,
         killCount, {
             fontSize: '150px',
             fill: '#008080'
         });*/
 
-    //  Our controls.
+
+    //CONTROLES
     cursors = game.input.keyboard.createCursorKeys();
     buttonW = game.input.keyboard.addKey(Phaser.Keyboard.W);
     buttonA = game.input.keyboard.addKey(Phaser.Keyboard.A);
     buttonS = game.input.keyboard.addKey(Phaser.Keyboard.S);
     buttonD = game.input.keyboard.addKey(Phaser.Keyboard.D);
-
 }
 
-/**
- * Game loop: update elements and check events
- */
+// REFRESCO DE PANTALLA A CADA FRAME
+
 function gameUpdate() {
-    //  If game is already over do nothing
+
     if (gameOver) {
         return;
     }
     else{
-        playerMovement();
-        rotatePlayer();
-        disparar();
-        manageColision();
-    
-        if(levelDifficulty==1){
-            enemiesMovement(); 
+
+        //EN CUALQUIER MOMENTO
+        playerMovement(); //            Se nueve el jugador
+        rotatePlayer();//               El jugador rota
+        disparar();//                   Disparo del jugador
+        manageColision();//             Tiene en cuenta la colisión del jugador
+        updateText();//                 Actualiza los valores de municion y dinero.
+
+
+        //Si hay un enemigo
+        if(enemy){
+            enemies.forEach(function(enemy){
+                rotateEnemy(enemy);
+            });
+
         }
-    
-    
-        updateText();
-    
+
+        //APARICIÓN DE ENEMIGOS
         //ESTA SOLUCION ES BASTANTE CUTRE, PERO DE MOMENTO LA TENEMOS AHI PARA QUE FUNCIONE.
         contador++;
         if(contador == 200){
-            timeEnemy(2000);
-            enemiesShoot();
+            timeEnemy(2000);//          Tiempo de reaparición de enemigo
             contador = 0;
         };
+
+        contador2++;
+        if(contador == 50){
+            timeEnemyShoot(0);//     Tiempo para que disparen los enemigos
+            contador2 = 0;
+        };
         //----------------------------------------------------------------------------------
-    
+
+
+
+        //NIVEL DE DIFICULTAD 1-------------------------------------------------------------
+        if(levelDifficulty==1){
+            enemiesMovement();//        El enemigo se mueve hacia el jugador
+        }
+        //----------------------------------------------------------------------------------
+
     }
-  
+
 }
 
-function updateText(){
+//FUNCIONES******************************************************************************************************************************************
+
+function updateText(){//                                                            Se actualiza el texto del dinero y munición
         dineroTotalText.setText(dineroTotal);
         bulletTotalText.setText(municionActual);
        // scoreText.setText(score);
 }
 
-function enemiesMovement(){
+function enemiesMovement(){//                                                       El enemigo se mueve hacia el jugador
     if(enemy){
             enemies.forEach(function(enemy) {
                 if(this.enemy){
                     rotateEnemy(enemy);
                     moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
                 }
-               
-            });        
+
+            });
     }
 
 }
 
-
-function enemiesShoot(){
+function enemiesShoot(){//                                                          El enemigo dispara en dirección del jugador
     if(enemy && !gameOver){
         enemies.forEach(function(enemy) {
+            tiempo = Phaser.Math.random(500, 3000);
             if(enemy){
-                console.log("ENEMIES "+enemies +"with enemy "+enemy);
-                rotateEnemy(enemy);
-                createEnemyBlast(enemy.x, enemy.y, enemy.angle);
-                posx = player.x;
-                posy = player.y;
-                moveTo(enemyBlast, posx, posy,ENEMY_VELOCITY);
-                destroyBlast(5000,enemyBlast)
+                game.time.events.add(tiempo, function() {
+                    console.log("ENEMIES "+enemies +"with enemy "+enemy);
+                    rotateEnemy(enemy);
+                    createEnemyBlast(enemy.x, enemy.y, enemy.angle);
+                    posx = player.x;
+                    posy = player.y;
+                    moveTo(enemyBlast, posx, posy,BLAST_VELOCITY);
+                    destroyBlast(5000,enemyBlast);
+                }, game);
             }
             else{console.log("DESTROYED ENEMY ENEMIES "+enemies +"with enemy "+enemy);}
-                
-            
-        });        
+
+
+        });
     }
 }
 
-function clearGameAll(){
+function clearGameAll(){//                                                          Elimina todo lo que hay en pantalla
     if(enemy){
         enemies.forEach(function(enemy) {
-            
+
             enemy.destroy();
 
-        });        
+        });
     }
-    
+
     if(enemyBlast){
         enemieBlastList.forEach(function(enemyBlast){
             enemyBlast.kill();
@@ -227,7 +260,8 @@ function clearGameAll(){
 
 
 }
-function blastManagement(){
+
+function blastManagement(){//                                                       Maneja todos los disparos realizados por el jugador
     if(blast){
         blastArray.forEach(function(blast){
             destroyBlast(3000);
@@ -235,7 +269,7 @@ function blastManagement(){
     }
 }
 
-function manageColision(){
+function manageColision(){//                                                        Maneja las colisiones
     for (let i = 0; i <= enemies.length; i++){
         if(blast){game.physics.arcade.overlap(blast, enemies[i], enemyBlastCollide, null, this);}
         game.physics.arcade.overlap(player, enemies[i], playerEnemyCollide, null, this);
@@ -262,7 +296,7 @@ function manageColision(){
 
 }
 
-function playerMovement() {
+function playerMovement() {//                                                       Controla el movimiento del jugador
     // Reset player's velocity
     player.body.velocity.setTo(0);
 
@@ -285,7 +319,7 @@ function playerMovement() {
     }
 }
 
-function endGame() {
+function endGame() {//                                                              Termina el juego
     // Game Over
     gameOver = true;
 
@@ -297,7 +331,7 @@ function endGame() {
     cursors.down.reset(true);
 
     // Stop player
-  
+
     player.body.velocity.x = player.body.velocity.y = 0;
 
 
@@ -330,7 +364,7 @@ function endGame() {
 
 }
 
-function createPlayer(){
+function createPlayer(){//                                                          Crea al jugador principal
     let x = game.world.centerX;
     let y = game.world.centerY;
 
@@ -341,7 +375,7 @@ function createPlayer(){
     //player.enableBody = true;
 }
 
-function createBlast(){
+function createBlast(){//                                                           Crea el blast del juagdor
     let x = player.x;
     let y = player.y;
 
@@ -355,8 +389,8 @@ function createBlast(){
 
 }
 
-function createEnemyBlast(posx, posy, enemyAngle){
-    
+function createEnemyBlast(posx, posy, enemyAngle){//                                Crea el blast del enemigo
+
     enemyBlast = game.add.sprite(posx, posy, 'blast');
     enemyBlast.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(enemyBlast);
@@ -369,14 +403,14 @@ function createEnemyBlast(posx, posy, enemyAngle){
 
 }
 
-function spawnMoneda(xSpawn,ySpawn){
+function spawnMoneda(xSpawn,ySpawn){//                                              Hace aparecer una moneda donde muere un enemigo
     moneda = game.add.sprite(xSpawn, ySpawn, 'moneda');
     game.physics.arcade.enable(moneda);
 
     monedasList.push(moneda);
 }
 
-function rotatePlayer(){
+function rotatePlayer(){//                                                          Permite que lel jugador rote donde aputna el ratón
     var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
         player.x, player.y,
         game.input.activePointer.x, game.input.activePointer.y);
@@ -387,7 +421,7 @@ function rotatePlayer(){
     player.angle = targetAngle;
 }
 
-function createEnemy(){
+function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
     let x = Phaser.Math.random(50, 751);
     let y = Phaser.Math.random(50, 550);
@@ -403,7 +437,7 @@ function createEnemy(){
 
 }
 
-function rotateEnemy(enemy) {
+function rotateEnemy(enemy) {//                                                     Rota el enemigo donde se encuentra el jugador
     var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
         enemy.x, enemy.y,
         player.x, player.y);
@@ -414,21 +448,24 @@ function rotateEnemy(enemy) {
     enemy.angle = targetAngle;
 }
 
-function timeEnemy(tiempo){
+function timeEnemy(tiempo){//                                                       Tiempo de creación de enemigos
     game.time.events.add(tiempo, function() {
         createEnemy();
-        if(levelDifficulty==2){timeEnemyShoot(3000);}
+        /*
+        tiempoDisparo = Phaser.Math.random(1000, 5000);
+        if(levelDifficulty==2){timeEnemyShoot(tiempoDisparo);}
+        */
     }, game);
 }
 
 
-function timeEnemyShoot(tiempo){
+function timeEnemyShoot(tiempo){//                                                  Tiempo de creación del disparo de los enemigos
     game.time.events.add(tiempo, function() {
         enemiesShoot();
     }, game);
 }
 
-function moveTo(object, targetX, targetY, speed) {
+function moveTo(object, targetX, targetY, speed) {//                                Mueve el objeto seleccionado a otro indicaddo
     // Calcular el ángulo entre la posición actual del objeto y la posición objetivo
     let angle = Phaser.Math.angleBetween(object.x, object.y, targetX, targetY);
 
@@ -440,7 +477,7 @@ function moveTo(object, targetX, targetY, speed) {
     object.body.velocity.setTo(velocityX, velocityY);
 }
 
-function disparar(){
+function disparar(){//                                                              Permite el disparo del jugador
     if(click.isDown && control == false && municionActual>0){
         createBlast();
         moveTo(blast, game.input.mousePointer.x, game.input.mousePointer.y, 500);
@@ -454,30 +491,29 @@ function disparar(){
 
 }
 
-function cooldownDisparo(tiempo){
+function cooldownDisparo(tiempo){//                                                 Tiempo de recarga entre disparos
     game.time.events.add(tiempo, function() {
         control = false;
     }, game);
 }
-function destroyBlast(tiempo, blast){
+
+function destroyBlast(tiempo, blast){//                                             Destruye el proyectil del jugador
     game.time.events.add(tiempo, function() {
         blast.kill();
     }, game);
 }
 
-function recogerMonedas(player,moneda){
+function recogerMonedas(player,moneda){//                                           Permite recoger las monedas
     moneda.kill();
     dineroTotal += 1;
 }
 
-function recogerBullets(player,bullet){
+function recogerBullets(player,bullet){//                                           Permite recoger la munición
     bullet.kill();
     municionActual += 1;
 }
 
-
-
-function bulletRandom(xSpawn,ySpawn){
+function bulletRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
     numeroRandom = Phaser.Math.between(0, 10);
 
     if(numeroRandom >= 5){
@@ -488,22 +524,22 @@ function bulletRandom(xSpawn,ySpawn){
     }
 }
 
-function spawnBullet(xSpawn, ySpawn){
+function spawnBullet(xSpawn, ySpawn){//                                             Aparece muniución cuando matas a un enemigo
     bullet = game.add.sprite(xSpawn +50, ySpawn +50, 'bullet');
     game.physics.arcade.enable(bullet);
 
     bulletList.push(bullet);
 }
 
-function enemyBlastCollide(blast, enemy) {
+function enemyBlastCollide(blast, enemy) {//                                        Tiene en cuenta el chocar del proyectil enemigo
 
     let xSpawn = enemy.x;
     let ySpawn = enemy.y;
 
-    blast.kill(); 
+    blast.kill();
     enemy.destroy();
     enemies.splice(enemies.indexOf(enemy),1);
-   
+
 
     spawnMoneda(xSpawn,ySpawn);
     bulletRandom(xSpawn,ySpawn);
@@ -517,7 +553,7 @@ function enemyBlastCollide(blast, enemy) {
 
 }
 
-function playerEnemyCollide(player, enemy){
+function playerEnemyCollide(player, enemy){//                                       Tiene en cuenta la colision del enemigo y el jugador
 
     playerHit();
     enemy.destroy();
@@ -525,14 +561,14 @@ function playerEnemyCollide(player, enemy){
 
 }
 
-function ataqueRecibido(player,enemyBlast){
+function ataqueRecibido(player,enemyBlast){//                                       Tiene en cuenta lo que ocurre al impactrar con el disparo enemigo
 
     playerHit();
     enemyBlast.destroy()
     enemieBlastList.splice(enemieBlastList.indexOf(enemyBlast),1);
 }
 
-function playerHit(){
+function playerHit(){//                                                             Daño provocado al jugador
 
     playerHealth -= 1;
     if(playerHealth<=0){
