@@ -9,7 +9,7 @@ const ENEMY_SHOOT_CADENCY = 3000;
 const PLAYER_HEALTH = 10;
 
 
-let levelDifficulty = 2;
+let levelDifficulty = 3;
 let gameOver = false;
 let victoryAtEnd = false;
 
@@ -21,6 +21,7 @@ let buttonD;
 let buttonS;
 let buttonW;
 let anglePlayer = 0;
+let cursorsShift;
 
 //SALUD DEL JUGADOR
 let playerHealth;
@@ -55,6 +56,7 @@ let killText;
 let dineroTotalText;
 let bulletTotalText;
 let scoreText;
+let velocidadExtra;
 
 
 
@@ -146,6 +148,7 @@ function initialiseGame() {
     buttonA = game.input.keyboard.addKey(Phaser.Keyboard.A);
     buttonS = game.input.keyboard.addKey(Phaser.Keyboard.S);
     buttonD = game.input.keyboard.addKey(Phaser.Keyboard.D);
+    buttonShift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 }
 
 // REFRESCO DE PANTALLA A CADA FRAME
@@ -156,6 +159,13 @@ function gameUpdate() {
         return;
     }
     else{
+
+        if(buttonShift.isDown){
+            velocidadExtra = 150;
+        }
+        else{
+            velocidadExtra = 0;
+        }
 
         //EN CUALQUIER MOMENTO
         playerMovement(); //            Se nueve el jugador
@@ -181,17 +191,21 @@ function gameUpdate() {
             contador = 0;
         };
 
-        contador2++;
-        if(contador == 50){
-            timeEnemyShoot(0);//     Tiempo para que disparen los enemigos
-            contador2 = 0;
+        if(levelDifficulty >= 2){
+
+            contador2++;
+            if(contador == 50){
+                timeEnemyShoot(0);//    Tiempo para que disparen los enemigos
+                contador2 = 0;
         };
+        }
+
         //----------------------------------------------------------------------------------
 
 
 
         //NIVEL DE DIFICULTAD 1-------------------------------------------------------------
-        if(levelDifficulty==1){
+        if(levelDifficulty == 1 || levelDifficulty == 3){
             enemiesMovement();//        El enemigo se mueve hacia el jugador
         }
         //----------------------------------------------------------------------------------
@@ -211,8 +225,8 @@ function updateText(){//                                                        
 function enemiesMovement(){//                                                       El enemigo se mueve hacia el jugador
     if(enemy){
             enemies.forEach(function(enemy) {
-                if(this.enemy){
-                    rotateEnemy(enemy);
+                if(enemy){
+                    //rotateEnemy(enemy);
                     moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
                 }
 
@@ -303,19 +317,19 @@ function playerMovement() {//                                                   
     // Check input for movement
     if (cursors.left.isDown || buttonA.isDown) {
         // Move left
-        player.body.velocity.x = -PLAYER_VELOCITY;
+        player.body.velocity.x = -PLAYER_VELOCITY - velocidadExtra;
     }
     if (cursors.right.isDown || buttonD.isDown) {
         // Move right
-        player.body.velocity.x = PLAYER_VELOCITY;
+        player.body.velocity.x = PLAYER_VELOCITY + velocidadExtra;
     }
     if (cursors.up.isDown || buttonW.isDown) {
         // Move up
-        player.body.velocity.y = -PLAYER_VELOCITY;
+        player.body.velocity.y = -PLAYER_VELOCITY - velocidadExtra;
     }
     if (cursors.down.isDown || buttonS.isDown) {
         // Move down
-        player.body.velocity.y = PLAYER_VELOCITY;
+        player.body.velocity.y = PLAYER_VELOCITY + velocidadExtra;
     }
 }
 
@@ -405,7 +419,14 @@ function createEnemyBlast(posx, posy, enemyAngle){//                            
 
 function spawnMoneda(xSpawn,ySpawn){//                                              Hace aparecer una moneda donde muere un enemigo
     moneda = game.add.sprite(xSpawn, ySpawn, 'moneda');
+    moneda.anchor.setTo(0.5, 0.5);
+    moneda.scale.setTo(0.5, 0.5)
     game.physics.arcade.enable(moneda);
+    let monedaanimation = game.add.tween(moneda.scale).to({
+        x: 0.75,
+        y: 0.75
+    }, 1000,
+    Phaser.Easing.Cubic.Out, true, 0, -1, true);
 
     monedasList.push(moneda);
 }
@@ -457,7 +478,6 @@ function timeEnemy(tiempo){//                                                   
         */
     }, game);
 }
-
 
 function timeEnemyShoot(tiempo){//                                                  Tiempo de creación del disparo de los enemigos
     game.time.events.add(tiempo, function() {
@@ -516,32 +536,50 @@ function recogerBullets(player,bullet){//                                       
 function bulletRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
     numeroRandom = Phaser.Math.between(0, 10);
 
-    if(numeroRandom >= 5){
-        spawnBullet(xSpawn,ySpawn);
-    }
-    if(numeroRandom == 9){
+    spawnBullet(xSpawn, ySpawn);
+
+    if(numeroRandom >= 7){
         spawnBullet(xSpawn -100,ySpawn -100);
+    }
+}
+
+function monedaRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
+    numeroRandom = Phaser.Math.between(0, 10);
+
+    if(numeroRandom >= 3){
+        spawnMoneda(xSpawn,ySpawn);
+    }
+    if(numeroRandom >= 7){
+        spawnMoneda(xSpawn-50,ySpawn +50);
     }
 }
 
 function spawnBullet(xSpawn, ySpawn){//                                             Aparece muniución cuando matas a un enemigo
     bullet = game.add.sprite(xSpawn +50, ySpawn +50, 'bullet');
+    bullet.anchor.setTo(0.5, 0.5);
+    bullet.scale.setTo(0.5, 0.5);
     game.physics.arcade.enable(bullet);
+    let bulletanimation = game.add.tween(bullet.scale).to({
+        x: 0.75,
+        y: 0.75
+    }, 1000,
+    Phaser.Easing.Cubic.Out, true, 0, -1, true);
 
     bulletList.push(bullet);
 }
 
-function enemyBlastCollide(blast, enemy) {//                                        Tiene en cuenta el chocar del proyectil enemigo
+function enemyBlastCollide(blast, enemy) {//                                        Tiene en cuenta el chocar del proyectil con el enemigo
 
     let xSpawn = enemy.x;
     let ySpawn = enemy.y;
 
     blast.kill();
     enemy.destroy();
+
     enemies.splice(enemies.indexOf(enemy),1);
 
 
-    spawnMoneda(xSpawn,ySpawn);
+    monedaRandom(xSpawn,ySpawn);
     bulletRandom(xSpawn,ySpawn);
 
 
