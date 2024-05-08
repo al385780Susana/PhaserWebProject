@@ -2,6 +2,14 @@
 const VICTORY_POINTS = 500;
 const PLAYER_VELOCITY = 150;
 const ENEMY_VELOCITY = 100;
+const ENEMY_SHOOT_CADENCY = 3000;
+const PLAYER_HEALTH = 10;
+
+
+let levelDifficulty = 2;
+let gameOver = false;
+let victoryAtEnd = false;
+
 
 //CONTROLES
 let cursors;
@@ -10,6 +18,8 @@ let buttonD;
 let buttonS;
 let buttonW;
 let anglePlayer = 0;
+
+let playerHealth;
 
 let playState = {
     preload: loadAssets,
@@ -26,6 +36,9 @@ let moneda;
 let monedasList;
 let bullet;
 let bulletList;
+
+let enemyBlast;
+let enemieBlastList;
 
 let municionActual;
 municionActual
@@ -53,6 +66,12 @@ function loadAssets() {
     game.load.image('blast', 'assets/proyectil.png');
     game.load.image('bullet', 'assets/municion.png');
     game.load.image('bulletHUD', 'assets/municionHUD.png');
+    //game.load.audio('victory', 'assets/snds/victory.wav');
+    game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
+    game.load.audio('laser', 'assets/snds/laser.mp3');
+    game.load.audio('menu', 'assets/snds/menu.mp3');
+    game.load.audio('stage', 'assets/snds/stage.mp3');
+
 }
 
 
@@ -62,15 +81,22 @@ function loadAssets() {
 function initialiseGame() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
     game.add.sprite(0,0,'sky');
     bulletHUD = game.add.sprite(725,525, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
+    const soundDefeat =  game.sound.add('soundDefeat');
+    //const soundVictory;
+
     createPlayer();
+
+    playerHealth = PLAYER_HEALTH;
 
     municionActual = 5;
 
     monedasList = [];
     bulletList = [];
+    enemieBlastList = [];
     enemies = [];
     click = game.input.mousePointer;
     control = false;
@@ -80,6 +106,7 @@ function initialiseGame() {
     score = 0;
     //createEnemy();
     timeEnemy(3000);
+
 
     dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
         dineroTotal, {
@@ -115,25 +142,33 @@ function initialiseGame() {
  */
 function gameUpdate() {
     //  If game is already over do nothing
-   /* if (gameOver) {
+    if (gameOver) {
         return;
-    }*/
-    playerMovement();
-    rotatePlayer();
-    disparar();
-    manageColision();
-    enemiesMovement(); //aqui está lo de rotar los enemigos que estaba antes aquí
-
-    updateText();
-
-    //ESTA SOLUCION ES BASTANTE CUTRE, PERO DE MOMENTO LA TENEMOS AHI PARA QUE FUNCIONE.
-    contador++;
-    if(contador == 200){
-        timeEnemy(2000);
-        contador = 0;
-    };
-    //----------------------------------------------------------------------------------
-
+    }
+    else{
+        playerMovement();
+        rotatePlayer();
+        disparar();
+        manageColision();
+    
+        if(levelDifficulty==1){
+            enemiesMovement(); 
+        }
+    
+    
+        updateText();
+    
+        //ESTA SOLUCION ES BASTANTE CUTRE, PERO DE MOMENTO LA TENEMOS AHI PARA QUE FUNCIONE.
+        contador++;
+        if(contador == 200){
+            timeEnemy(2000);
+            enemiesShoot();
+            contador = 0;
+        };
+        //----------------------------------------------------------------------------------
+    
+    }
+  
 }
 
 function updateText(){
@@ -144,14 +179,54 @@ function updateText(){
 
 function enemiesMovement(){
     if(enemy){
-        enemies.forEach(function(enemy) {
-            rotateEnemy(enemy);
-            moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
-        });
+            enemies.forEach(function(enemy) {
+                if(this.enemy){
+                    rotateEnemy(enemy);
+                    moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
+                }
+               
+            });        
     }
 
 }
 
+
+function enemiesShoot(){
+    if(enemy && !gameOver){
+        enemies.forEach(function(enemy) {
+            if(enemy){
+                console.log("ENEMIES "+enemies +"with enemy "+enemy);
+                rotateEnemy(enemy);
+                createEnemyBlast(enemy.x, enemy.y, enemy.angle);
+                posx = player.x;
+                posy = player.y;
+                moveTo(enemyBlast, posx, posy,ENEMY_VELOCITY);
+                destroyBlast(5000,enemyBlast)
+            }
+            else{console.log("DESTROYED ENEMY ENEMIES "+enemies +"with enemy "+enemy);}
+                
+            
+        });        
+    }
+}
+
+function clearGameAll(){
+    if(enemy){
+        enemies.forEach(function(enemy) {
+            
+            enemy.destroy();
+
+        });        
+    }
+    
+    if(enemyBlast){
+        enemieBlastList.forEach(function(enemyBlast){
+            enemyBlast.kill();
+        })
+    }
+
+
+}
 function blastManagement(){
     if(blast){
         blastArray.forEach(function(blast){
@@ -168,19 +243,24 @@ function manageColision(){
 
     if(moneda){
         for (let i = 0; i <= monedasList.length; i++){
-            game.physics.arcade.overlap(monedasList[i], player, recogerMonedas, null, this);
+            game.physics.arcade.overlap(player,monedasList[i], recogerMonedas, null, this);
         }
     }
 
     if(bullet){
         for(let i = 0; i <= bulletList.length; i++){
-            game.physics.arcade.overlap(bulletList[i], player, recogerBullets, null, this);
+            game.physics.arcade.overlap(player,bulletList[i], recogerBullets, null, this);
+        }
+    }
+
+    if(enemyBlast){
+        for(let i = 0; i <= enemieBlastList.length; i++){
+            game.physics.arcade.overlap(player,enemieBlastList[i], ataqueRecibido, null, this);
         }
     }
 
 
 }
-
 
 function playerMovement() {
     // Reset player's velocity
@@ -222,7 +302,9 @@ function endGame() {
 
 
     // Cleaning...
+    clearGameAll();
 
+    victoryAtEnd = score>=VICTORY_POINTS;
 
     // Final animation (a tween)
     let finalTween = game.add.tween(player.scale).to({
@@ -233,14 +315,19 @@ function endGame() {
 
     finalTween.onComplete.add(function () {
         player.destroy();
-        game.state.start('win');
+        if (victoryAtEnd) {
+            //soundVictory.play();
+            game.state.start('win');
+       } else {
+            //soundDefeat.play();
+            console.log("DEFEAT");
+            game.state.start('gameOver');
+       }
+
     });
 
-   // if (victoryAtEnd) {
-        //soundVictory.play();
-    //} else {
-        //soundDefeat.play();
-    //}
+
+
 }
 
 function createPlayer(){
@@ -265,7 +352,20 @@ function createBlast(){
 
     blast.angle = player.angle;
 
-    console.log("Proyectil creado");
+
+}
+
+function createEnemyBlast(posx, posy, enemyAngle){
+    
+    enemyBlast = game.add.sprite(posx, posy, 'blast');
+    enemyBlast.anchor.setTo(0.5, 0.5);
+    game.physics.arcade.enable(enemyBlast);
+    enemyBlast.body.collideWorldBounds = false;
+
+    enemyBlast.angle = enemyAngle;
+
+    enemieBlastList.push(enemyBlast);
+
 
 }
 
@@ -298,8 +398,6 @@ function createEnemy(){
     game.physics.arcade.enable(enemy);
     enemy.body.collideWorldBounds = true;
 
-    //game.physics.arcade.collide(enemy, player, collisionHandler, null, game);
-
     rotateEnemy(enemy);
     enemies.push(enemy);
 
@@ -319,9 +417,16 @@ function rotateEnemy(enemy) {
 function timeEnemy(tiempo){
     game.time.events.add(tiempo, function() {
         createEnemy();
+        if(levelDifficulty==2){timeEnemyShoot(3000);}
     }, game);
 }
 
+
+function timeEnemyShoot(tiempo){
+    game.time.events.add(tiempo, function() {
+        enemiesShoot();
+    }, game);
+}
 
 function moveTo(object, targetX, targetY, speed) {
     // Calcular el ángulo entre la posición actual del objeto y la posición objetivo
@@ -356,38 +461,21 @@ function cooldownDisparo(tiempo){
 }
 function destroyBlast(tiempo, blast){
     game.time.events.add(tiempo, function() {
-        blast.destroy();
+        blast.kill();
     }, game);
 }
 
-function recogerMonedas(moneda, player){
+function recogerMonedas(player,moneda){
     moneda.kill();
     dineroTotal += 1;
 }
 
-function recogerBullets(bullet, player){
+function recogerBullets(player,bullet){
     bullet.kill();
     municionActual += 1;
 }
 
-function enemyBlastCollide(blast, enemy) {
 
-    let xSpawn = enemy.x;
-    let ySpawn = enemy.y;
-
-    console.log("Colisión detectada: proyectil y enemigo");
-    blast.kill();
-    enemy.kill();
-
-    spawnMoneda(xSpawn,ySpawn);
-    bulletRandom(xSpawn,ySpawn);
-
-
-
-    killCount += 1;
-    //AQUI SE PONE LA PUNTUACION Y LO QUE OCURRA AL MATAR
-
-}
 
 function bulletRandom(xSpawn,ySpawn){
     numeroRandom = Phaser.Math.between(0, 10);
@@ -407,8 +495,47 @@ function spawnBullet(xSpawn, ySpawn){
     bulletList.push(bullet);
 }
 
-function playerEnemyCollide(player, enemy){
-    console.log("Colisión detectada: jugador y enemigo");
-    enemy.kill();
+function enemyBlastCollide(blast, enemy) {
 
+    let xSpawn = enemy.x;
+    let ySpawn = enemy.y;
+
+    blast.kill(); 
+    enemy.destroy();
+    enemies.splice(enemies.indexOf(enemy),1);
+   
+
+    spawnMoneda(xSpawn,ySpawn);
+    bulletRandom(xSpawn,ySpawn);
+
+
+
+    killCount += 1;
+    //AQUI SE PONE LA PUNTUACION Y LO QUE OCURRA AL MATAR
+
+    score = killCount*100;
+
+}
+
+function playerEnemyCollide(player, enemy){
+
+    playerHit();
+    enemy.destroy();
+    enemies.splice(enemies.indexOf(enemy),1);
+
+}
+
+function ataqueRecibido(player,enemyBlast){
+
+    playerHit();
+    enemyBlast.destroy()
+    enemieBlastList.splice(enemieBlastList.indexOf(enemyBlast),1);
+}
+
+function playerHit(){
+
+    playerHealth -= 1;
+    if(playerHealth<=0){
+        endGame();
+    }
 }
