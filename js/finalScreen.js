@@ -32,5 +32,5 @@ function createFinal() {
 function restartGame() {
     score = 0;
     gameOver = false;
-    game.state.start('main');
+    window.location.reload();
 }
