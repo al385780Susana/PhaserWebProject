@@ -96,6 +96,7 @@ function initialiseGame() {
     bulletHUD = game.add.sprite(725,525, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
 
+    bulletHUD.fixedToCamera = true;
 
     const soundDefeat =  game.sound.add('soundDefeat');
     //const soundVictory;
@@ -133,11 +134,15 @@ function initialiseGame() {
             fill: '#fff'
         });
   
+    dineroTotalText.fixedToCamera = true;
+
     bulletTotalText = game.add.text(700, GAME_STAGE_HEIGHT - 50,
         municionActual, {
             fontSize: '32px',
             fill: '#fff'
         });
+        
+    bulletTotalText.fixedToCamera = true;
     //------------------------------------------------------------------
 
         /*TEXTO EN MEDIO, SERÍA CAMBIAR EL TIPO DE FUENTE Y COLOR */
@@ -509,7 +514,7 @@ function moveTo(object, targetX, targetY, speed) {//                            
 function disparar(){//                                                              Permite el disparo del jugador
     if(click.isDown && control == false && municionActual>0){
         createBlast();
-        moveTo(blast, game.input.mousePointer.x, game.input.mousePointer.y, 500);
+        moveTo(blast, game.input.mousePointer.worldX, game.input.mousePointer.worldY, 500);
         control = true;
         cooldownDisparo(1000);
         destroyBlast(3000, blast);
