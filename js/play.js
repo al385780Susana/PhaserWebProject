@@ -71,11 +71,16 @@ function loadAssets() {
     game.load.image('blast', 'assets/proyectil.png');
     game.load.image('bullet', 'assets/municion.png');
     game.load.image('bulletHUD', 'assets/municionHUD.png');
+    game.load.image('monedaHUD', 'assets/monedaHUD.png');
+    game.load.image('enemyBlast', 'assets/proyetilEnemigo.png');
     //game.load.audio('victory', 'assets/snds/victory.wav');
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
     game.load.audio('stage', 'assets/snds/stage.mp3');
+    //fuente
+    //game.load.setPath('assets/04B_19_.TTF');
+    //game.load.bitmapFont('textoFondo', 'assets/04B_19_.png', 'assets/04B_19_.xm1');
 
 }
 
@@ -89,8 +94,12 @@ function initialiseGame() {
     //CARGAMOS LOS ASSETS EN LE JUEGO
 
     game.add.sprite(0,0,'sky');
+    //textoFondo = game.add.bitmapText(400, 300, 'textoFondo', '0', { fontSize: '100px', fill: '#ffffff' });
+    //textoFondo.anchor.setTo(0.5);
     bulletHUD = game.add.sprite(725,525, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
+    monedaHUD = game.add.sprite(0,525, 'monedaHUD');
+    monedaHUD.scale.setTo(1.5);
     const soundDefeat =  game.sound.add('soundDefeat');
     //const soundVictory;
 
@@ -405,7 +414,8 @@ function createBlast(){//                                                       
 
 function createEnemyBlast(posx, posy, enemyAngle){//                                Crea el blast del enemigo
 
-    enemyBlast = game.add.sprite(posx, posy, 'blast');
+    enemyBlast = game.add.sprite(posx, posy, 'enemyBlast');
+    enemyBlast.scale.setTo(0.75, 0.75);
     enemyBlast.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(enemyBlast);
     enemyBlast.body.collideWorldBounds = false;
