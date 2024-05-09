@@ -1,16 +1,9 @@
 
+
 // VAriables CONSTANTES
 
-const VICTORY_POINTS = 500;
-const PLAYER_VELOCITY = 150;
-const ENEMY_VELOCITY = 100;
-const BLAST_VELOCITY = 200;
-const ENEMY_SHOOT_CADENCY = 3000;
-const PLAYER_HEALTH = 6;
-const RANGO_PERSECUCION = 300;
 
-
-let levelDifficulty = 3;
+let levelDifficulty = 2;
 let gameOver = false;
 let victoryAtEnd = false;
 
@@ -65,10 +58,13 @@ let contadorZS;
 let compraVelocidad;
 
 
+let LevelData;
 
 
 //CARGAR IMAGENES
 function loadAssets() {
+//Info nivel
+    game.load.text('levelJSON','assets/levelData/levelData.json');
 
     //game.load.image('sky', 'assets/sky.png');
     game.load.spritesheet('playerAnimation', 'assets/NaveDestruccion.png', 50, 50);
@@ -94,9 +90,7 @@ function loadAssets() {
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
     game.load.audio('stage', 'assets/snds/stage.mp3');
-    //fuente
-   // game.load.setPath('assets/04B_19_.TTF');
-    //game.load.bitmapFont('textoFondo', 'assets/04B_19_.png', 'assets/04B_19_.xm1');
+    
 
 }
 
@@ -104,6 +98,9 @@ function loadAssets() {
 //INICIO DEL JUEGO
 
 function initialiseGame() {
+
+    levelData = JSON.parse(game.cache.getText('levelJSON'));
+    console.log("level data"+levelData.LevelData[levelDifficulty-1].VICTORY_POINTS + levelData.LevelData[levelDifficulty-1].MUNICION_INICIAL);
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //CARGAMOS Y CONFIGURAMOS EL MUNDO
@@ -177,7 +174,7 @@ function initialiseGame() {
     game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.01, 0.01);
 
     //DAMOS LOS VALORES
-    playerHealth = PLAYER_HEALTH;
+    playerHealth = levelData.LevelData[levelDifficulty-1].PLAYER_HEALTH;
     click = game.input.mousePointer;
 
     //LISTAS
@@ -187,7 +184,7 @@ function initialiseGame() {
     enemies = [];
 
     //NUMERICO
-    municionActual = 5;
+    municionActual = levelData.LevelData[levelDifficulty-1].MUNICION_INICIAL;
     contador = 0;
     contador2 = 0;
     dineroTotal = 0;
@@ -230,7 +227,9 @@ function initialiseGame() {
     buttonShift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 
 
+
 }
+
 
 // REFRESCO DE PANTALLA A CADA FRAME
 
@@ -314,6 +313,7 @@ function updateText(){//                                                        
        // scoreText.setText(score);
 }
 
+
 /*function enemiesMovement(){//                                                       El enemigo se mueve hacia el jugador (sin rango de persecucion)
     if(enemy){
             enemies.forEach(function(enemy) {
@@ -327,11 +327,12 @@ function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador
     enemies.forEach(function(enemy) {
         if(levelDifficulty>1){
             distanciaJugador = Phaser.Math.distance(player.x,player.y, enemy.x,enemy.y);
-           if(distanciaJugador<=RANGO_PERSECUCION){
-                moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
+           if(distanciaJugador<=levelData.LevelData[levelDifficulty-1].RANGO_PERSECUCION){
+                moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);
            }
         }
-        else { moveTo(enemy, player.x, player.y,ENEMY_VELOCITY);}
+        else { moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);}
+
     });
 }
 
@@ -391,7 +392,7 @@ function enemiesShoot(){//                                                      
                     createEnemyBlast(enemy.x, enemy.y, enemy.angle);
                     posx = player.x;
                     posy = player.y;
-                    moveTo(enemyBlast, posx, posy,BLAST_VELOCITY);
+                    moveTo(enemyBlast, posx, posy,levelData.LevelData[levelDifficulty-1].BLAST_VELOCITY);
                     destroyBlast(5000,enemyBlast);
                 }, game);
             }
@@ -502,19 +503,19 @@ function playerMovement() {//                                                   
     // Check input for movement
     if (cursors.left.isDown || buttonA.isDown) {
         // Move left
-        player.body.velocity.x = -PLAYER_VELOCITY - velocidadExtra;
+        player.body.velocity.x = -levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY - velocidadExtra;
     }
     if (cursors.right.isDown || buttonD.isDown) {
         // Move right
-        player.body.velocity.x = PLAYER_VELOCITY + velocidadExtra;
+        player.body.velocity.x = levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY + velocidadExtra;
     }
     if (cursors.up.isDown || buttonW.isDown) {
         // Move up
-        player.body.velocity.y = -PLAYER_VELOCITY - velocidadExtra;
+        player.body.velocity.y = -levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY - velocidadExtra;
     }
     if (cursors.down.isDown || buttonS.isDown) {
         // Move down
-        player.body.velocity.y = PLAYER_VELOCITY + velocidadExtra;
+        player.body.velocity.y = levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY + velocidadExtra;
     }
 }
 
@@ -537,7 +538,7 @@ function endGame() {//                                                          
     // Cleaning...
     clearGameAll();
 
-    victoryAtEnd = score>=VICTORY_POINTS;
+    victoryAtEnd = score>=levelData.LevelData[levelDifficulty-1].VICTORY_POINTS;
 
     // Final animation (a tween)
     let finalTween = game.add.tween(player.scale).to({
@@ -837,7 +838,7 @@ function playerHit(){//                                                         
     if(playerHealth<=0){
         endGame();
     }
-    else if(playerHealth == PLAYER_HEALTH/2){
+    else if(playerHealth == levelData.LevelData[levelDifficulty-1].PLAYER_HEALTH/2){
         //Herido
         player.frame = 1;
 

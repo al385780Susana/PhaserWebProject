@@ -1,0 +1,40 @@
+{
+    "LevelData":[
+        {
+            "VICTORY_POINTS": 500,
+            "PLAYER_VELOCITY": 150,
+            "ENEMY_VELOCITY": 100,
+            "BLAST_VELOCITY": 200,
+            "ENEMY_SHOOT_CADENCY": 3000,
+            "PLAYER_HEALTH": 6, 
+            "RANGO_PERSECUCION": 300,
+            "MUNICION_INICIAL": 7
+
+
+        },
+        {
+            "VICTORY_POINTS": 500,
+            "PLAYER_VELOCITY": 150,
+            "ENEMY_VELOCITY": 100,
+            "BLAST_VELOCITY": 200,
+            "ENEMY_SHOOT_CADENCY": 3000,
+            "PLAYER_HEALTH": 6, 
+            "RANGO_PERSECUCION": 300,
+            "MUNICION_INICIAL": 6
+
+
+        },
+        {
+            "VICTORY_POINTS": 700,
+            "PLAYER_VELOCITY": 150,
+            "ENEMY_VELOCITY": 100,
+            "BLAST_VELOCITY": 200,
+            "ENEMY_SHOOT_CADENCY": 3000,
+            "PLAYER_HEALTH": 6, 
+            "RANGO_PERSECUCION": 500,
+            "MUNICION_INICIAL": 5
+
+
+        }
+    ]
+}
