@@ -3,7 +3,7 @@
 // VAriables CONSTANTES
 
 
-let levelDifficulty = 2;
+let levelDifficulty = 3;
 let gameOver = false;
 let victoryAtEnd = false;
 
@@ -59,6 +59,7 @@ let compraVelocidad;
 let valorEscudo;
 let valorSprint;
 let valorSuerte;
+let mejoraSuerteCompra;
 
 
 let LevelData;
@@ -93,7 +94,6 @@ function loadAssets() {
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
     game.load.audio('stage', 'assets/snds/stage.mp3');
-    
 
 }
 
@@ -194,7 +194,8 @@ function initialiseGame() {
     score = 0;
     valorEscudo = 5;
     valorSprint = 10;
-    valorSuerte = 15;
+    valorSuerte = 2;
+    mejoraSuerteCompra = 0;
 
     //BOOL
     control = false;
@@ -510,6 +511,7 @@ function manageColision(){//                                                    
             mejoraSuerte.kill();
             mejoraSuerteTexto.kill();
             dineroTotal -= valorSuerte;
+            mejoraSuerteCompra = 5;
         }
 
         /*
@@ -766,7 +768,7 @@ function recogerBullets(player,bullet){//                                       
 }
 
 function bulletRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
-    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE);
+    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE + mejoraSuerteCompra);
 
     spawnBullet(xSpawn, ySpawn);
 
@@ -776,7 +778,7 @@ function bulletRandom(xSpawn,ySpawn){//                                         
 }
 
 function monedaRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
-    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE);
+    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE + mejoraSuerteCompra);
 
     if(numeroRandom >= 3){
         spawnMoneda(xSpawn,ySpawn);
