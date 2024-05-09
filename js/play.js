@@ -66,7 +66,7 @@ let textoFondo;
 //CARGAR IMAGENES
 function loadAssets() {
 
-    game.load.image('sky', 'assets/sky.png');
+    //game.load.image('sky', 'assets/sky.png');
     game.load.image('player','assets/nave_inicial_0.png' );
     game.load.atlas('playerAtlas','assets/naveDestruccion.png');
     game.load.image('enemy', 'assets/enemigo.png');
@@ -76,7 +76,7 @@ function loadAssets() {
     game.load.image('bulletHUD', 'assets/municionHUD.png');
     game.load.image('monedaHUD', 'assets/monedaHUD.png');
     game.load.image('enemyBlast', 'assets/proyetilEnemigo.png');
-    game.load.image('fondoGrande', 'assets/fondoGrande.jpg');
+    game.load.image('fondoGrande', 'assets/fondoGrande.png');
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
@@ -100,8 +100,8 @@ function initialiseGame() {
     bg.scrollFactorY = 0.7;
     //CARGAMOS LOS ASSETS EN EL JUEGO
 
-    game.add.sprite(0,0,'sky');
-    textoFondo = game.add.text(400, 300, killCount, { font: '04B_19', fontSize: '100px', fill: '#ffffff' });
+    //game.add.sprite(0,0,'sky');
+    textoFondo = game.add.text(400, 300, killCount, { font: '04B_19', fontSize: '100px', fill: '#009099' });
     textoFondo.anchor.setTo(0.5);
     bulletHUD = game.add.sprite(725,525, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
@@ -144,18 +144,20 @@ function initialiseGame() {
     //HUD---------------------------------------------------------------
     dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
         dineroTotal, {
+            font: '04B_19',
             fontSize: '32px',
             fill: '#fff'
         });
-  
+
     dineroTotalText.fixedToCamera = true;
 
     bulletTotalText = game.add.text(700, GAME_STAGE_HEIGHT - 50,
         municionActual, {
+            font: '04B_19',
             fontSize: '32px',
             fill: '#fff'
         });
-        
+
     bulletTotalText.fixedToCamera = true;
     //------------------------------------------------------------------
 
@@ -291,7 +293,7 @@ function clearGameAll(){//                                                      
         enemies.forEach(function(enemy) {
 
             enemy.kill();
-           
+
         });
     }
 
@@ -338,8 +340,6 @@ function manageColision(){//                                                    
 
 
 }
-
-
 
 function playerMovement() {//                                                       Controla el movimiento del jugador
     // Reset player's velocity
@@ -476,8 +476,8 @@ function rotatePlayer(){//                                                      
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
     if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
-        let x = Phaser.Math.random(50, 751);
-        let y = Phaser.Math.random(50, 550);
+        let x = Phaser.Math.random(50, 1870);
+        let y = Phaser.Math.random(50, 1030);
 
         enemy = game.add.sprite(x, y, 'enemy');
         enemy.anchor.setTo(0.5, 0.5);
