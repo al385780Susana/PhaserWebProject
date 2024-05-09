@@ -63,6 +63,9 @@ let playerIdleAnimation;
 let estar;
 let contadorZS;
 let compraVelocidad;
+let valorEscudo;
+let valorSprint;
+let valorSuerte;
 
 
 
@@ -193,6 +196,9 @@ function initialiseGame() {
     dineroTotal = 0;
     killCount = 0;
     score = 0;
+    valorEscudo = 5;
+    valorSprint = 10;
+    valorSuerte = 15;
 
     //BOOL
     control = false;
@@ -463,28 +469,56 @@ function manageColision(){//                                                    
     }
 
     if(game.physics.arcade.overlap(player, mejoraEscudo)){
+
+        if(dineroTotal >= valorEscudo){
+            mejoraEscudo.kill();
+            mejoraEscudoTexto.kill();
+            dineroTotal -= valorEscudo;
+        }
+
+        /*
         game.time.events.add(Phaser.Timer.SECOND * 3, function() {
             console.log('Mejora de escudo');
             mejoraEscudo.kill();
             mejoraEscudoTexto.kill();
         }, this);
+        */
     }
 
     if(game.physics.arcade.overlap(player, mejoraSprint)){
+
+        if(dineroTotal >= valorSprint){
+            mejoraSprint.kill();
+            mejoraSprintTexto.kill();
+            dineroTotal -= valorSprint;
+            compraVelocidad = true;
+        }
+
+        /*
         game.time.events.add(Phaser.Timer.SECOND * 3, function() {
             console.log('Mejora de Sprint');
             mejoraSprint.kill();
             mejoraSprintTexto.kill();
             compraVelocidad = true;
         }, this);
+        */
     }
 
     if(game.physics.arcade.overlap(player, mejoraSuerte)){
+
+        if(dineroTotal >= valorSuerte){
+            mejoraSuerte.kill();
+            mejoraSuerteTexto.kill();
+            dineroTotal -= valorSuerte;
+        }
+
+        /*
         game.time.events.add(Phaser.Timer.SECOND * 3, function() {
             console.log('Mejora de Suerte');
             mejoraSuerte.kill();
             mejoraSuerteTexto.kill()
         }, this);
+        */
     }
 
 
