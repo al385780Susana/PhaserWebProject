@@ -6,7 +6,7 @@ const PLAYER_VELOCITY = 150;
 const ENEMY_VELOCITY = 100;
 const BLAST_VELOCITY = 200;
 const ENEMY_SHOOT_CADENCY = 3000;
-const PLAYER_HEALTH = 10;
+const PLAYER_HEALTH = 6;
 const RANGO_PERSECUCION = 300;
 
 
@@ -59,6 +59,8 @@ let bulletTotalText;
 let scoreText;
 let velocidadExtra;
 let textoFondo;
+let playerIdleAnimation;
+let estar;
 
 
 
@@ -67,7 +69,11 @@ let textoFondo;
 function loadAssets() {
 
     //game.load.image('sky', 'assets/sky.png');
+    game.load.spritesheet('playerAnimation', 'assets/NaveDestruccion.png', 50, 50);
+    game.load.spritesheet('explosion', 'assets/explosion.png', 50, 50);
+    game.load.spritesheet('explosionEnemy', 'assets/explosionEnemigo.png', 50, 50);
     game.load.image('player','assets/nave_inicial_0.png' );
+    game.load.image('barreraPrueba', 'assets/barreraPrueba.png');
     game.load.atlas('playerAtlas','assets/naveDestruccion.png');
     game.load.image('enemy', 'assets/enemigo.png');
     game.load.image('moneda','assets/moneda.png' );
@@ -77,6 +83,8 @@ function loadAssets() {
     game.load.image('monedaHUD', 'assets/monedaHUD.png');
     game.load.image('enemyBlast', 'assets/proyetilEnemigo.png');
     game.load.image('fondoGrande', 'assets/fondoGrande.png');
+    game.load.image('muroZonaSegura', 'assets/muroSafeZone.png');
+    game.load.image('techoZonaSegura', 'assets/techoSafeZone.png');
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
@@ -108,14 +116,39 @@ function initialiseGame() {
     monedaHUD = game.add.sprite(0,525, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
 
+    barreraPrueba = game.add.sprite(600, 200, 'barreraPrueba');
+    game.physics.arcade.enable(barreraPrueba);
+    barreraPrueba.body.immovable = true;
+
+    muroSeguro = game.add.sprite(960,880, 'muroZonaSegura');
+    muroSeguro.anchor.setTo(0.5, 0.5);
+    game.physics.arcade.enable(muroSeguro);
+    muroSeguro.body.immovable = true;
+
+    muroSeguro2 = game.add.sprite(1360,880, 'muroZonaSegura');
+    muroSeguro2.anchor.setTo(0.5, 0.5);
+    game.physics.arcade.enable(muroSeguro2);
+    muroSeguro2.body.immovable = true;
+
+    techoSeguro = game.add.sprite(1160,680, 'techoZonaSegura');
+    techoSeguro.anchor.setTo(0.5, 0.5);
+    game.physics.arcade.enable(techoSeguro);
+    techoSeguro.body.immovable = true;
+
+
     monedaHUD.fixedToCamera = true;
     bulletHUD.fixedToCamera = true;
     textoFondo.fixedToCamera = true;
+    estar = false;
 
     let soundDefeat =  game.sound.add('soundDefeat');
 
 
     createPlayer();
+    idle();
+
+    //CAMERA
+    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.01, 0.01);
 
     //DAMOS LOS VALORES
     playerHealth = PLAYER_HEALTH;
@@ -170,8 +203,7 @@ function initialiseGame() {
     buttonD = game.input.keyboard.addKey(Phaser.Keyboard.D);
     buttonShift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 
-    //CAMERA
-    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.01, 0.01);;
+
 }
 
 // REFRESCO DE PANTALLA A CADA FRAME
@@ -193,9 +225,18 @@ function gameUpdate() {
         //EN CUALQUIER MOMENTO
         playerMovement(); //            Se nueve el jugador
         rotatePlayer();//               El jugador rota
-        disparar();//                   Disparo del jugador
+        inSafeZone();
+
+        if(estar == false){
+            disparar();//               Disparo del jugador
+
+        }
+
         manageColision();//             Tiene en cuenta la colisión del jugador
         updateText();//                 Actualiza los valores de municion y dinero.
+
+        abrirBarrera();
+
 
 
         //Si hay un enemigo
@@ -267,6 +308,28 @@ function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador
     });
 }
 
+function inSafeZone(){
+    if( 957 <= player.x <= 1351 && player.y >= 681){
+        estar = true;
+        console.log('Esta dentro de la ZS');
+    }
+    else{
+        estar = false;
+        console.log('NO ESTA DENTRO DE ZS');
+    }
+
+}
+
+function idle(){
+
+    playerIdleAnimation = game.add.tween(player.scale).to({
+        x: 1.25,
+        y: 1.25
+        }, 2000,
+        Phaser.Easing.Cubic.Out, true, 0, -1, true);
+
+}
+
 function enemiesShoot(){//                                                          El enemigo dispara en dirección del jugador
     if(enemy && !gameOver){
         enemies.forEach(function(enemy) {
@@ -334,9 +397,25 @@ function manageColision(){//                                                    
 
     if(enemyBlast){
         for(let i = 0; i <= enemieBlastList.length; i++){
-            game.physics.arcade.overlap(player,enemieBlastList[i], ataqueRecibido, null, this);
+            game.physics.arcade.collide(player,enemieBlastList[i], ataqueRecibido, null, this);
+            game.physics.arcade.collide(techoSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, this);
+            game.physics.arcade.collide(muroSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, this);
+            game.physics.arcade.collide(muroSeguro2, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, this);
         }
     }
+
+    if(enemy){
+        for(let i = 0; i <= enemies.length; i++){
+            game.physics.arcade.collide(techoSeguro, enemies[i]);
+            game.physics.arcade.collide(muroSeguro, enemies[i]);
+            game.physics.arcade.collide(muroSeguro2, enemies[i]);
+        }
+    }
+
+
+    game.physics.arcade.collide(player, barreraPrueba);
+
+
 
 
 }
@@ -412,8 +491,10 @@ function createPlayer(){//                                                      
     let x = game.world.centerX;
     let y = game.world.centerY;
 
-    player = game.add.sprite(x, y, 'player');
+    player = game.add.sprite(x, y, 'playerAnimation', 0);
     player.anchor.setTo(0.5, 0.5);
+    player.scale.setTo(1, 1);
+
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     //player.enableBody = true;
@@ -610,6 +691,7 @@ function enemyBlastCollide(blast, enemy) {//                                    
 
     blast.kill();
     enemy.destroy();
+    explosionEnemy(enemy);
 
     enemies.splice(enemies.indexOf(enemy),1);
 
@@ -626,10 +708,29 @@ function enemyBlastCollide(blast, enemy) {//                                    
 
 }
 
+function explosionEnemy(enemy){
+    explosionEnemigo = game.add.sprite(enemy.x, enemy.y, 'explosionEnemy');
+    explosionEnemigo.anchor.setTo(0.5, 0.5);
+    explosionEnemigo.scale.setTo(2, 2);
+
+    explosionEnemigo.animations.add('daño');
+    explosionEnemigo.animations.play('daño', 15, false, true);
+}
+
+function explosionPlayer(){
+    explosion = game.add.sprite(player.x, player.y, 'explosion');
+    explosion.anchor.setTo(0.5, 0.5);
+    explosion.scale.setTo(2,2)
+
+    explosion.animations.add('daño');
+    explosion.animations.play('daño', 15, false, true);
+}
+
 function playerEnemyCollide(player, enemy){//                                       Tiene en cuenta la colision del enemigo y el jugador
 
     playerHit();
     enemy.destroy();
+    explosionEnemy(enemy);
     enemies.splice(enemies.indexOf(enemy),1);
 
 }
@@ -637,25 +738,41 @@ function playerEnemyCollide(player, enemy){//                                   
 function ataqueRecibido(player,enemyBlast){//                                       Tiene en cuenta lo que ocurre al impactrar con el disparo enemigo
 
     playerHit();
-    enemyBlast.destroy()
+    destroyEnemyBlast(enemyBlast);
+}
+
+function destroyEnemyBlast(enemyBlast){
+    enemyBlast.kill()
     enemieBlastList.splice(enemieBlastList.indexOf(enemyBlast),1);
 }
 
 function playerHit(){//                                                             Daño provocado al jugador
 
     playerHealth -= 1;
+
+    explosionPlayer();
+
     if(playerHealth<=0){
         endGame();
     }
-    else if(playerHealth>PLAYER_HEALTH/2){
+    else if(playerHealth == PLAYER_HEALTH/2){
         //Herido
+        player.frame = 1;
 
     }
-    else if(playerHealth/3){
+    else if(playerHealth == 2){
         //Muy herido
+        player.frame = 2;
 
     }
     else if(playerHealth==1){
+        player.frame = 3;
         //Moribundo
+    }
+}
+
+function abrirBarrera(){
+    if(killCount == 5){
+        barreraPrueba.kill();
     }
 }
