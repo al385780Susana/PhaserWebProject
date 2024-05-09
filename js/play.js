@@ -100,7 +100,6 @@ function loadAssets() {
 function initialiseGame() {
 
     levelData = JSON.parse(game.cache.getText('levelJSON'));
-    console.log("level data"+levelData.LevelData[levelDifficulty-1].VICTORY_POINTS + levelData.LevelData[levelDifficulty-1].MUNICION_INICIAL);
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //CARGAMOS Y CONFIGURAMOS EL MUNDO
@@ -733,7 +732,7 @@ function recogerBullets(player,bullet){//                                       
 }
 
 function bulletRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
-    numeroRandom = Phaser.Math.between(0, 10);
+    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE);
 
     spawnBullet(xSpawn, ySpawn);
 
@@ -743,7 +742,7 @@ function bulletRandom(xSpawn,ySpawn){//                                         
 }
 
 function monedaRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
-    numeroRandom = Phaser.Math.between(0, 10);
+    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE);
 
     if(numeroRandom >= 3){
         spawnMoneda(xSpawn,ySpawn);

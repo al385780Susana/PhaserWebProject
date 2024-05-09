@@ -8,7 +8,8 @@
             "ENEMY_SHOOT_CADENCY": 3000,
             "PLAYER_HEALTH": 6, 
             "RANGO_PERSECUCION": 300,
-            "MUNICION_INICIAL": 7
+            "MUNICION_INICIAL": 7,
+            "SUERTE": 20
 
 
         },
@@ -20,7 +21,8 @@
             "ENEMY_SHOOT_CADENCY": 3000,
             "PLAYER_HEALTH": 6, 
             "RANGO_PERSECUCION": 300,
-            "MUNICION_INICIAL": 6
+            "MUNICION_INICIAL": 6,
+            "SUERTE": 15
 
 
         },
@@ -32,7 +34,8 @@
             "ENEMY_SHOOT_CADENCY": 3000,
             "PLAYER_HEALTH": 6, 
             "RANGO_PERSECUCION": 500,
-            "MUNICION_INICIAL": 5
+            "MUNICION_INICIAL": 5,
+            "SUERTE": 10
 
 
         }
