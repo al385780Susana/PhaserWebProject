@@ -7,7 +7,7 @@ const ENEMY_VELOCITY = 100;
 const BLAST_VELOCITY = 200;
 const ENEMY_SHOOT_CADENCY = 3000;
 const PLAYER_HEALTH = 10;
-const RANGO_PERSECUCION = 100000;
+const RANGO_PERSECUCION = 300;
 
 
 let levelDifficulty = 3;
@@ -58,6 +58,7 @@ let dineroTotalText;
 let bulletTotalText;
 let scoreText;
 let velocidadExtra;
+let textoFondo;
 
 
 
@@ -67,6 +68,7 @@ function loadAssets() {
 
     game.load.image('sky', 'assets/sky.png');
     game.load.image('player','assets/nave_inicial_0.png' );
+    game.load.atlas('playerAtlas','assets/naveDestruccion.png');
     game.load.image('enemy', 'assets/enemigo.png');
     game.load.image('moneda','assets/moneda.png' );
     game.load.image('blast', 'assets/proyectil.png');
@@ -80,7 +82,7 @@ function loadAssets() {
     game.load.audio('menu', 'assets/snds/menu.mp3');
     game.load.audio('stage', 'assets/snds/stage.mp3');
     //fuente
-    //game.load.setPath('assets/04B_19_.TTF');
+   // game.load.setPath('assets/04B_19_.TTF');
     //game.load.bitmapFont('textoFondo', 'assets/04B_19_.png', 'assets/04B_19_.xm1');
 
 }
@@ -96,20 +98,22 @@ function initialiseGame() {
     let bg = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'fondoGrande');
     bg.scrollFactorX = 0.7;
     bg.scrollFactorY = 0.7;
-    //CARGAMOS LOS ASSETS EN LE JUEGO
+    //CARGAMOS LOS ASSETS EN EL JUEGO
 
     game.add.sprite(0,0,'sky');
-    //textoFondo = game.add.bitmapText(400, 300, 'textoFondo', '0', { fontSize: '100px', fill: '#ffffff' });
-    //textoFondo.anchor.setTo(0.5);
+    textoFondo = game.add.text(400, 300, killCount, { font: '04B_19', fontSize: '100px', fill: '#ffffff' });
+    textoFondo.anchor.setTo(0.5);
     bulletHUD = game.add.sprite(725,525, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
     monedaHUD = game.add.sprite(0,525, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
 
+    monedaHUD.fixedToCamera = true;
     bulletHUD.fixedToCamera = true;
+    textoFondo.fixedToCamera = true;
 
-    const soundDefeat =  game.sound.add('soundDefeat');
-    //const soundVictory;
+    let soundDefeat =  game.sound.add('soundDefeat');
+
 
     createPlayer();
 
@@ -155,13 +159,6 @@ function initialiseGame() {
     bulletTotalText.fixedToCamera = true;
     //------------------------------------------------------------------
 
-        /*TEXTO EN MEDIO, SERÍA CAMBIAR EL TIPO DE FUENTE Y COLOR */
-        /*killText = game.add.text(GAME_STAGE_HEIGHT/2 + 55, GAME_STAGE_HEIGHT/2 - 100,
-        killCount, {
-            fontSize: '150px',
-            fill: '#008080'
-        });*/
-
 
     //CONTROLES
     cursors = game.input.keyboard.createCursorKeys();
@@ -172,7 +169,7 @@ function initialiseGame() {
     buttonShift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 
     //CAMERA
-    game.camera.follow(player);
+    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.01, 0.01);;
 }
 
 // REFRESCO DE PANTALLA A CADA FRAME
@@ -243,6 +240,7 @@ function gameUpdate() {
 function updateText(){//                                                            Se actualiza el texto del dinero y munición
         dineroTotalText.setText(dineroTotal);
         bulletTotalText.setText(municionActual);
+        textoFondo.setText(killCount);
        // scoreText.setText(score);
 }
 
@@ -258,7 +256,7 @@ function updateText(){//                                                        
 function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador está en el rango de persecucion del enemigo o el nivel es 1
     enemies.forEach(function(enemy) {
         if(levelDifficulty>1){
-            distanciaJugador = Phaser.Math.distanceSq(player.x,player.y, enemy.x,enemy.y);
+            distanciaJugador = Phaser.Math.distance(player.x,player.y, enemy.x,enemy.y);
            if(distanciaJugador<=RANGO_PERSECUCION){
                 moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
            }
@@ -648,5 +646,16 @@ function playerHit(){//                                                         
     playerHealth -= 1;
     if(playerHealth<=0){
         endGame();
+    }
+    else if(playerHealth>PLAYER_HEALTH/2){
+        //Herido
+
+    }
+    else if(playerHealth/3){
+        //Muy herido
+
+    }
+    else if(playerHealth==1){
+        //Moribundo
     }
 }

@@ -7,3 +7,8 @@ canvas {
     margin: auto;
     margin-top: 4em;
 }
+
+@font-face {
+    font-family: "04B_19";
+    src: url("/assets/04B_19_.TTF");
+}
