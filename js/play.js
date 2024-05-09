@@ -287,6 +287,7 @@ function updateText(){//                                                        
        // scoreText.setText(score);
 }
 
+
 /*function enemiesMovement(){//                                                       El enemigo se mueve hacia el jugador (sin rango de persecucion)
     if(enemy){
             enemies.forEach(function(enemy) {
@@ -309,7 +310,7 @@ function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador
 }
 
 function inSafeZone(){
-    if( 957 <= player.x <= 1351 && player.y >= 681){
+    if( 957 <= player.x && player.x <= 1351 && player.y >= 681){
         estar = true;
         console.log('Esta dentro de la ZS');
     }
