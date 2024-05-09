@@ -54,6 +54,8 @@ let velocidadExtra;
 let textoFondo;
 let playerIdleAnimation;
 let estar;
+let contadorZS;
+let compraVelocidad;
 
 
 let LevelData;
@@ -81,6 +83,9 @@ function loadAssets() {
     game.load.image('fondoGrande', 'assets/fondoGrande.png');
     game.load.image('muroZonaSegura', 'assets/muroSafeZone.png');
     game.load.image('techoZonaSegura', 'assets/techoSafeZone.png');
+    game.load.image('mejoraEscudo', 'assets/escudo.png');
+    game.load.image('mejoraSuerte', 'assets/trebol.png');
+    game.load.image('mejoraSprint', 'assets/velocidad.png');
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
@@ -113,6 +118,26 @@ function initialiseGame() {
     monedaHUD = game.add.sprite(0,525, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
 
+    //MEJORAS
+    mejoraEscudoTexto = game.add.text(1045, 1000, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraEscudo = game.add.sprite(1053, 980, 'mejoraEscudo');
+    mejoraEscudo.anchor.setTo(0.5, 0.5);
+    mejoraEscudo.scale.setTo(0.75,0.75);
+    game.physics.arcade.enable(mejoraEscudo);
+
+    mejoraSprintTexto = game.add.text(1145, 1000, '10', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSprint = game.add.sprite(1159, 980, 'mejoraSprint');
+    mejoraSprint.anchor.setTo(0.5, 0.5);
+    mejoraSprint.scale.setTo(0.85,0.85);
+    game.physics.arcade.enable(mejoraSprint);
+
+    mejoraSuerteTexto = game.add.text(1245, 1000, '15', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSuerte = game.add.sprite(1259, 980, 'mejoraSuerte');
+    mejoraSuerte.anchor.setTo(0.5, 0.5);
+    mejoraSuerte.scale.setTo(0.75,0.75);
+    game.physics.arcade.enable(mejoraSuerte);
+
+
     barreraPrueba = game.add.sprite(600, 200, 'barreraPrueba');
     game.physics.arcade.enable(barreraPrueba);
     barreraPrueba.body.immovable = true;
@@ -137,6 +162,7 @@ function initialiseGame() {
     bulletHUD.fixedToCamera = true;
     textoFondo.fixedToCamera = true;
     estar = false;
+    compraVelocidad = false;
 
     let soundDefeat =  game.sound.add('soundDefeat');
 
@@ -214,7 +240,7 @@ function gameUpdate() {
     }
     else{
 
-        if(buttonShift.isDown){
+        if(buttonShift.isDown && compraVelocidad == true){
             velocidadExtra = 150;
         }
         else{
@@ -235,6 +261,7 @@ function gameUpdate() {
         updateText();//                 Actualiza los valores de municion y dinero.
 
         abrirBarrera();
+
 
 
 
@@ -305,6 +332,7 @@ function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador
            }
         }
         else { moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);}
+
     });
 }
 
@@ -312,10 +340,33 @@ function inSafeZone(){
     if( 957 <= player.x && player.x <= 1351 && player.y >= 681){
         estar = true;
         console.log('Esta dentro de la ZS');
+
+        if (!contadorZS) {
+
+
+            contadorZS = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
+                clearGameAll();
+                endGame();
+            }, this);
+
+            game.time.events.add(Phaser.Timer.SECOND * 7, function() {
+                console.log('Alarm');
+            }, this);
+        }
+
+
+
     }
     else{
         estar = false;
         console.log('NO ESTA DENTRO DE ZS');
+
+
+        if (contadorZS) {
+            game.time.events.remove(contadorZS);
+            contadorZS = null; // Reiniciar el contador
+        }
+
     }
 
 }
@@ -410,6 +461,31 @@ function manageColision(){//                                                    
             game.physics.arcade.collide(muroSeguro, enemies[i]);
             game.physics.arcade.collide(muroSeguro2, enemies[i]);
         }
+    }
+
+    if(game.physics.arcade.overlap(player, mejoraEscudo)){
+        game.time.events.add(Phaser.Timer.SECOND * 3, function() {
+            console.log('Mejora de escudo');
+            mejoraEscudo.kill();
+            mejoraEscudoTexto.kill();
+        }, this);
+    }
+
+    if(game.physics.arcade.overlap(player, mejoraSprint)){
+        game.time.events.add(Phaser.Timer.SECOND * 3, function() {
+            console.log('Mejora de Sprint');
+            mejoraSprint.kill();
+            mejoraSprintTexto.kill();
+            compraVelocidad = true;
+        }, this);
+    }
+
+    if(game.physics.arcade.overlap(player, mejoraSuerte)){
+        game.time.events.add(Phaser.Timer.SECOND * 3, function() {
+            console.log('Mejora de Suerte');
+            mejoraSuerte.kill();
+            mejoraSuerteTexto.kill()
+        }, this);
     }
 
 
@@ -557,8 +633,15 @@ function rotatePlayer(){//                                                      
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
     if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+
         let x = Phaser.Math.random(50, 1870);
         let y = Phaser.Math.random(50, 1030);
+
+        while(957 <= x <= 1351 && y >= 681){
+            x = Phaser.Math.random(50, 1870);
+            y = Phaser.Math.random(50, 1030);
+        }
+
 
         enemy = game.add.sprite(x, y, 'enemy');
         enemy.anchor.setTo(0.5, 0.5);
