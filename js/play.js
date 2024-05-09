@@ -60,7 +60,8 @@ let valorEscudo;
 let valorSprint;
 let valorSuerte;
 let mejoraSuerteCompra;
-
+let corazonList;
+let corazon;
 
 let LevelData;
 
@@ -90,6 +91,7 @@ function loadAssets() {
     game.load.image('mejoraEscudo', 'assets/escudo.png');
     game.load.image('mejoraSuerte', 'assets/trebol.png');
     game.load.image('mejoraSprint', 'assets/velocidad.png');
+    game.load.image('corazon', 'assets/corazon.png');
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
@@ -173,7 +175,10 @@ function initialiseGame() {
     idle();
 
     //CAMERA
-    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.01, 0.01);
+    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.2, 0.2);
+
+    setTimeout(function(){game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.01, 0.01);}, 500);
+
 
     //DAMOS LOS VALORES
     playerHealth = levelData.LevelData[levelDifficulty-1].PLAYER_HEALTH;
@@ -184,6 +189,7 @@ function initialiseGame() {
     bulletList = [];
     enemieBlastList = [];
     enemies = [];
+    corazonList = [];
 
     //NUMERICO
     municionActual = levelData.LevelData[levelDifficulty-1].MUNICION_INICIAL;
@@ -202,6 +208,7 @@ function initialiseGame() {
 
     //CREACION DE ENEMIGOS
     timeEnemy(3000);
+    corazonesRespawn();
 
     //HUD---------------------------------------------------------------
     dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
@@ -443,6 +450,14 @@ function manageColision(){//                                                    
     if(moneda){
         for (let i = 0; i <= monedasList.length; i++){
             game.physics.arcade.overlap(player,monedasList[i], recogerMonedas, null, this);
+        }
+    }
+
+    if(corazon){
+        if(playerHealth < levelData.LevelData[levelDifficulty - 1].PLAYER_HEALTH){
+            for (let i = 0; i <= corazonList.length; i++){
+                game.physics.arcade.overlap(player,corazonList[i], recogerVida, null, this);
+            }
         }
     }
 
@@ -762,6 +777,13 @@ function recogerMonedas(player,moneda){//                                       
     dineroTotal += 1;
 }
 
+function recogerVida(player,corazon){//                                           Permite recoger las monedas
+    corazon.kill();
+    corazonList.splice(corazonList.indexOf(corazon),1);
+    playerHealth += 1;
+    actualizarVida();
+}
+
 function recogerBullets(player,bullet){//                                           Permite recoger la munición
     bullet.kill();
     municionActual += 1;
@@ -870,13 +892,40 @@ function playerHit(){//                                                         
 
     explosionPlayer();
 
+    actualizarVida();
+}
+
+function abrirBarrera(){
+    if(killCount == 5){
+        barreraPrueba.kill();
+    }
+}
+
+function corazonesRespawn(){
+    limite = 10;
+    for(i = 0; i < limite; i++){
+        randomx = Phaser.Math.random(50, 1900);
+        randomy = Phaser.Math.random(50, 1060);
+
+        corazon = game.add.sprite(randomx, randomy, 'corazon');
+        corazon.anchor.setTo(0.5, 0.5);
+        game.physics.arcade.enable(corazon);
+        corazonList.push(corazon);
+
+    }
+}
+
+function actualizarVida(){
     if(playerHealth<=0){
         endGame();
     }
-    else if(playerHealth == levelData.LevelData[levelDifficulty-1].PLAYER_HEALTH/2){
+    else if(playerHealth > levelData.LevelData[levelDifficulty-1].PLAYER_HEALTH/2){
         //Herido
-        player.frame = 1;
+        player.frame = 0;
 
+    }
+    else if(playerHealth == 3){
+        player.frame = 1;
     }
     else if(playerHealth == 2){
         //Muy herido
@@ -886,11 +935,5 @@ function playerHit(){//                                                         
     else if(playerHealth==1){
         player.frame = 3;
         //Moribundo
-    }
-}
-
-function abrirBarrera(){
-    if(killCount == 5){
-        barreraPrueba.kill();
     }
 }
