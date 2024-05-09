@@ -61,6 +61,7 @@ let velocidadExtra;
 let textoFondo;
 let playerIdleAnimation;
 let estar;
+let contadorZS;
 
 
 
@@ -239,6 +240,7 @@ function gameUpdate() {
 
 
 
+
         //Si hay un enemigo
         if(enemy){
             enemies.forEach(function(enemy){
@@ -304,18 +306,31 @@ function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador
                 moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
            }
         }
-        else { moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);}
+        else { moveTo(enemy, player.x, player.y,ENEMY_VELOCITY);}
     });
 }
 
 function inSafeZone(){
-    if( 957 <= player.x <= 1351 && player.y >= 681){
+    if( 957 <= player.x && player.x <= 1351 && player.y >= 681){
         estar = true;
         console.log('Esta dentro de la ZS');
+
+        /*
+        contadorZS = game.time.events.add(Phaser.Timer.SECOND * 5, function() {
+            clearGameAll();
+            endGame();
+        }, this);
+        */
     }
     else{
         estar = false;
         console.log('NO ESTA DENTRO DE ZS');
+
+        /*
+        if(contadorZS){
+            game.time.events.remove(contadorZS);
+        }
+        */
     }
 
 }
@@ -557,8 +572,15 @@ function rotatePlayer(){//                                                      
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
     if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+
         let x = Phaser.Math.random(50, 1870);
         let y = Phaser.Math.random(50, 1030);
+
+        while(957 <= x <= 1351 && y >= 681){
+            x = Phaser.Math.random(50, 1870);
+            y = Phaser.Math.random(50, 1030);
+        }
+
 
         enemy = game.add.sprite(x, y, 'enemy');
         enemy.anchor.setTo(0.5, 0.5);
