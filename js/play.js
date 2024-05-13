@@ -62,6 +62,7 @@ let valorSuerte;
 let mejoraSuerteCompra;
 let corazonList;
 let corazon;
+let puedeComprar = true;
 
 let LevelData;
 
@@ -92,6 +93,7 @@ function loadAssets() {
     game.load.image('mejoraSuerte', 'assets/trebol.png');
     game.load.image('mejoraSprint', 'assets/velocidad.png');
     game.load.image('corazon', 'assets/corazon.png');
+    game.load.image('recarga', 'assets/recarga.png');
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
     game.load.audio('menu', 'assets/snds/menu.mp3');
@@ -121,6 +123,18 @@ function initialiseGame() {
     bulletHUD.scale.setTo(1.5);
     monedaHUD = game.add.sprite(0,525, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
+
+    //RECARGA MUNICIÓN
+    recargaMunicion = game.add.sprite(1300, 750 , 'bullet');
+    recargaMunicion.anchor.setTo(0.5, 0.5);
+    recargaMunicion.scale.setTo(1.5,1.5);
+    game.physics.arcade.enable(recargaMunicion);
+
+    recargaMunicion2 = game.add.sprite(1298, 800 , 'recarga');
+    recargaMunicion2.anchor.setTo(0.5, 0.5);
+    recargaMunicion2.scale.setTo(0.75, 0.75);
+    game.physics.arcade.enable(recargaMunicion2);
+
 
     //MEJORAS
     mejoraEscudoTexto = game.add.text(1045, 1000, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
@@ -372,6 +386,7 @@ function inSafeZone(){
     }
     else{
         estar = false;
+        puedeComprar = true;
         console.log('NO ESTA DENTRO DE ZS');
 
 
@@ -484,12 +499,25 @@ function manageColision(){//                                                    
         }
     }
 
+    if(game.physics.arcade.overlap(player, recargaMunicion)){
+        if(municionActual < 5){
+            municionActual = 5
+            recargaMunicion.scale.setTo(1.0, 1.0);
+            recargaMunicion2.scale.setTo(0.5, 0.5);
+        }
+    }
+    else{
+        recargaMunicion.scale.setTo(1.5, 1.5);
+        recargaMunicion2.scale.setTo(0.75, 0.75);
+    }
+
     if(game.physics.arcade.overlap(player, mejoraEscudo)){
 
-        if(dineroTotal >= valorEscudo){
+        if(dineroTotal >= valorEscudo && puedeComprar == true){
             mejoraEscudo.kill();
             mejoraEscudoTexto.kill();
             dineroTotal -= valorEscudo;
+            puedeComprar = false;
         }
 
         /*
@@ -501,13 +529,15 @@ function manageColision(){//                                                    
         */
     }
 
+
     if(game.physics.arcade.overlap(player, mejoraSprint)){
 
-        if(dineroTotal >= valorSprint){
+        if(dineroTotal >= valorSprint && puedeComprar == true){
             mejoraSprint.kill();
             mejoraSprintTexto.kill();
             dineroTotal -= valorSprint;
             compraVelocidad = true;
+            puedeComprar == false;
         }
 
         /*
@@ -520,13 +550,14 @@ function manageColision(){//                                                    
         */
     }
 
-    if(game.physics.arcade.overlap(player, mejoraSuerte)){
+    if(game.physics.arcade.overlap(player, mejoraSuerte )){
 
-        if(dineroTotal >= valorSuerte){
+        if(dineroTotal >= valorSuerte && puedeComprar == true){
             mejoraSuerte.kill();
             mejoraSuerteTexto.kill();
             dineroTotal -= valorSuerte;
             mejoraSuerteCompra = 5;
+            puedeComprar == false;
         }
 
         /*
