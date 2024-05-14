@@ -10,6 +10,8 @@ let initState = {
   Load the assets
 */
 
+let estaAnimando = false
+
 function loadAssets() {
     game.load.image('mainMenu', 'assets/mainMenu.png');
     game.load.image('playButton', 'assets/playButton.png');
@@ -36,21 +38,25 @@ function createInit() {
     
     startMovingAnimation();
 
-    creditos = game.add.button(160, 420, 'creditos', clickStart);
+    creditos = game.add.button(160, 390, 'creditos', clickStart);
     creditos.anchor.setTo(0.5, 0.5);
     creditos.scale.setTo(1);
+    addButtonHoverEffect(creditos);
 
-    dificultad = game.add.button(175, 340, 'dificultad', clickStart);
+    dificultad = game.add.button(175, 310, 'dificultad', clickStart);
     dificultad.anchor.setTo(0.5, 0.5);
-    dificultad.scale.setTo(1.0);
+    dificultad.scale.setTo(1);
+    addButtonHoverEffect(dificultad);
 
-    btnStart = game.add.button(130, 260, 'playButton', clickStart);
+    btnStart = game.add.button(130, 230, 'playButton', clickStart);
     btnStart.anchor.setTo(0.5, 0.5);
     btnStart.scale.setTo(0.7);
+    addButtonHoverEffect(btnStart);
 
-    btnTuto = game.add.button(150, 500, 'tutorialButton', clickTutorial);
+    btnTuto = game.add.button(150, 470, 'tutorialButton', clickTutorial);
     btnTuto.anchor.setTo(0.5, 0.5);
     btnTuto.scale.setTo(0.7);
+    addButtonHoverEffect(btnTuto);
 
 
 }
@@ -72,4 +78,20 @@ function startMovingAnimation() {
     animNave.to({
         y: Nave.y - 20
     }, 1000, Phaser.Easing.Cubic.Out, true, 0, -1, true);
+}
+
+var buttonTweens = {};
+
+function addButtonHoverEffect(button) {
+    var originalScale = { x: button.scale.x, y: button.scale.y };
+
+    // Tween para escalar cuando el cursor está sobre el botón
+    button.events.onInputOver.add(function() {
+        game.add.tween(button.scale).to({x: originalScale.x * 1.1, y: originalScale.y * 1.1}, 200, Phaser.Easing.Linear.None, true);
+    }, this);
+
+    // Tween para volver al tamaño original cuando el cursor sale del botón
+    button.events.onInputOut.add(function() {
+        game.add.tween(button.scale).to({x: originalScale.x, y: originalScale.y}, 200, Phaser.Easing.Linear.None, true);
+    }, this);
 }
