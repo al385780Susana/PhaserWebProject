@@ -38,7 +38,7 @@ function createInit() {
     
     startMovingAnimation();
 
-    creditos = game.add.button(160, 390, 'creditos', clickStart);
+    creditos = game.add.button(160, 470, 'creditos', clickCreditos);
     creditos.anchor.setTo(0.5, 0.5);
     creditos.scale.setTo(1);
     addButtonHoverEffect(creditos);
@@ -53,22 +53,10 @@ function createInit() {
     btnStart.scale.setTo(0.7);
     addButtonHoverEffect(btnStart);
 
-    btnTuto = game.add.button(150, 470, 'tutorialButton', clickTutorial);
+    btnTuto = game.add.button(150, 390, 'tutorialButton', clickTutorial);
     btnTuto.anchor.setTo(0.5, 0.5);
     btnTuto.scale.setTo(0.7);
     addButtonHoverEffect(btnTuto);
-
-
-}
-
-function clickStart() {
-    btnStart.inputEnabled = false;
-    game.state.start('play');
-
-}
-function clickTutorial() {
-    btnStart.inputEnabled = false;
-    game.state.start('tutorial');
 }
 
 function updateInit(){}
@@ -87,11 +75,26 @@ function addButtonHoverEffect(button) {
 
     // Tween para escalar cuando el cursor está sobre el botón
     button.events.onInputOver.add(function() {
-        game.add.tween(button.scale).to({x: originalScale.x * 1.1, y: originalScale.y * 1.1}, 200, Phaser.Easing.Linear.None, true);
+        game.add.tween(button.scale).to({x: originalScale.x * 1.1, y: originalScale.y * 1.1}, 100, Phaser.Easing.Linear.None, true);
     }, this);
 
     // Tween para volver al tamaño original cuando el cursor sale del botón
     button.events.onInputOut.add(function() {
-        game.add.tween(button.scale).to({x: originalScale.x, y: originalScale.y}, 200, Phaser.Easing.Linear.None, true);
+        game.add.tween(button.scale).to({x: originalScale.x, y: originalScale.y}, 100, Phaser.Easing.Linear.None, true);
     }, this);
+}
+
+function clickStart() {
+    btnStart.inputEnabled = false;
+    game.state.start('play');
+}
+
+function clickCreditos() {
+    btnStart.inputEnabled = false;
+    game.state.start('creditos');
+}
+
+function clickTutorial() {
+    btnStart.inputEnabled = false;
+    game.state.start('tutorial');
 }

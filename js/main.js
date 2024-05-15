@@ -12,5 +12,6 @@ function startGame() {
     game.state.add('gameOver', gameOverState);
     game.state.add('win', winState);
     game.state.add('tutorial', tutorialState);
+    game.state.add('creditos', creditosState);
     game.state.start('init');
 }
