@@ -84,6 +84,7 @@ function loadAssets() {
     game.load.spritesheet('explosionEnemy', 'assets/explosionEnemigo.png', 50, 50);
     game.load.spritesheet('onda', 'assets/onda expansiva.png', 200, 200);
     game.load.spritesheet('barreraMapa', 'assets/barreraMapa.png', 1920, 30);
+    game.load.spritesheet('enemigoAnimacion', 'assets/enemigoanimation.png', 50, 50);
 
     game.load.image('player','assets/nave_inicial_0.png' );
     //game.load.image('barreraPrueba', 'assets/barreraPrueba.png');
@@ -180,7 +181,7 @@ function initialiseGame() {
     barreraMapa.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa);
     barreraMapa.body.immovable = true;
-    
+
     barreraMapa2 = game.add.sprite(0, 565, 'barreraMapa'); //565
     barreraMapa2.animations.add('laser');
     barreraMapa2.animations.play('laser', 4, true, false );
@@ -415,8 +416,13 @@ function enemiesMovement() {
         // Comprueba si el jugador está dentro del rango de visión
         if (distanciaJugador <= levelData.LevelData[levelDifficulty - 1].RANGO_PERSECUCION) {
             // Mueve el enemigo hacia el jugador
+            enemy.animations.play('enemigoAnimacion', 14, true, true);
             moveTo(enemy, player.x, player.y, levelData.LevelData[levelDifficulty - 1].ENEMY_VELOCITY);
             persecucion = true;
+            /*
+            enemy.animations.add('enemigoAnimacion');
+            enemy.animations.play('enemigoAnimacion', 14, false, true);
+            */
         }
         else{
             persecucion = false;
@@ -424,6 +430,8 @@ function enemiesMovement() {
         // Si el jugador está fuera del rango de visión, el enemigo no se mueve
         if (!persecucion) {
             enemy.body.velocity.setTo(0);
+            enemy.animations.stop(true, true);
+            enemy.frame = 0;
 
         }
     });
@@ -862,8 +870,10 @@ function createEnemy(){//                                                       
         }
 
 
-        enemy = game.add.sprite(x, y, 'enemy');
+        enemy = game.add.sprite(x, y, 'enemigoAnimacion');
+        enemy.animations.add('enemigoAnimacion');
         enemy.anchor.setTo(0.5, 0.5);
+
         enemy.enableBody = true;
         game.physics.arcade.enable(enemy);
         enemy.body.collideWorldBounds = true;
