@@ -171,7 +171,7 @@ function initialiseGame() {
 
     portal = game.add.sprite(960, 100, 'portal');
     portal.anchor.setTo(0.5, 0.5);
-    portal.scale.setTo(3, 3);
+    portal.scale.setTo(0.5, 0.5);
     game.physics.arcade.enable(portal);
     portal.body.immovable = true;
 
