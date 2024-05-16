@@ -33,7 +33,7 @@
             "BLAST_VELOCITY": 200,
             "ENEMY_SHOOT_CADENCY": 3000,
             "PLAYER_HEALTH": 6, 
-            "RANGO_PERSECUCION": 350,
+            "RANGO_PERSECUCION": 300,
             "MUNICION_INICIAL": 5,
             "SUERTE": 10
 

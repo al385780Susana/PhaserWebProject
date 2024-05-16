@@ -37,6 +37,7 @@ function createInit() {
     Nave.anchor.setTo(0.5, 0.5);
     
     startMovingAnimation();
+    startMovingShadow();
 
     creditos = game.add.button(160, 470, 'creditos', clickCreditos);
     creditos.anchor.setTo(0.5, 0.5);
@@ -68,6 +69,21 @@ function startMovingAnimation() {
     }, 1000, Phaser.Easing.Cubic.Out, true, 0, -1, true);
 }
 
+function startMovingShadow() {
+    var sombraNave = game.add.tween(NaveSombra.scale);
+    sombraNave.to({
+        x: 1.05,
+        y: 1.05
+    }, 1000, Phaser.Easing.Cubic.Out, true, 0, -1, true);
+}
+
+/*
+let bulletanimation = game.add.tween(bullet.scale).to({
+        x: 0.75,
+        y: 0.75
+    }, 1000,
+    Phaser.Easing.Cubic.Out, true, 0, -1, true);
+*/
 var buttonTweens = {};
 
 function addButtonHoverEffect(button) {
