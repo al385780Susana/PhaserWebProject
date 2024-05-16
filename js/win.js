@@ -1,3 +1,4 @@
+
 let winState = {
     preload: preloadWin,
     create: createWin,
@@ -5,15 +6,24 @@ let winState = {
 };
 
 function preloadWin() {
-
+    game.load.image('background', 'assets/mainMenu.png');
+    game.load.image('playButton', 'assets/playButton.png');
 
 }
 
 function createWin() {
-    let winText = game.add.text(GAME_STAGE_HEIGHT/2 + 55, GAME_STAGE_HEIGHT/2 - 100,
-    "WIN", {
-        fontSize: '50px',
-        fill: '#0bf'
+    game.add.image(0, 0, 'background');
+
+    btnStart = game.add.button(400, 550, 'playButton', restartGame);
+    btnStart.anchor.setTo(0.5, 0.5);
+    btnStart.scale.setTo(0.7);
+    addButtonHoverEffect(btnStart);
+
+    let winText = game.add.text(250, GAME_STAGE_HEIGHT/2 - 100,
+    "WIN\nSCORE: "+killCount,  {
+        font: '04B_19',
+        fontSize: '100px',
+        fill: '#fff'
     });
 
     let timerEvent = game.time.events.add(5000, function() {
