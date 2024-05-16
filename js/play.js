@@ -67,6 +67,7 @@ let mejoraSuerteCompra;
 let corazonList;
 let corazon;
 let puedeComprar = true;
+let persecucion;
 
 let LevelData;
 
@@ -82,9 +83,10 @@ function loadAssets() {
     game.load.spritesheet('granada', 'assets/granada.png', 10, 10);
     game.load.spritesheet('explosionEnemy', 'assets/explosionEnemigo.png', 50, 50);
     game.load.spritesheet('onda', 'assets/onda expansiva.png', 200, 200);
+    game.load.spritesheet('barreraMapa', 'assets/barreraMapa.png', 1920, 30);
 
     game.load.image('player','assets/nave_inicial_0.png' );
-    game.load.image('barreraPrueba', 'assets/barreraPrueba.png');
+    //game.load.image('barreraPrueba', 'assets/barreraPrueba.png');
     game.load.atlas('playerAtlas','assets/naveDestruccion.png');
     game.load.image('enemy', 'assets/enemigo.png');
     game.load.image('moneda','assets/moneda.png' );
@@ -165,9 +167,11 @@ function initialiseGame() {
     game.physics.arcade.enable(mejoraSuerte);
 
 
-    barreraPrueba = game.add.sprite(600, 200, 'barreraPrueba');
-    game.physics.arcade.enable(barreraPrueba);
-    barreraPrueba.body.immovable = true;
+    barreraMapa = game.add.sprite(0, 300, 'barreraMapa');
+    barreraMapa.animations.add('laser');
+    barreraMapa.animations.play('laser', 4, true, false );
+    game.physics.arcade.enable(barreraMapa);
+    barreraMapa.body.immovable = true;
 
     muroSeguro = game.add.sprite(960,880, 'muroZonaSegura');
     muroSeguro.anchor.setTo(0.5, 0.5);
@@ -371,6 +375,8 @@ function updateText(){//                                                        
     }
 
 }*/
+
+/*
 function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador está en el rango de persecucion del enemigo o el nivel es 1
     enemies.forEach(function(enemy) {
         if(levelDifficulty>1){
@@ -379,9 +385,33 @@ function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador
                 moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);
            }
         }
-        else { moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);}
+        //else { moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);}
 
     });
+}
+*/
+
+function enemiesMovement() {
+    enemies.forEach(function(enemy) {
+        // Calcula la distancia entre el enemigo y el jugador
+        distanciaJugador = Phaser.Math.distance(player.x, player.y, enemy.x, enemy.y);
+
+        // Comprueba si el jugador está dentro del rango de visión
+        if (distanciaJugador <= levelData.LevelData[levelDifficulty - 1].RANGO_PERSECUCION) {
+            // Mueve el enemigo hacia el jugador
+            moveTo(enemy, player.x, player.y, levelData.LevelData[levelDifficulty - 1].ENEMY_VELOCITY);
+            persecucion = true;
+        }
+        else{
+            persecucion = false;
+        }
+        // Si el jugador está fuera del rango de visión, el enemigo no se mueve
+        if (!persecucion) {
+            enemy.body.velocity.setTo(0);
+
+        }
+    });
+
 }
 
 function inSafeZone(){
@@ -634,7 +664,7 @@ function manageColision(){//                                                    
     }
 
 
-    game.physics.arcade.collide(player, barreraPrueba);
+    game.physics.arcade.collide(player, barreraMapa);
 
 
 
@@ -1120,7 +1150,7 @@ function playerHit(){//                                                         
 
 function abrirBarrera(){
     if(killCount == 5){
-        barreraPrueba.kill();
+        barreraMapa.kill();
     }
 }
 
