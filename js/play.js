@@ -104,6 +104,7 @@ function loadAssets() {
     game.load.image('corazon', 'assets/corazon.png');
     game.load.image('recarga', 'assets/recarga.png');
     game.load.image('enemigoCuadrado', 'assets/enemigoCuadrado.png');
+    game.load.image('portal', 'assets/portal.png');
 
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
@@ -121,7 +122,7 @@ function initialiseGame() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //CARGAMOS Y CONFIGURAMOS EL MUNDO
-    game.world.setBounds(0, 0, 1920, 1080);
+    game.world.setBounds(0, 0, 1920, 2200);
     let bg = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'fondoGrande');
     bg.scrollFactorX = 0.7;
     bg.scrollFactorY = 0.7;
@@ -136,54 +137,67 @@ function initialiseGame() {
     monedaHUD.scale.setTo(1.5);
 
     //RECARGA MUNICIÓN
-    recargaMunicion = game.add.sprite(1300, 750 , 'bullet');
+    recargaMunicion = game.add.sprite(1300, 1870 , 'bullet');
     recargaMunicion.anchor.setTo(0.5, 0.5);
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
 
-    recargaMunicion2 = game.add.sprite(1298, 800 , 'recarga');
+    recargaMunicion2 = game.add.sprite(1298, 1920 , 'recarga');
     recargaMunicion2.anchor.setTo(0.5, 0.5);
     recargaMunicion2.scale.setTo(0.75, 0.75);
     game.physics.arcade.enable(recargaMunicion2);
 
 
     //MEJORAS
-    mejoraEscudoTexto = game.add.text(1045, 1000, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraEscudo = game.add.sprite(1053, 980, 'mejoraEscudo');
+    mejoraEscudoTexto = game.add.text(1045, 2120, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraEscudo = game.add.sprite(1053, 2100, 'mejoraEscudo');
     mejoraEscudo.anchor.setTo(0.5, 0.5);
     mejoraEscudo.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraEscudo);
 
-    mejoraSprintTexto = game.add.text(1145, 1000, '10', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraSprint = game.add.sprite(1159, 980, 'mejoraSprint');
+    mejoraSprintTexto = game.add.text(1145, 2120, '10', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSprint = game.add.sprite(1159, 2100, 'mejoraSprint');
     mejoraSprint.anchor.setTo(0.5, 0.5);
     mejoraSprint.scale.setTo(0.85,0.85);
     game.physics.arcade.enable(mejoraSprint);
 
-    mejoraSuerteTexto = game.add.text(1245, 1000, '15', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraSuerte = game.add.sprite(1259, 980, 'mejoraSuerte');
+    mejoraSuerteTexto = game.add.text(1245, 2120, '15', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSuerte = game.add.sprite(1259, 2100, 'mejoraSuerte');
     mejoraSuerte.anchor.setTo(0.5, 0.5);
     mejoraSuerte.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraSuerte);
 
+    //MAPA
 
-    barreraMapa = game.add.sprite(0, 300, 'barreraMapa');
+    portal = game.add.sprite(960, 100, 'portal');
+    portal.anchor.setTo(0.5, 0.5);
+    portal.scale.setTo(3, 3);
+    game.physics.arcade.enable(portal);
+    portal.body.immovable = true;
+
+    barreraMapa = game.add.sprite(0, 1240, 'barreraMapa');  //1240
     barreraMapa.animations.add('laser');
     barreraMapa.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa);
     barreraMapa.body.immovable = true;
+    
+    barreraMapa2 = game.add.sprite(0, 565, 'barreraMapa'); //565
+    barreraMapa2.animations.add('laser');
+    barreraMapa2.animations.play('laser', 4, true, false );
+    game.physics.arcade.enable(barreraMapa2);
+    barreraMapa2.body.immovable = true;
 
-    muroSeguro = game.add.sprite(960,880, 'muroZonaSegura');
+    muroSeguro = game.add.sprite(960,2000, 'muroZonaSegura');
     muroSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro);
     muroSeguro.body.immovable = true;
 
-    muroSeguro2 = game.add.sprite(1360,880, 'muroZonaSegura');
+    muroSeguro2 = game.add.sprite(1360,2000, 'muroZonaSegura');
     muroSeguro2.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro2);
     muroSeguro2.body.immovable = true;
 
-    techoSeguro = game.add.sprite(1160,680, 'techoZonaSegura');
+    techoSeguro = game.add.sprite(1160,1800, 'techoZonaSegura');
     techoSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(techoSeguro);
     techoSeguro.body.immovable = true;
@@ -202,9 +216,9 @@ function initialiseGame() {
     idle();
 
     //CAMERA
-    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.2, 0.2);
+    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 1, 1);
 
-    setTimeout(function(){game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.01, 0.01);}, 500);
+    setTimeout(function(){game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);}, 500);
 
 
     //DAMOS LOS VALORES
@@ -304,6 +318,8 @@ function gameUpdate() {
         updateText();//                 Actualiza los valores de municion y dinero.
 
         abrirBarrera();
+        abrirBarrera2();
+        endPortal();
 
 
 
@@ -415,7 +431,7 @@ function enemiesMovement() {
 }
 
 function inSafeZone(){
-    if( 957 <= player.x && player.x <= 1351 && player.y >= 681){
+    if( 957 <= player.x && player.x <= 1351 && player.y >= 1800){
         estar = true;
         console.log('Esta dentro de la ZS');
 
@@ -665,6 +681,16 @@ function manageColision(){//                                                    
 
 
     game.physics.arcade.collide(player, barreraMapa);
+    if(game.physics.arcade.collide(blast, barreraMapa)){
+        blast.kill()
+    }
+
+    game.physics.arcade.collide(player, barreraMapa2);
+    if(game.physics.arcade.collide(blast, barreraMapa2)){
+        blast.kill()
+    }
+
+    
 
 
 
@@ -739,8 +765,8 @@ function endGame() {//                                                          
 }
 
 function createPlayer(){//                                                          Crea al jugador principal
-    let x = game.world.centerX;
-    let y = game.world.centerY;
+    let x = game.world.centerX +200 ;
+    let y = 2000;
 
     player = game.add.sprite(x, y, 'playerAnimation', 0);
     player.anchor.setTo(0.5, 0.5);
@@ -1154,11 +1180,24 @@ function abrirBarrera(){
     }
 }
 
+function abrirBarrera2(){
+    if(killCount == 15){
+        barreraMapa2.kill();
+    }
+}
+
+function endPortal(){
+    if(killCount == 20 && game.physics.arcade.collide(player, portal)){
+        portal.kill();
+        
+    }
+}
+
 function corazonesRespawn(){
     limite = 10;
     for(i = 0; i < limite; i++){
         randomx = Phaser.Math.random(50, 1900);
-        randomy = Phaser.Math.random(50, 1060);
+        randomy = Phaser.Math.random(50, 2180);
 
         corazon = game.add.sprite(randomx, randomy, 'corazon');
         corazon.anchor.setTo(0.5, 0.5);
