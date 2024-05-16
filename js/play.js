@@ -319,7 +319,7 @@ function gameUpdate() {
 
         if(enemyCuadrado){
             enemiesCuadrado.forEach(function(enemyCuadrado){
-                rotateEnemy(enemyCuadrado);
+                rotateEnemyCuadrado(enemyCuadrado);
             });
 
         }
@@ -476,7 +476,7 @@ function enemiesShootCuadrado(){//                                              
             if(enemyCuadrado){
                 game.time.events.add(tiempo, function() {
 
-                    rotateEnemy(enemyCuadrado);
+                    rotateEnemyCuadrado(enemyCuadrado);
                     createEnemyBlastCuadrado(enemyCuadrado.x, enemyCuadrado.y, enemyCuadrado.angle);
                     posx = player.x;
                     posy = player.y;
@@ -506,6 +506,20 @@ function clearGameAll(){//                                                      
     if(enemyBlast){
         enemieBlastList.forEach(function(enemyBlast){
             enemyBlast.kill();
+        })
+    }
+
+    if(enemyCuadrado){
+        enemiesCuadrado.forEach(function(enemyCuadrado) {
+
+            enemyCuadrado.kill();
+
+        });
+    }
+
+    if(enemyGranada){
+        enemieGranadaList.forEach(function(enemyGranada){
+            enemyGranada.kill();
         })
     }
 
@@ -861,7 +875,7 @@ function createEnemyCuadrado(){//                                               
         game.physics.arcade.enable(enemyCuadrado);
         enemyCuadrado.body.collideWorldBounds = true;
 
-        rotateEnemy(enemyCuadrado);
+        rotateEnemyCuadrado(enemyCuadrado);
         enemiesCuadrado.push(enemyCuadrado);
     }
 
@@ -877,6 +891,17 @@ function rotateEnemy(enemy) {//                                                 
         targetAngle += 360;
 
     enemy.angle = targetAngle;
+}
+
+function rotateEnemyCuadrado(enemyCuadrado) {//                                                     Rota el enemigo donde se encuentra el jugador
+    var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+        enemyCuadrado.x, enemyCuadrado.y,
+        player.x, player.y);
+
+    if (targetAngle < 0)
+        targetAngle += 360;
+
+    enemyCuadrado.angle = targetAngle;
 }
 
 function timeEnemy(tiempo){//                                                       Tiempo de creación de enemigos
