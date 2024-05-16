@@ -19,15 +19,18 @@ function createWin() {
     btnStart.scale.setTo(0.7);
     addButtonHoverEffect(btnStart);
 
+    let showHealth = 0
+    if(playerHealth>0) {showHealth = playerHealth};
+
     let winText = game.add.text(250, 100,
-    "WIN\n"+killCount+" KILLS\n& "+playerHealth+" HP",  {
+    "WIN\n"+killCount+" KILLS\n& "+showHealth+" HP",  {
         font: '04B_19',
         fontSize: '100px',
         fill: '#fff'
     });
 
     let timerEvent = game.time.events.add(5000, function() {
-        restartGame();
+        restartGameWin();
     }, game);
 
 

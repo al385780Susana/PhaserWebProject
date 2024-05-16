@@ -3,6 +3,16 @@ const GAME_STAGE_HEIGHT = 600;
 
 let game = new Phaser.Game(GAME_STAGE_WIDTH, GAME_STAGE_HEIGHT, Phaser.AUTO, 'gamestage');
 
+let wfConfig = {
+    active: function(){startGame();}
+,   custom: {
+        families:['04B_19'],
+    }
+};
+
+
+WebFont.load(wfConfig);
+
 // Entry point
 window.onload = startGame;
 
