@@ -14,13 +14,13 @@ function preloadWin() {
 function createWin() {
     game.add.image(0, 0, 'background');
 
-    btnStart = game.add.button(400, 550, 'playButton', restartGame);
+    btnStart = game.add.button(400, 550, 'playButton', restartGameWin);
     btnStart.anchor.setTo(0.5, 0.5);
     btnStart.scale.setTo(0.7);
     addButtonHoverEffect(btnStart);
 
-    let winText = game.add.text(250, GAME_STAGE_HEIGHT/2 - 100,
-    "WIN\nSCORE: "+killCount,  {
+    let winText = game.add.text(250, 100,
+    "WIN\n"+killCount+" KILLS\n& "+playerHealth+" HP",  {
         font: '04B_19',
         fontSize: '100px',
         fill: '#fff'
@@ -37,6 +37,6 @@ function updateWin(){
 }
 
 
-function restartGame() {
-    window.location.reload();
+function restartGameWin() {
+    game.state.start('init');
 }
