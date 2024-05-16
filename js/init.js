@@ -44,7 +44,7 @@ function createInit() {
     creditos.scale.setTo(1);
     addButtonHoverEffect(creditos);
 
-    dificultad = game.add.button(175, 310, 'dificultad', clickStart);
+    dificultad = game.add.button(175, 310, 'dificultad', clickDificultad);
     dificultad.anchor.setTo(0.5, 0.5);
     dificultad.scale.setTo(1);
     addButtonHoverEffect(dificultad);
@@ -113,4 +113,9 @@ function clickCreditos() {
 function clickTutorial() {
     btnStart.inputEnabled = false;
     game.state.start('tutorial');
+}
+
+function clickDificultad(){
+    btnStart.inputEnabled = false;
+    game.state.start('seleccionDificultad');
 }
