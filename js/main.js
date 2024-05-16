@@ -8,6 +8,7 @@ window.onload = startGame;
 
 function startGame() {
     game.state.add('init', initState);
+    game.state.add('seleccionDificultad', dificultadState);
     game.state.add('play', playState);
     game.state.add('gameOver', gameOverState);
     game.state.add('win', winState);
