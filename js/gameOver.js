@@ -6,19 +6,15 @@ let gameOverState = {
 
 function preloadgameOver() {
     game.load.image('background', 'assets/mainMenu.png');
-    game.load.image('playButton', 'assets/playButton.png');
+    game.load.image('flecha', 'assets/flechaDer.png');
 }
 
 function creategameOver() {
     game.add.image(0, 0, 'background');
 
-    btnStart = game.add.button(400, 550, 'playButton', restartGameOver);
-    btnStart.anchor.setTo(0.5, 0.5);
-    btnStart.scale.setTo(0.7);
-    addButtonHoverEffect(btnStart);
+
 
     let showHealth = 0
-    
     let defeatText = game.add.text(250, 100,
         "DEFEAT\n"+killCount+" KILLS\n& 0 HP", {
             font: '04B_19',
@@ -30,11 +26,17 @@ function creategameOver() {
         restartGameOver();
     }, game);
 
+    flecha = game.add.button(720, 540, 'flecha', restartGameOver);
+    flecha.anchor.setTo(0.5, 0.5);
+    flecha.scale.setTo(0.5);
+
 }
+
 function updategameOver(){
 
 }
 
 function restartGameOver() {
+    flecha.inputEnabled = false;
     window.location.reload();
 }

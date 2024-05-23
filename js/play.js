@@ -724,11 +724,12 @@ function endGame() {//                                                          
     gameOver = true;
 
     // Stop and reset input
-    game.input.enabled = false;
+    game.input.enabled = true;
     cursors.left.reset(true);
     cursors.right.reset(true);
     cursors.up.reset(true);
     cursors.down.reset(true);
+    
 
     // Stop player
 
@@ -738,7 +739,7 @@ function endGame() {//                                                          
     // Cleaning...
     clearGameAll();
 
-    victoryAtEnd = score>=levelData.LevelData[levelDifficulty-1].VICTORY_POINTS;
+    //victoryAtEnd = score>=levelData.LevelData[levelDifficulty-1].VICTORY_POINTS;
 
     // Final animation (a tween)
     let finalTween = game.add.tween(player.scale).to({
@@ -1188,7 +1189,8 @@ function abrirBarrera2(){
 function endPortal(){
     if(killCount >= levelData.LevelData[levelDifficulty-1].END_PORTAL_KILLS && game.physics.arcade.collide(player, portal)){
         portal.kill();
-        
+        victoryAtEnd = true;
+        endGame();
     }
 }
 
