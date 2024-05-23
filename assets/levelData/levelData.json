@@ -1,6 +1,41 @@
 {
     "LevelData":[
         {
+            "SAFE_ZONE_X_LEFT":957,
+            "SAFE_ZONE_X_RIGHT":1351,
+            "SAFE_ZONE_Y":1800,
+
+            "PORTAL_X":960,
+            "PORTAL_Y":100,
+
+            "BARRERA_1_Y":1240,
+            "BARRERA_2_Y":565,
+            "TECHO_SEGURO_X":1160,
+
+            "TEXTO_FONDO_X":400,
+            "TEXTO_FONDO_Y":300,
+            "BULLET_HUD_X":725,
+            "BULLET_HUD_Y":525,
+            "MONEDA_HUD_X":0,
+            "MONEDA_HUD_Y":525,
+
+            "RECARGA_1_X":1300,
+            "RECARGA_1_Y":1870,
+            "RECARGA_2_X":1298,
+            "RECARGA_2_Y":1920,
+
+            "MEJORAS_Y":2100,
+            "MEJORAS_TEXTO_Y":2140,
+            "MEJORA_ESCUDO_X":1053,
+            "MEJORA_ESCUDO_TEXTO_X":1045,
+            "MEJORA_SPRINT_X":1159,
+            "MEJORA_SPRINT_TEXTO_X":1145,
+            "MEJORA_SUERTE_X":1259,
+            "MEJORA_SUERTE_TEXTO_X":1245,
+
+
+            "PLAYER_X_INICIAL":200,
+            "PLAYER_Y_INICIAL": 2000,
             "VICTORY_POINTS": 500,
             "PLAYER_VELOCITY": 150,
             "ENEMY_VELOCITY": 100,
@@ -9,11 +44,50 @@
             "PLAYER_HEALTH": 6, 
             "RANGO_PERSECUCION": 300,
             "MUNICION_INICIAL": 7,
-            "SUERTE": 20
+            "SUERTE": 20,
+            "BARRIER_1_KILLS": 5,
+            "BARRIER_2_KILLS": 15,
+            "END_PORTAL_KILLS": 20,
+            "GRANADA_AREA_RADIUS": 200
 
 
         },
         {
+            "SAFE_ZONE_X_LEFT":957,
+            "SAFE_ZONE_X_RIGHT":1351,
+            "SAFE_ZONE_Y":1800,
+
+            "PORTAL_X":960,
+            "PORTAL_Y":100,
+
+            "BARRERA_1_Y":1240,
+            "BARRERA_2_Y":565,
+            "TECHO_SEGURO_X":1160,
+
+            "TEXTO_FONDO_X":400,
+            "TEXTO_FONDO_Y":300,
+            "BULLET_HUD_X":725,
+            "BULLET_HUD_Y":525,
+            "MONEDA_HUD_X":0,
+            "MONEDA_HUD_Y":525,
+
+            "RECARGA_1_X":1300,
+            "RECARGA_1_Y":1870,
+            "RECARGA_2_X":1298,
+            "RECARGA_2_Y":1920,
+
+            "MEJORAS_Y":2120,
+            "MEJORAS_TEXTO_Y":2100,
+            "MEJORA_ESCUDO_X":1045,
+            "MEJORA_ESCUDO_TEXTO_X":1053,
+            "MEJORA_SPRINT_X":1145,
+            "MEJORA_SPRINT_TEXTO_X":1159,
+            "MEJORA_SUERTE_X":1245,
+            "MEJORA_SUERTE_TEXTO_X":1259,
+
+
+            "PLAYER_X_INICIAL":200,
+            "PLAYER_Y_INICIAL": 2000,
             "VICTORY_POINTS": 500,
             "PLAYER_VELOCITY": 150,
             "ENEMY_VELOCITY": 100,
@@ -22,11 +96,50 @@
             "PLAYER_HEALTH": 6, 
             "RANGO_PERSECUCION": 300,
             "MUNICION_INICIAL": 6,
-            "SUERTE": 15
+            "SUERTE": 15,
+            "BARRIER_1_KILLS": 5,
+            "BARRIER_2_KILLS": 15,
+            "END_PORTAL_KILLS": 20,
+            "GRANADA_AREA_RADIUS": 200
 
 
         },
         {
+            "SAFE_ZONE_X_LEFT":957,
+            "SAFE_ZONE_X_RIGHT":1351,
+            "SAFE_ZONE_Y":1800,
+
+            "PORTAL_X":960,
+            "PORTAL_Y":100,
+
+            "BARRERA_1_Y":1240,
+            "BARRERA_2_Y":565,
+            "TECHO_SEGURO_X":1160,
+
+            "TEXTO_FONDO_X":400,
+            "TEXTO_FONDO_Y":300,
+            "BULLET_HUD_X":725,
+            "BULLET_HUD_Y":525,
+            "MONEDA_HUD_X":0,
+            "MONEDA_HUD_Y":525,
+
+            "RECARGA_1_X":1300,
+            "RECARGA_1_Y":1870,
+            "RECARGA_2_X":1298,
+            "RECARGA_2_Y":1920,
+
+            "MEJORAS_Y":2120,
+            "MEJORAS_TEXTO_Y":2100,
+            "MEJORA_ESCUDO_X":1045,
+            "MEJORA_ESCUDO_TEXTO_X":1053,
+            "MEJORA_SPRINT_X":1145,
+            "MEJORA_SPRINT_TEXTO_X":1159,
+            "MEJORA_SUERTE_X":1245,
+            "MEJORA_SUERTE_TEXTO_X":1259,
+
+            
+            "PLAYER_X_INICIAL":200,
+            "PLAYER_Y_INICIAL": 2000,
             "VICTORY_POINTS": 700,
             "PLAYER_VELOCITY": 150,
             "ENEMY_VELOCITY": 100,
@@ -35,7 +148,11 @@
             "PLAYER_HEALTH": 6, 
             "RANGO_PERSECUCION": 300,
             "MUNICION_INICIAL": 5,
-            "SUERTE": 10
+            "SUERTE": 10,
+            "BARRIER_1_KILLS": 5,
+            "BARRIER_2_KILLS": 15,
+            "END_PORTAL_KILLS": 20,
+            "GRANADA_AREA_RADIUS": 200
 
 
         }
