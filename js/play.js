@@ -103,7 +103,7 @@ function loadAssets() {
     game.load.image('mejoraSuerte', 'assets/trebol.png');
     game.load.image('mejoraSprint', 'assets/velocidad.png');
     game.load.image('corazon', 'assets/corazon.png');
-    game.load.image('recarga', 'assets/recarga.png');
+    game.load.image('recarga', 'assets/recargaMunicion.png');
     game.load.image('enemigoCuadrado', 'assets/enemigoCuadrado.png');
     game.load.image('portal', 'assets/portal.png');
 
@@ -136,16 +136,16 @@ function initialiseGame() {
     monedaHUD.scale.setTo(1.5);
 
     //RECARGA MUNICIÓN
-    recargaMunicion = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_1_X, levelData.LevelData[levelDifficulty-1].RECARGA_1_Y , 'bullet');
+    recargaMunicion = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_1_X, levelData.LevelData[levelDifficulty-1].RECARGA_1_Y , 'recarga');
     recargaMunicion.anchor.setTo(0.5, 0.5);
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
-
+    /*
     recargaMunicion2 = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_2_X, levelData.LevelData[levelDifficulty-1].RECARGA_2_Y , 'recarga');
     recargaMunicion2.anchor.setTo(0.5, 0.5);
     recargaMunicion2.scale.setTo(0.75, 0.75);
     game.physics.arcade.enable(recargaMunicion2);
-
+*/
 
     //MEJORAS
     mejoraEscudo = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraEscudo');
@@ -612,12 +612,12 @@ function manageColision(){//                                                    
         if(municionActual < 5){
             municionActual = 5
             recargaMunicion.scale.setTo(1.0, 1.0);
-            recargaMunicion2.scale.setTo(0.5, 0.5);
+            //recargaMunicion2.scale.setTo(0.5, 0.5);
         }
     }
     else{
         recargaMunicion.scale.setTo(1.5, 1.5);
-        recargaMunicion2.scale.setTo(0.75, 0.75);
+        //recargaMunicion2.scale.setTo(0.75, 0.75);
     }
 
     if(game.physics.arcade.overlap(player, mejoraEscudo)){
@@ -928,7 +928,7 @@ function timeEnemyCuadrado(tiempo){//                                           
     game.time.events.add(tiempo, function() {
         if(enemiesCuadrado.length < 5){
             createEnemyCuadrado();
-            
+            console.log("cuadrados = ", enemies.length);
         }
         /*
         tiempoDisparo = Phaser.Math.random(1000, 5000);
