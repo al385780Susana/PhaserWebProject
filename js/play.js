@@ -851,8 +851,7 @@ function rotatePlayer(){//                                                      
 
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
-
+    if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida  
         let x = Phaser.Math.random(50, 1870);
         let y = Phaser.Math.random(50, 1030);
 
@@ -914,7 +913,10 @@ function rotateEnemy(enemigo) {//                                               
 
 function timeEnemy(tiempo){//                                                       Tiempo de creación de enemigos
     game.time.events.add(tiempo, function() {
-        createEnemy();
+        if(enemies.length < 5){
+            createEnemy();
+            
+        }
         /*
         tiempoDisparo = Phaser.Math.random(1000, 5000);
         if(levelDifficulty==2){timeEnemyShoot(tiempoDisparo);}
@@ -924,7 +926,10 @@ function timeEnemy(tiempo){//                                                   
 
 function timeEnemyCuadrado(tiempo){//                                                       Tiempo de creación de enemigos
     game.time.events.add(tiempo, function() {
-        createEnemyCuadrado();
+        if(enemiesCuadrado.length < 5){
+            createEnemyCuadrado();
+            
+        }
         /*
         tiempoDisparo = Phaser.Math.random(1000, 5000);
         if(levelDifficulty==2){timeEnemyShoot(tiempoDisparo);}
