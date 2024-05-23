@@ -7,17 +7,13 @@ let winState = {
 
 function preloadWin() {
     game.load.image('background', 'assets/mainMenu.png');
-    game.load.image('playButton', 'assets/playButton.png');
+    game.load.image('flecha', 'assets/flechaDer.png');
 
 }
 
 function createWin() {
     game.add.image(0, 0, 'background');
 
-    btnStart = game.add.button(400, 550, 'playButton', restartGameWin);
-    btnStart.anchor.setTo(0.5, 0.5);
-    btnStart.scale.setTo(0.7);
-    addButtonHoverEffect(btnStart);
 
     let showHealth = 0
     if(playerHealth>0) {showHealth = playerHealth};
@@ -33,6 +29,9 @@ function createWin() {
         restartGameWin();
     }, game);
 
+    flecha = game.add.button(720, 540, 'flecha', restartGameWin);
+    flecha.anchor.setTo(0.5, 0.5);
+    flecha.scale.setTo(0.5);
 
 }
 function updateWin(){
@@ -41,5 +40,6 @@ function updateWin(){
 
 
 function restartGameWin() {
-    game.state.start('init');
+    flecha.inputEnabled = false;
+    window.location.reload();
 }
