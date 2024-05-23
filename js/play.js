@@ -39,6 +39,7 @@ let moneda;
 let monedasList;
 let bullet;
 let bulletList;
+let alarma;
 
 let enemyBlast;
 let enemyGranada;
@@ -87,7 +88,6 @@ function loadAssets() {
     game.load.spritesheet('enemigoAnimacion', 'assets/enemigoanimation.png', 50, 50);
 
     game.load.image('player','assets/nave_inicial_0.png' );
-    //game.load.image('barreraPrueba', 'assets/barreraPrueba.png');
     game.load.atlas('playerAtlas','assets/naveDestruccion.png');
     game.load.image('enemy', 'assets/enemigo.png');
     game.load.image('moneda','assets/moneda.png' );
@@ -106,6 +106,7 @@ function loadAssets() {
     game.load.image('recarga', 'assets/recargaMunicion.png');
     game.load.image('enemigoCuadrado', 'assets/enemigoCuadrado.png');
     game.load.image('portal', 'assets/portal.png');
+    game.load.image('alarma', 'assets/peligro.png');
 
     game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
     game.load.audio('laser', 'assets/snds/laser.mp3');
@@ -135,6 +136,8 @@ function initialiseGame() {
     monedaHUD = game.add.sprite(0,525, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
 
+
+
     //RECARGA MUNICIÓN
     recargaMunicion = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_1_X, levelData.LevelData[levelDifficulty-1].RECARGA_1_Y , 'recarga');
     recargaMunicion.anchor.setTo(0.5, 0.5);
@@ -156,7 +159,11 @@ function initialiseGame() {
     zonaRecarga3.scale.setTo(0.75, 0.75);
     game.physics.arcade.enable(zonaRecarga3);
 
-
+    //ALARMA
+    alarma = game.add.image(0, 0, 'alarma');
+    alarma.fixedToCamera = true;
+    alarma.alpha = 0;
+    
     //MEJORAS
     mejoraEscudo = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraEscudo');
     mejoraEscudoTexto = game.add.text(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_TEXTO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_TEXTO_Y, '5' , { font: '04B_19', fontSize: '22px', fill: '#ffffff'} );
@@ -213,6 +220,7 @@ function initialiseGame() {
 
 
     monedaHUD.fixedToCamera = true;
+    
     bulletHUD.fixedToCamera = true;
     textoFondo.fixedToCamera = true;
     estar = false;
@@ -453,7 +461,11 @@ function inSafeZone(){
             }, this);
 
             game.time.events.add(Phaser.Timer.SECOND * 7, function() {
-                console.log('Alarm');
+                //game.add.sprite()
+                alarma = game.add.image(0, 0, 'alarma');
+                alarma.fixedToCamera = true;
+                alarma.alpha = 0;
+                var tween = game.add.tween(alarma).to({ alpha: 1 }, 300, Phaser.Easing.Linear.None, true, 0, -1, true);
             }, this);
         }
 
@@ -462,10 +474,11 @@ function inSafeZone(){
     }
     else{
         estar = false;
+        
         puedeComprar = true;
         console.log('NO ESTA DENTRO DE ZS');
 
-
+        alarma.kill()
         if (contadorZS) {
             game.time.events.remove(contadorZS);
             contadorZS = null; // Reiniciar el contador
