@@ -128,77 +128,75 @@ function initialiseGame() {
     bg.scrollFactorX = 0.7;
     bg.scrollFactorY = 0.7;
     //CARGAMOS LOS ASSETS EN EL JUEGO
-
-    //game.add.sprite(0,0,'sky');
-    textoFondo = game.add.text(400, 300, killCount, { font: '04B_19', fontSize: '100px', fill: '#009099' });
+    textoFondo = game.add.text(levelData.LevelData[levelDifficulty-1].TEXTO_FONDO_X, levelData.LevelData[levelDifficulty-1].TEXTO_FONDO_Y, killCount, { font: '04B_19', fontSize: '100px', fill: '#009099' });
     textoFondo.anchor.setTo(0.5);
-    bulletHUD = game.add.sprite(725,525, 'bulletHUD');
+    bulletHUD = game.add.sprite(levelData.LevelData[levelDifficulty-1].BULLET_HUD_X,levelData.LevelData[levelDifficulty-1].BULLET_HUD_Y, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
     monedaHUD = game.add.sprite(0,525, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
 
     //RECARGA MUNICIÓN
-    recargaMunicion = game.add.sprite(1300, 1870 , 'bullet');
+    recargaMunicion = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_1_X, levelData.LevelData[levelDifficulty-1].RECARGA_1_Y , 'bullet');
     recargaMunicion.anchor.setTo(0.5, 0.5);
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
 
-    recargaMunicion2 = game.add.sprite(1298, 1920 , 'recarga');
+    recargaMunicion2 = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_2_X, levelData.LevelData[levelDifficulty-1].RECARGA_2_Y , 'recarga');
     recargaMunicion2.anchor.setTo(0.5, 0.5);
     recargaMunicion2.scale.setTo(0.75, 0.75);
     game.physics.arcade.enable(recargaMunicion2);
 
 
     //MEJORAS
-    mejoraEscudoTexto = game.add.text(1045, 2120, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraEscudo = game.add.sprite(1053, 2100, 'mejoraEscudo');
+    mejoraEscudo = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraEscudo');
+    mejoraEscudoTexto = game.add.text(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_TEXTO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_TEXTO_Y, '5' , { font: '04B_19', fontSize: '22px', fill: '#ffffff'} );
     mejoraEscudo.anchor.setTo(0.5, 0.5);
     mejoraEscudo.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraEscudo);
 
-    mejoraSprintTexto = game.add.text(1145, 2120, '10', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraSprint = game.add.sprite(1159, 2100, 'mejoraSprint');
+    mejoraSprint = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_SPRINT_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraSprint');
+    mejoraSprintTexto = game.add.text(levelData.LevelData[levelDifficulty-1].MEJORA_SPRINT_TEXTO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_TEXTO_Y, '10', { font: '04B_19', fontSize: '22px', fill: '#ffffff' });
     mejoraSprint.anchor.setTo(0.5, 0.5);
     mejoraSprint.scale.setTo(0.85,0.85);
     game.physics.arcade.enable(mejoraSprint);
 
-    mejoraSuerteTexto = game.add.text(1245, 2120, '15', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraSuerte = game.add.sprite(1259, 2100, 'mejoraSuerte');
+    mejoraSuerte = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_SUERTE_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraSuerte');
+    mejoraSuerteTexto = game.add.text(levelData.LevelData[levelDifficulty-1].MEJORA_SUERTE_TEXTO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_TEXTO_Y, '15', { font: '04B_19', fontSize: '22px', fill: '#ffffff' });
     mejoraSuerte.anchor.setTo(0.5, 0.5);
     mejoraSuerte.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraSuerte);
 
     //MAPA
 
-    portal = game.add.sprite(960, 100, 'portal');
+    portal = game.add.sprite(levelData.LevelData[levelDifficulty-1].PORTAL_X, levelData.LevelData[levelDifficulty-1].PORTAL_Y, 'portal');
     portal.anchor.setTo(0.5, 0.5);
     portal.scale.setTo(0.5, 0.5);
     game.physics.arcade.enable(portal);
     portal.body.immovable = true;
 
-    barreraMapa = game.add.sprite(0, 1240, 'barreraMapa');  //1240
+    barreraMapa = game.add.sprite(0, levelData.LevelData[levelDifficulty-1].BARRERA_1_Y, 'barreraMapa');  //1240
     barreraMapa.animations.add('laser');
     barreraMapa.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa);
     barreraMapa.body.immovable = true;
-
-    barreraMapa2 = game.add.sprite(0, 565, 'barreraMapa'); //565
+    
+    barreraMapa2 = game.add.sprite(0, levelData.LevelData[levelDifficulty-1].BARRERA_2_Y, 'barreraMapa'); //565
     barreraMapa2.animations.add('laser');
     barreraMapa2.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa2);
     barreraMapa2.body.immovable = true;
 
-    muroSeguro = game.add.sprite(960,2000, 'muroZonaSegura');
+    muroSeguro = game.add.sprite(levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_LEFT,levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y+200, 'muroZonaSegura');
     muroSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro);
     muroSeguro.body.immovable = true;
 
-    muroSeguro2 = game.add.sprite(1360,2000, 'muroZonaSegura');
+    muroSeguro2 = game.add.sprite(levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_RIGHT,levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y+200, 'muroZonaSegura');
     muroSeguro2.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro2);
     muroSeguro2.body.immovable = true;
 
-    techoSeguro = game.add.sprite(1160,1800, 'techoZonaSegura');
+    techoSeguro = game.add.sprite(levelData.LevelData[levelDifficulty-1].TECHO_SEGURO_X,levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y, 'techoZonaSegura');
     techoSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(techoSeguro);
     techoSeguro.body.immovable = true;
@@ -256,7 +254,7 @@ function initialiseGame() {
     corazonesRespawn();
 
     //HUD---------------------------------------------------------------
-    dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
+    dineroTotalText = game.add.text(levelData.LevelData[levelDifficulty-1].MONEDA_HUD_X+65, GAME_STAGE_HEIGHT - 50,
         dineroTotal, {
             font: '04B_19',
             fontSize: '32px',
@@ -265,7 +263,7 @@ function initialiseGame() {
 
     dineroTotalText.fixedToCamera = true;
 
-    bulletTotalText = game.add.text(700, GAME_STAGE_HEIGHT - 50,
+    bulletTotalText = game.add.text(levelData.LevelData[levelDifficulty-1].BULLET_HUD_X-25, GAME_STAGE_HEIGHT - 50,
         municionActual, {
             font: '04B_19',
             fontSize: '32px',
@@ -416,13 +414,8 @@ function enemiesMovement() {
         // Comprueba si el jugador está dentro del rango de visión
         if (distanciaJugador <= levelData.LevelData[levelDifficulty - 1].RANGO_PERSECUCION) {
             // Mueve el enemigo hacia el jugador
-            enemy.animations.play('enemigoAnimacion', 14, true, true);
             moveTo(enemy, player.x, player.y, levelData.LevelData[levelDifficulty - 1].ENEMY_VELOCITY);
             persecucion = true;
-            /*
-            enemy.animations.add('enemigoAnimacion');
-            enemy.animations.play('enemigoAnimacion', 14, false, true);
-            */
         }
         else{
             persecucion = false;
@@ -430,8 +423,6 @@ function enemiesMovement() {
         // Si el jugador está fuera del rango de visión, el enemigo no se mueve
         if (!persecucion) {
             enemy.body.velocity.setTo(0);
-            enemy.animations.stop(true, true);
-            enemy.frame = 0;
 
         }
     });
@@ -439,7 +430,7 @@ function enemiesMovement() {
 }
 
 function inSafeZone(){
-    if( 957 <= player.x && player.x <= 1351 && player.y >= 1800){
+    if( levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_LEFT <= player.x && player.x <= levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_RIGHT && player.y >= levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y){
         estar = true;
         console.log('Esta dentro de la ZS');
 
@@ -738,6 +729,7 @@ function endGame() {//                                                          
     cursors.right.reset(true);
     cursors.up.reset(true);
     cursors.down.reset(true);
+    
 
     // Stop player
 
@@ -747,6 +739,7 @@ function endGame() {//                                                          
     // Cleaning...
     clearGameAll();
 
+    //victoryAtEnd = score>=levelData.LevelData[levelDifficulty-1].VICTORY_POINTS;
 
     // Final animation (a tween)
     let finalTween = game.add.tween(player.scale).to({
@@ -772,8 +765,8 @@ function endGame() {//                                                          
 }
 
 function createPlayer(){//                                                          Crea al jugador principal
-    let x = game.world.centerX +200 ;
-    let y = 2000;
+    let x = game.world.centerX +levelData.LevelData[levelDifficulty-1].PLAYER_X_INICIAL;
+    let y = levelData.LevelData[levelDifficulty-1].PLAYER_Y_INICIAL;
 
     player = game.add.sprite(x, y, 'playerAnimation', 0);
     player.anchor.setTo(0.5, 0.5);
@@ -869,10 +862,8 @@ function createEnemy(){//                                                       
         }
 
 
-        enemy = game.add.sprite(x, y, 'enemigoAnimacion');
-        enemy.animations.add('enemigoAnimacion');
+        enemy = game.add.sprite(x, y, 'enemy');
         enemy.anchor.setTo(0.5, 0.5);
-
         enemy.enableBody = true;
         game.physics.arcade.enable(enemy);
         enemy.body.collideWorldBounds = true;
@@ -994,7 +985,7 @@ function destroyBlast(tiempo, blast){//                                         
 function destroyGranada(tiempo, enemyGranada, player){//                                             Destruye el proyectil del jugador
     game.time.events.add(tiempo, function() {
 
-        areaDamageRadius = 200;
+        areaDamageRadius = levelData.LevelData[levelDifficulty-1].GRANADA_AREA_RADIUS;
 
         detectarObjeto(areaDamageRadius, player, enemyGranada);
         enemyGranada.kill();
@@ -1171,7 +1162,7 @@ function ataqueRecibido(player,enemyBlast){//                                   
 
 function destroyEnemyBlast(enemyBlast){
     enemyBlast.kill()
-    enemieBlastList.splice(enemieBlastList.indexOf(enemyBlast),1);wa
+    enemieBlastList.splice(enemieBlastList.indexOf(enemyBlast),1);
 }
 
 function playerHit(){//                                                             Daño provocado al jugador
@@ -1184,22 +1175,22 @@ function playerHit(){//                                                         
 }
 
 function abrirBarrera(){
-    if(killCount == 5){
+    if(killCount == levelData.LevelData[levelDifficulty-1].BARRIER_1_KILLS){
         barreraMapa.kill();
     }
 }
 
 function abrirBarrera2(){
-    if(killCount == 15){
+    if(killCount == levelData.LevelData[levelDifficulty-1].BARRIER_2_KILLS){
         barreraMapa2.kill();
     }
 }
 
 function endPortal(){
-    if(killCount >= 20 && game.physics.arcade.collide(player, portal)){
-        victoryAtEnd = true;
+    if(killCount >= levelData.LevelData[levelDifficulty-1].END_PORTAL_KILLS && game.physics.arcade.collide(player, portal)){
         portal.kill();
-        endGame();        
+        victoryAtEnd = true;
+        endGame();
     }
 }
 
