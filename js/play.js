@@ -140,12 +140,22 @@ function initialiseGame() {
     recargaMunicion.anchor.setTo(0.5, 0.5);
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
-    /*
-    recargaMunicion2 = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_2_X, levelData.LevelData[levelDifficulty-1].RECARGA_2_Y , 'recarga');
-    recargaMunicion2.anchor.setTo(0.5, 0.5);
-    recargaMunicion2.scale.setTo(0.75, 0.75);
-    game.physics.arcade.enable(recargaMunicion2);
-*/
+    
+    zonaRecarga1 = game.add.sprite(50, 1870, 'recarga');
+    zonaRecarga1.anchor.setTo(0.5, 0.5);
+    zonaRecarga1.scale.setTo(0.75, 0.75);
+    game.physics.arcade.enable(zonaRecarga1);
+
+    zonaRecarga2 = game.add.sprite(50, 1100, 'recarga');
+    zonaRecarga2.anchor.setTo(0.5, 0.5);
+    zonaRecarga2.scale.setTo(0.75, 0.75);
+    game.physics.arcade.enable(zonaRecarga2);
+
+    zonaRecarga3 = game.add.sprite(50, 500, 'recarga');
+    zonaRecarga3.anchor.setTo(0.5, 0.5);
+    zonaRecarga3.scale.setTo(0.75, 0.75);
+    game.physics.arcade.enable(zonaRecarga3);
+
 
     //MEJORAS
     mejoraEscudo = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraEscudo');
@@ -612,13 +622,42 @@ function manageColision(){//                                                    
         if(municionActual < 5){
             municionActual = 5
             recargaMunicion.scale.setTo(1.0, 1.0);
-            //recargaMunicion2.scale.setTo(0.5, 0.5);
         }
     }
     else{
         recargaMunicion.scale.setTo(1.5, 1.5);
-        //recargaMunicion2.scale.setTo(0.75, 0.75);
     }
+
+    if(game.physics.arcade.overlap(player, zonaRecarga1)){
+        if(municionActual < 5){
+            municionActual = 5
+            zonaRecarga1.scale.setTo(1.0, 1.0);
+        }
+    }
+    else{
+        zonaRecarga1.scale.setTo(1.5, 1.5);
+    }
+
+    if(game.physics.arcade.overlap(player, zonaRecarga2)){
+        if(municionActual < 5){
+            municionActual = 5
+            zonaRecarga2.scale.setTo(1.0, 1.0);
+        }
+    }
+    else{
+        zonaRecarga2.scale.setTo(1.5, 1.5);
+    }
+
+    if(game.physics.arcade.overlap(player, zonaRecarga3)){
+        if(municionActual < 5){
+            municionActual = 5
+            zonaRecarga3.scale.setTo(1.0, 1.0);
+        }
+    }
+    else{
+        zonaRecarga3.scale.setTo(1.5, 1.5);
+    }
+
 
     if(game.physics.arcade.overlap(player, mejoraEscudo)){
 
