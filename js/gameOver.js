@@ -30,7 +30,7 @@ function creategameOver() {
     flecha.anchor.setTo(0.5, 0.5);
     flecha.scale.setTo(0.5);
 
-}awd
+}
 
 function updategameOver(){
 
