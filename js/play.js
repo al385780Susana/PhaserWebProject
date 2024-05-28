@@ -779,7 +779,7 @@ function endGame() {//                                                          
     gameOver = true;
 
     // Stop and reset input
-    game.input.enabled = false;
+    game.input.enabled = true;
     cursors.left.reset(true);
     cursors.right.reset(true);
     cursors.up.reset(true);
