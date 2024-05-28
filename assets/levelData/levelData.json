@@ -1,6 +1,8 @@
 {
     "LevelData":[
-        {
+        {  
+            "DIFICULTAD":1,
+
             "SAFE_ZONE_X_LEFT":957,
             "SAFE_ZONE_X_RIGHT":1351,
             "SAFE_ZONE_Y":1800,
@@ -33,7 +35,6 @@
             "MEJORA_SUERTE_X":1259,
             "MEJORA_SUERTE_TEXTO_X":1245,
 
-
             "PLAYER_X_INICIAL":200,
             "PLAYER_Y_INICIAL": 2000,
             "VICTORY_POINTS": 500,
@@ -53,6 +54,8 @@
 
         },
         {
+            "DIFICULTAD":2,
+
             "SAFE_ZONE_X_LEFT":957,
             "SAFE_ZONE_X_RIGHT":1351,
             "SAFE_ZONE_Y":1800,
@@ -105,6 +108,7 @@
 
         },
         {
+            "DIFICULTAD":3,
             "SAFE_ZONE_X_LEFT":957,
             "SAFE_ZONE_X_RIGHT":1351,
             "SAFE_ZONE_Y":1800,

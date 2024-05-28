@@ -108,6 +108,9 @@ function loadAssets() {
     game.load.image('enemigoCuadrado', 'assets/enemigoCuadrado.png');
     game.load.image('portal', 'assets/portal.png');
     game.load.image('alarma', 'assets/peligro.png');
+    game.load.image('dificultad1', 'assets/dificultad1.png');
+    game.load.image('dificultad2', 'assets/dificultad2.png');
+    game.load.image('dificultad3', 'assets/dificultad3.png');
 
     game.load.audio('Muerte', 'assets/snds/Muerte.mp3');
     game.load.audio('Disparo', 'assets/snds/Disparo.mp3');
@@ -166,6 +169,29 @@ function initialiseGame() {
     alarma.fixedToCamera = true;
     alarma.alpha = 0;
     
+    //DIFICULTAD
+    dificultadCartel = levelData.LevelData[levelDifficulty-1].DIFICULTAD;
+    if(dificultadCartel == 1){
+        dificultad1 = game.add.sprite(110, 25 , 'dificultad1');
+        dificultad1.anchor.setTo(0.5, 0.5);
+        dificultad1.scale.setTo(0.5);
+        dificultad1.fixedToCamera = true;
+
+    }
+    else if(dificultadCartel == 2){
+        dificultad2 = game.add.sprite(110, 25 , 'dificultad2');
+        dificultad2.anchor.setTo(0.5, 0.5);
+        dificultad3.scale.setTo(0.5);
+        dificultad2.fixedToCamera = true;
+    }
+    else if(dificultadCartel == 3){
+        dificultad3 = game.add.sprite(110, 25 , 'dificultad3');
+        dificultad3.anchor.setTo(0.5, 0.5);
+        dificultad3.scale.setTo(0.5);
+        dificultad3.fixedToCamera = true;
+    }
+    
+
     //MEJORAS
 
     mejoraCorazonTexto = game.add.text(1045, 2120, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
@@ -230,7 +256,6 @@ function initialiseGame() {
 
 
     monedaHUD.fixedToCamera = true;
-    
     bulletHUD.fixedToCamera = true;
     textoFondo.fixedToCamera = true;
     estar = false;
@@ -367,7 +392,6 @@ function gameUpdate() {
         }
 
         //APARICIÓN DE ENEMIGOS
-        //ESTA SOLUCION ES BASTANTE CUTRE, PERO DE MOMENTO LA TENEMOS AHI PARA QUE FUNCIONE.
         contador++;
         if(contador == 200){
             timeEnemy(2000);//          Tiempo de reaparición de enemigo
