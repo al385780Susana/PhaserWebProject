@@ -955,7 +955,7 @@ function createEnemy(){//                                                       
             y = Phaser.Math.random(50, 2150);
         }
         
-        while(957 <= x && x <= 1351 && y >= 1800){
+        while((x > 950 && x < 1360) && y > 1790){
             console.log("mierda, estoy dentrod de la safezone");
             if(killCount < 5){
                 console.log("estoy generando en 1");
@@ -1012,7 +1012,7 @@ function createEnemyCuadrado(){//                                               
             y = Phaser.Math.random(50, 2150);
         }
         
-        while(957 <= x && x <= 1351 && y >= 1800){
+        while((x > 950 && x < 1360) && y > 1790){
             console.log("mierda, estoy dentrod de la safezone");
             if(killCount < 5){
                 console.log("estoy generando en 1");
