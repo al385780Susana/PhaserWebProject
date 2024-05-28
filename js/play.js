@@ -493,21 +493,19 @@ function inSafeZone(){
         estar = true;
         console.log('Esta dentro de la ZS');
 
-        if (!contadorZS) {
-
+        if (!contadorZS) {     
 
             contadorZS = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
                 clearGameAll();
                 endGame();
-            }, this);
+            }, game);
 
-            game.time.events.add(Phaser.Timer.SECOND * 7, function() {
-                //game.add.sprite()
+            alarmaEvent = game.time.events.add(Phaser.Timer.SECOND * 7, function() {
                 alarma = game.add.image(0, 0, 'alarma');
                 alarma.fixedToCamera = true;
                 alarma.alpha = 0;
                 var tween = game.add.tween(alarma).to({ alpha: 1 }, 300, Phaser.Easing.Linear.None, true, 0, -1, true);
-            }, this);
+            }, game);
         }
 
 
@@ -519,10 +517,19 @@ function inSafeZone(){
         puedeComprar = true;
         console.log('NO ESTA DENTRO DE ZS');
 
-        alarma.kill()
+        if (alarma) {
+            alarma.kill();
+            alarma = null;
+        }
+
         if (contadorZS) {
             game.time.events.remove(contadorZS);
             contadorZS = null; // Reiniciar el contador
+        }
+        
+        if (alarmaEvent) {
+            game.time.events.remove(alarmaEvent);
+            alarmaEvent = null;
         }
 
     }
@@ -619,50 +626,50 @@ function blastManagement(){//                                                   
 
 function manageColision(){//                                                        Maneja las colisiones
     for (let i = 0; i <= enemies.length; i++){
-        if(blast){game.physics.arcade.overlap(blast, enemies[i], enemyBlastCollide, null, this);}
-        game.physics.arcade.overlap(player, enemies[i], playerEnemyCollide, null, this);
+        if(blast){game.physics.arcade.overlap(blast, enemies[i], enemyBlastCollide, null, game);}
+        game.physics.arcade.overlap(player, enemies[i], playerEnemyCollide, null, game);
     }
 
     for (let i = 0; i <= enemiesCuadrado.length; i++){
-        if(blast){game.physics.arcade.overlap(blast, enemiesCuadrado[i], enemyBlastCollideCuadrado, null, this);}
-        game.physics.arcade.overlap(player, enemiesCuadrado[i], playerEnemyCollideCuadrado, null, this);
+        if(blast){game.physics.arcade.overlap(blast, enemiesCuadrado[i], enemyBlastCollideCuadrado, null, game);}
+        game.physics.arcade.overlap(player, enemiesCuadrado[i], playerEnemyCollideCuadrado, null, game);
     }
 
     if(moneda){
         for (let i = 0; i <= monedasList.length; i++){
-            game.physics.arcade.overlap(player,monedasList[i], recogerMonedas, null, this);
+            game.physics.arcade.overlap(player,monedasList[i], recogerMonedas, null, game);
         }
     }
 
     if(corazon){
         if(playerHealth < levelData.LevelData[levelDifficulty - 1].PLAYER_HEALTH){
             for (let i = 0; i <= corazonList.length; i++){
-                game.physics.arcade.overlap(player,corazonList[i], recogerVida, null, this);
+                game.physics.arcade.overlap(player,corazonList[i], recogerVida, null, game);
             }
         }
     }
 
     if(bullet){
         for(let i = 0; i <= bulletList.length; i++){
-            game.physics.arcade.overlap(player,bulletList[i], recogerBullets, null, this);
+            game.physics.arcade.overlap(player,bulletList[i], recogerBullets, null, game);
         }
     }
 
     if(enemyBlast){
         for(let i = 0; i <= enemieBlastList.length; i++){
-            game.physics.arcade.collide(player,enemieBlastList[i], ataqueRecibido, null, this);
-            game.physics.arcade.collide(techoSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, this);
-            game.physics.arcade.collide(muroSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, this);
-            game.physics.arcade.collide(muroSeguro2, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, this);
+            game.physics.arcade.collide(player,enemieBlastList[i], ataqueRecibido, null, game);
+            game.physics.arcade.collide(techoSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro2, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
         }
     }
 
     if(enemyGranada){
         for(let i = 0; i <= enemieGranadaList.length; i++){
-            game.physics.arcade.collide(player,enemieGranadaList[i], ataqueRecibido, null, this);
-            game.physics.arcade.collide(techoSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, this);
-            game.physics.arcade.collide(muroSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, this);
-            game.physics.arcade.collide(muroSeguro2, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, this);
+            game.physics.arcade.collide(player,enemieGranadaList[i], ataqueRecibido, null, game);
+            game.physics.arcade.collide(techoSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro2, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
         }
     }
 
@@ -888,7 +895,7 @@ function createEnemyBlast(posx, posy, enemyAngle){//                            
 
 }
 
-function createEnemyBlastCuadrado(posx, posy, enemyAngle){//                                Crea el blast del enemigo
+function createEnemyBlastCuadrado(posx, posy, enemyAngle){//                                Crea el blast del enemigo Cuadrado
 
     enemyGranada = game.add.sprite(posx, posy, 'granada');
     enemyGranada.scale.setTo(5, 5);
