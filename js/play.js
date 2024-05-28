@@ -916,28 +916,35 @@ function createEnemy(){//                                                       
         let y = 0;
 
         if(killCount < 5){
+            console.log("estoy generando en 1");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(1240, 2150);
         }
         else if(killCount < 15){
+            console.log("estoy generando en 2");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(565, 2150);
         }
         else{
+            console.log("estoy generando en 3");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(50, 2150);
         }
         
-        while(x > 957 && x <= 1351 && y >= 681){
+        while(957 <= x && x <= 1351 && y >= 1800){
+            console.log("mierda, estoy dentrod de la safezone");
             if(killCount < 5){
+                console.log("estoy generando en 1");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(1240, 2150);
             }
             else if(killCount < 15){
+                console.log("estoy generando en 2");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(565, 2150);
             }
             else{
+                console.log("estoy generando en 3");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(50, 2150);
             }
@@ -966,28 +973,35 @@ function createEnemyCuadrado(){//                                               
         let y = 0;
 
         if(killCount < 5){
+            console.log("estoy generando en 1");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(1240, 2150);
         }
         else if(killCount < 15){
+            console.log("estoy generando en 2");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(565, 2150);
         }
         else{
+            console.log("estoy generando en 3");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(50, 2150);
         }
         
-        while(x > 957 && x <= 1351 && y >= 681){
+        while(957 <= x && x <= 1351 && y >= 1800){
+            console.log("mierda, estoy dentrod de la safezone");
             if(killCount < 5){
+                console.log("estoy generando en 1");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(1240, 2150);
             }
             else if(killCount < 15){
+                console.log("estoy generando en 2");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(565, 2150);
             }
             else{
+                console.log("estoy generando en 3");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(50, 2150);
             }
