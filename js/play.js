@@ -62,6 +62,7 @@ let estar;
 let contadorZS;
 let compraVelocidad;
 let valorEscudo;
+let valorCorazon;
 let valorSprint;
 let valorSuerte;
 let mejoraSuerteCompra;
@@ -103,15 +104,17 @@ function loadAssets() {
     game.load.image('mejoraSuerte', 'assets/trebol.png');
     game.load.image('mejoraSprint', 'assets/velocidad.png');
     game.load.image('corazon', 'assets/corazon.png');
-    game.load.image('recarga', 'assets/recargaMunicion.png');
+    game.load.image('recarga', 'assets/recarga.png');
     game.load.image('enemigoCuadrado', 'assets/enemigoCuadrado.png');
     game.load.image('portal', 'assets/portal.png');
     game.load.image('alarma', 'assets/peligro.png');
 
-    game.load.audio('soundDefeat', 'assets/snds/wrong.mp3');
-    game.load.audio('laser', 'assets/snds/laser.mp3');
-    game.load.audio('menu', 'assets/snds/menu.mp3');
-    game.load.audio('stage', 'assets/snds/stage.mp3');
+    game.load.audio('Muerte', 'assets/snds/Muerte.mp3');
+    game.load.audio('Disparo', 'assets/snds/Disparo.mp3');
+    game.load.audio('DisparoEnemigo', 'assets/snds/DisparoEnemigo.mp3');
+    game.load.audio('RecogerMoneda', 'assets/snds/Moneda.mp3');
+    game.load.audio('RecogerBala', 'assets/snds/BalasCaidas.mp3');
+    game.load.audio('MusicaJuego', 'assets/snds/MusicaJuego.mp3');
 
 }
 
@@ -122,6 +125,12 @@ function initialiseGame() {
 
     levelData = JSON.parse(game.cache.getText('levelJSON'));
 
+    musicaFondo = game.sound.add('MusicaJuego');
+    musicaFondo.volume = 0.25;
+    musicaFondo.loop = true;
+    musicaFondo.play();
+
+
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //CARGAMOS Y CONFIGURAMOS EL MUNDO
     game.world.setBounds(0, 0, 1920, 2200);
@@ -129,9 +138,12 @@ function initialiseGame() {
     bg.scrollFactorX = 0.7;
     bg.scrollFactorY = 0.7;
     //CARGAMOS LOS ASSETS EN EL JUEGO
-    textoFondo = game.add.text(levelData.LevelData[levelDifficulty-1].TEXTO_FONDO_X, levelData.LevelData[levelDifficulty-1].TEXTO_FONDO_Y, killCount, { font: '04B_19', fontSize: '100px', fill: '#009099' });
+
+    //game.add.sprite(0,0,'sky');
+    textoFondo = game.add.text(400, 300, killCount, { font: '04B_19', fontSize: '100px', fill: '#000000' });
+    textoFondo.alpha = 0.2;
     textoFondo.anchor.setTo(0.5);
-    bulletHUD = game.add.sprite(levelData.LevelData[levelDifficulty-1].BULLET_HUD_X,levelData.LevelData[levelDifficulty-1].BULLET_HUD_Y, 'bulletHUD');
+    bulletHUD = game.add.sprite(725,525, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
     monedaHUD = game.add.sprite(0,525, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
@@ -139,25 +151,15 @@ function initialiseGame() {
 
 
     //RECARGA MUNICIÓN
-    recargaMunicion = game.add.sprite(levelData.LevelData[levelDifficulty-1].RECARGA_1_X, levelData.LevelData[levelDifficulty-1].RECARGA_1_Y , 'recarga');
+    recargaMunicion = game.add.sprite(1300, 1870 , 'bullet');
     recargaMunicion.anchor.setTo(0.5, 0.5);
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
-    
-    zonaRecarga1 = game.add.sprite(50, 1870, 'recarga');
-    zonaRecarga1.anchor.setTo(0.5, 0.5);
-    zonaRecarga1.scale.setTo(0.75, 0.75);
-    game.physics.arcade.enable(zonaRecarga1);
 
-    zonaRecarga2 = game.add.sprite(50, 1100, 'recarga');
-    zonaRecarga2.anchor.setTo(0.5, 0.5);
-    zonaRecarga2.scale.setTo(0.75, 0.75);
-    game.physics.arcade.enable(zonaRecarga2);
-
-    zonaRecarga3 = game.add.sprite(50, 500, 'recarga');
-    zonaRecarga3.anchor.setTo(0.5, 0.5);
-    zonaRecarga3.scale.setTo(0.75, 0.75);
-    game.physics.arcade.enable(zonaRecarga3);
+    recargaMunicion2 = game.add.sprite(1298, 1920 , 'recarga');
+    recargaMunicion2.anchor.setTo(0.5, 0.5);
+    recargaMunicion2.scale.setTo(0.75, 0.75);
+    game.physics.arcade.enable(recargaMunicion2);
 
     //ALARMA
     alarma = game.add.image(0, 0, 'alarma');
@@ -165,55 +167,63 @@ function initialiseGame() {
     alarma.alpha = 0;
     
     //MEJORAS
-    mejoraEscudo = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraEscudo');
-    mejoraEscudoTexto = game.add.text(levelData.LevelData[levelDifficulty-1].MEJORA_ESCUDO_TEXTO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_TEXTO_Y, '5' , { font: '04B_19', fontSize: '22px', fill: '#ffffff'} );
+
+    mejoraCorazonTexto = game.add.text(1045, 2120, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraCorazon = game.add.sprite(1053, 2100,'corazon');
+    mejoraCorazon.anchor.setTo(0.5, 0.5);
+    mejoraCorazon.scale.setTo(0.75,0.75);
+    game.physics.arcade.enable(mejoraCorazon);
+
+    /*
+    mejoraEscudo = game.add.sprite(1053, 2100, 'mejoraEscudo');
     mejoraEscudo.anchor.setTo(0.5, 0.5);
     mejoraEscudo.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraEscudo);
+    */
 
-    mejoraSprint = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_SPRINT_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraSprint');
-    mejoraSprintTexto = game.add.text(levelData.LevelData[levelDifficulty-1].MEJORA_SPRINT_TEXTO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_TEXTO_Y, '10', { font: '04B_19', fontSize: '22px', fill: '#ffffff' });
+    mejoraSprintTexto = game.add.text(1145, 2120, '10', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSprint = game.add.sprite(1159, 2100, 'mejoraSprint');
     mejoraSprint.anchor.setTo(0.5, 0.5);
     mejoraSprint.scale.setTo(0.85,0.85);
     game.physics.arcade.enable(mejoraSprint);
 
-    mejoraSuerte = game.add.sprite(levelData.LevelData[levelDifficulty-1].MEJORA_SUERTE_X, levelData.LevelData[levelDifficulty-1].MEJORAS_Y, 'mejoraSuerte');
-    mejoraSuerteTexto = game.add.text(levelData.LevelData[levelDifficulty-1].MEJORA_SUERTE_TEXTO_X, levelData.LevelData[levelDifficulty-1].MEJORAS_TEXTO_Y, '15', { font: '04B_19', fontSize: '22px', fill: '#ffffff' });
+    mejoraSuerteTexto = game.add.text(1245, 2120, '15', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSuerte = game.add.sprite(1259, 2100, 'mejoraSuerte');
     mejoraSuerte.anchor.setTo(0.5, 0.5);
     mejoraSuerte.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraSuerte);
 
     //MAPA
 
-    portal = game.add.sprite(levelData.LevelData[levelDifficulty-1].PORTAL_X, levelData.LevelData[levelDifficulty-1].PORTAL_Y, 'portal');
+    portal = game.add.sprite(960, 100, 'portal');
     portal.anchor.setTo(0.5, 0.5);
     portal.scale.setTo(0.5, 0.5);
     game.physics.arcade.enable(portal);
     portal.body.immovable = true;
 
-    barreraMapa = game.add.sprite(0, levelData.LevelData[levelDifficulty-1].BARRERA_1_Y, 'barreraMapa');  //1240
+    barreraMapa = game.add.sprite(0, 1240, 'barreraMapa');  //1240
     barreraMapa.animations.add('laser');
     barreraMapa.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa);
     barreraMapa.body.immovable = true;
-    
-    barreraMapa2 = game.add.sprite(0, levelData.LevelData[levelDifficulty-1].BARRERA_2_Y, 'barreraMapa'); //565
+
+    barreraMapa2 = game.add.sprite(0, 565, 'barreraMapa'); //565
     barreraMapa2.animations.add('laser');
     barreraMapa2.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa2);
     barreraMapa2.body.immovable = true;
 
-    muroSeguro = game.add.sprite(levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_LEFT,levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y+200, 'muroZonaSegura');
+    muroSeguro = game.add.sprite(960,2000, 'muroZonaSegura');
     muroSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro);
     muroSeguro.body.immovable = true;
 
-    muroSeguro2 = game.add.sprite(levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_RIGHT,levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y+200, 'muroZonaSegura');
+    muroSeguro2 = game.add.sprite(1360,2000, 'muroZonaSegura');
     muroSeguro2.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro2);
     muroSeguro2.body.immovable = true;
 
-    techoSeguro = game.add.sprite(levelData.LevelData[levelDifficulty-1].TECHO_SEGURO_X,levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y, 'techoZonaSegura');
+    techoSeguro = game.add.sprite(1160,1800, 'techoZonaSegura');
     techoSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(techoSeguro);
     techoSeguro.body.immovable = true;
@@ -258,7 +268,7 @@ function initialiseGame() {
     dineroTotal = 0;
     killCount = 0;
     score = 0;
-    valorEscudo = 5;
+    valorCorazon = 5;
     valorSprint = 10;
     valorSuerte = 2;
     mejoraSuerteCompra = 0;
@@ -272,7 +282,7 @@ function initialiseGame() {
     corazonesRespawn();
 
     //HUD---------------------------------------------------------------
-    dineroTotalText = game.add.text(levelData.LevelData[levelDifficulty-1].MONEDA_HUD_X+65, GAME_STAGE_HEIGHT - 50,
+    dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
         dineroTotal, {
             font: '04B_19',
             fontSize: '32px',
@@ -281,7 +291,7 @@ function initialiseGame() {
 
     dineroTotalText.fixedToCamera = true;
 
-    bulletTotalText = game.add.text(levelData.LevelData[levelDifficulty-1].BULLET_HUD_X-25, GAME_STAGE_HEIGHT - 50,
+    bulletTotalText = game.add.text(700, GAME_STAGE_HEIGHT - 50,
         municionActual, {
             font: '04B_19',
             fontSize: '32px',
@@ -432,8 +442,13 @@ function enemiesMovement() {
         // Comprueba si el jugador está dentro del rango de visión
         if (distanciaJugador <= levelData.LevelData[levelDifficulty - 1].RANGO_PERSECUCION) {
             // Mueve el enemigo hacia el jugador
+            enemy.animations.play('enemigoAnimacion', 14, true, true);
             moveTo(enemy, player.x, player.y, levelData.LevelData[levelDifficulty - 1].ENEMY_VELOCITY);
             persecucion = true;
+            /*
+            enemy.animations.add('enemigoAnimacion');
+            enemy.animations.play('enemigoAnimacion', 14, false, true);
+            */
         }
         else{
             persecucion = false;
@@ -441,6 +456,8 @@ function enemiesMovement() {
         // Si el jugador está fuera del rango de visión, el enemigo no se mueve
         if (!persecucion) {
             enemy.body.velocity.setTo(0);
+            enemy.animations.stop(true, true);
+            enemy.frame = 0;
 
         }
     });
@@ -448,7 +465,7 @@ function enemiesMovement() {
 }
 
 function inSafeZone(){
-    if( levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_LEFT <= player.x && player.x <= levelData.LevelData[levelDifficulty-1].SAFE_ZONE_X_RIGHT && player.y >= levelData.LevelData[levelDifficulty-1].SAFE_ZONE_Y){
+    if( 957 <= player.x && player.x <= 1351 && player.y >= 1800){
         estar = true;
         console.log('Esta dentro de la ZS');
 
@@ -509,6 +526,11 @@ function enemiesShoot(){//                                                      
                     createEnemyBlast(enemy.x, enemy.y, enemy.angle);
                     posx = player.x;
                     posy = player.y;
+
+                    disparoEnemigo = game.sound.add('DisparoEnemigo');
+                    disparoEnemigo.volume = 0.5;
+                    disparoEnemigo.play();
+
                     moveTo(enemyBlast, posx, posy,levelData.LevelData[levelDifficulty-1].BLAST_VELOCITY);
                     destroyBlast(5000,enemyBlast);
                 }, game);
@@ -530,6 +552,11 @@ function enemiesShootCuadrado(){//                                              
                     createEnemyBlastCuadrado(enemyCuadrado.x, enemyCuadrado.y, enemyCuadrado.angle);
                     posx = player.x;
                     posy = player.y;
+
+                    disparoEnemigo = game.sound.add('DisparoEnemigo');
+                    disparoEnemigo.volume = 0.5;
+                    disparoEnemigo.play();
+
                     moveTo(enemyGranada, posx, posy,levelData.LevelData[levelDifficulty-1].BLAST_VELOCITY);
                     destroyGranada(2000, enemyGranada, player);
                 }, game);
@@ -635,49 +662,20 @@ function manageColision(){//                                                    
         if(municionActual < 5){
             municionActual = 5
             recargaMunicion.scale.setTo(1.0, 1.0);
+            recargaMunicion2.scale.setTo(0.5, 0.5);
         }
     }
     else{
         recargaMunicion.scale.setTo(1.5, 1.5);
+        recargaMunicion2.scale.setTo(0.75, 0.75);
     }
 
-    if(game.physics.arcade.overlap(player, zonaRecarga1)){
-        if(municionActual < 5){
-            municionActual = 5
-            zonaRecarga1.scale.setTo(1.0, 1.0);
-        }
-    }
-    else{
-        zonaRecarga1.scale.setTo(1.5, 1.5);
-    }
+    if(game.physics.arcade.overlap(player, mejoraCorazon)){
 
-    if(game.physics.arcade.overlap(player, zonaRecarga2)){
-        if(municionActual < 5){
-            municionActual = 5
-            zonaRecarga2.scale.setTo(1.0, 1.0);
-        }
-    }
-    else{
-        zonaRecarga2.scale.setTo(1.5, 1.5);
-    }
-
-    if(game.physics.arcade.overlap(player, zonaRecarga3)){
-        if(municionActual < 5){
-            municionActual = 5
-            zonaRecarga3.scale.setTo(1.0, 1.0);
-        }
-    }
-    else{
-        zonaRecarga3.scale.setTo(1.5, 1.5);
-    }
-
-
-    if(game.physics.arcade.overlap(player, mejoraEscudo)){
-
-        if(dineroTotal >= valorEscudo && puedeComprar == true){
-            mejoraEscudo.kill();
-            mejoraEscudoTexto.kill();
-            dineroTotal -= valorEscudo;
+        if(dineroTotal >= valorCorazon && puedeComprar == true){
+            mejoraCorazon.kill();
+            mejoraCorazonTexto.kill();
+            dineroTotal -= valorCorazon;
             puedeComprar = false;
         }
 
@@ -698,7 +696,7 @@ function manageColision(){//                                                    
             mejoraSprintTexto.kill();
             dineroTotal -= valorSprint;
             compraVelocidad = true;
-            puedeComprar == false;
+            puedeComprar = false;
         }
 
         /*
@@ -718,7 +716,7 @@ function manageColision(){//                                                    
             mejoraSuerteTexto.kill();
             dineroTotal -= valorSuerte;
             mejoraSuerteCompra = 5;
-            puedeComprar == false;
+            puedeComprar = false;
         }
 
         /*
@@ -772,16 +770,20 @@ function playerMovement() {//                                                   
 }
 
 function endGame() {//                                                              Termina el juego
+
+    muerte = game.sound.add('Muerte');
+    muerte.volume = 0.5;
+    muerte.play();
+
     // Game Over
     gameOver = true;
 
     // Stop and reset input
-    game.input.enabled = true;
+    game.input.enabled = false;
     cursors.left.reset(true);
     cursors.right.reset(true);
     cursors.up.reset(true);
     cursors.down.reset(true);
-    
 
     // Stop player
 
@@ -791,7 +793,7 @@ function endGame() {//                                                          
     // Cleaning...
     clearGameAll();
 
-    //victoryAtEnd = score>=levelData.LevelData[levelDifficulty-1].VICTORY_POINTS;
+    victoryAtEnd = score>=levelData.LevelData[levelDifficulty-1].VICTORY_POINTS;
 
     // Final animation (a tween)
     let finalTween = game.add.tween(player.scale).to({
@@ -817,8 +819,8 @@ function endGame() {//                                                          
 }
 
 function createPlayer(){//                                                          Crea al jugador principal
-    let x = game.world.centerX +levelData.LevelData[levelDifficulty-1].PLAYER_X_INICIAL;
-    let y = levelData.LevelData[levelDifficulty-1].PLAYER_Y_INICIAL;
+    let x = game.world.centerX +200 ;
+    let y = 2000;
 
     player = game.add.sprite(x, y, 'playerAnimation', 0);
     player.anchor.setTo(0.5, 0.5);
@@ -839,6 +841,10 @@ function createBlast(){//                                                       
     blast.body.collideWorldBounds = false;
 
     blast.angle = player.angle;
+
+    disparo = game.sound.add('Disparo');
+    disparo.volume = 0.75;
+    disparo.play();
 
 
 }
@@ -903,7 +909,8 @@ function rotatePlayer(){//                                                      
 
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida  
+    if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+
         let x = Phaser.Math.random(50, 1870);
         let y = Phaser.Math.random(50, 1030);
 
@@ -913,8 +920,10 @@ function createEnemy(){//                                                       
         }
 
 
-        enemy = game.add.sprite(x, y, 'enemy');
+        enemy = game.add.sprite(x, y, 'enemigoAnimacion');
+        enemy.animations.add('enemigoAnimacion');
         enemy.anchor.setTo(0.5, 0.5);
+
         enemy.enableBody = true;
         game.physics.arcade.enable(enemy);
         enemy.body.collideWorldBounds = true;
@@ -965,10 +974,7 @@ function rotateEnemy(enemigo) {//                                               
 
 function timeEnemy(tiempo){//                                                       Tiempo de creación de enemigos
     game.time.events.add(tiempo, function() {
-        if(enemies.length < 5){
-            createEnemy();
-            
-        }
+        createEnemy();
         /*
         tiempoDisparo = Phaser.Math.random(1000, 5000);
         if(levelDifficulty==2){timeEnemyShoot(tiempoDisparo);}
@@ -978,10 +984,7 @@ function timeEnemy(tiempo){//                                                   
 
 function timeEnemyCuadrado(tiempo){//                                                       Tiempo de creación de enemigos
     game.time.events.add(tiempo, function() {
-        if(enemiesCuadrado.length < 5){
-            createEnemyCuadrado();
-            console.log("cuadrados = ", enemies.length);
-        }
+        createEnemyCuadrado();
         /*
         tiempoDisparo = Phaser.Math.random(1000, 5000);
         if(levelDifficulty==2){timeEnemyShoot(tiempoDisparo);}
@@ -1015,6 +1018,7 @@ function moveTo(object, targetX, targetY, speed) {//                            
 
 function disparar(){//                                                              Permite el disparo del jugador
     if(click.isDown && control == false && municionActual>0){
+        game.camera.shake(0.0025);
         createBlast();
         moveTo(blast, game.input.mousePointer.worldX, game.input.mousePointer.worldY, 500);
         control = true;
@@ -1042,7 +1046,7 @@ function destroyBlast(tiempo, blast){//                                         
 function destroyGranada(tiempo, enemyGranada, player){//                                             Destruye el proyectil del jugador
     game.time.events.add(tiempo, function() {
 
-        areaDamageRadius = levelData.LevelData[levelDifficulty-1].GRANADA_AREA_RADIUS;
+        areaDamageRadius = 200;
 
         detectarObjeto(areaDamageRadius, player, enemyGranada);
         enemyGranada.kill();
@@ -1075,6 +1079,11 @@ function detectarObjeto(area, player, enemyGranada){
 }
 
 function recogerMonedas(player,moneda){//                                           Permite recoger las monedas
+
+    pickMoneda = game.sound.add('RecogerMoneda');
+    pickMoneda.volume = 0.5;
+    pickMoneda.play();
+
     moneda.kill();
     monedasList.splice(monedasList.indexOf(moneda),1);
     dineroTotal += 1;
@@ -1088,6 +1097,11 @@ function recogerVida(player,corazon){//                                         
 }
 
 function recogerBullets(player,bullet){//                                           Permite recoger la munición
+
+    pickBala = game.sound.add('RecogerBala');
+    pickBala.volume = 0.25;
+    pickBala.play();
+
     bullet.kill();
     municionActual += 1;
 }
@@ -1224,6 +1238,10 @@ function destroyEnemyBlast(enemyBlast){
 
 function playerHit(){//                                                             Daño provocado al jugador
 
+
+    camera = Phaser.camera;
+
+    game.camera.shake(0.015);
     playerHealth -= 1;
 
     explosionPlayer();
@@ -1232,22 +1250,21 @@ function playerHit(){//                                                         
 }
 
 function abrirBarrera(){
-    if(killCount == levelData.LevelData[levelDifficulty-1].BARRIER_1_KILLS){
+    if(killCount == 5){
         barreraMapa.kill();
     }
 }
 
 function abrirBarrera2(){
-    if(killCount == levelData.LevelData[levelDifficulty-1].BARRIER_2_KILLS){
+    if(killCount == 15){
         barreraMapa2.kill();
     }
 }
 
 function endPortal(){
-    if(killCount >= levelData.LevelData[levelDifficulty-1].END_PORTAL_KILLS && game.physics.arcade.collide(player, portal)){
+    if(killCount >= 20 && game.physics.arcade.collide(player, portal)){
         portal.kill();
-        victoryAtEnd = true;
-        endGame();
+
     }
 }
 
