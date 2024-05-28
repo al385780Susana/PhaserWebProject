@@ -295,7 +295,7 @@ function initialiseGame() {
     score = 0;
     valorCorazon = 5;
     valorSprint = 10;
-    valorSuerte = 2;
+    valorSuerte = 15;
     mejoraSuerteCompra = 0;
 
     //BOOL
@@ -1355,17 +1355,28 @@ function endPortal(){
 }
 
 function corazonesRespawn(){
-    limite = 10;
-    for(i = 0; i < limite; i++){
-        randomx = Phaser.Math.random(50, 1900);
-        randomy = Phaser.Math.random(50, 2180);
+
+    let limite = 0;
+
+    while(limite < 10){
+
+        let randomx = Phaser.Math.random(50, 1900);
+        let randomy = Phaser.Math.random(50, 2180);
+
+        while((957 <= randomx && randomx <= 1351) && randomy >= 1800){
+            randomx = Phaser.Math.random(50, 1900);
+            randomy = Phaser.Math.random(50, 2180);
+        }
 
         corazon = game.add.sprite(randomx, randomy, 'corazon');
         corazon.anchor.setTo(0.5, 0.5);
         game.physics.arcade.enable(corazon);
         corazonList.push(corazon);
 
+        limite++;
+        console.log(limite);
     }
+    console.log("todos generados");
 }
 
 function actualizarVida(){
