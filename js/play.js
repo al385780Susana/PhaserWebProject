@@ -181,7 +181,7 @@ function initialiseGame() {
     else if(dificultadCartel == 2){
         dificultad2 = game.add.sprite(110, 25 , 'dificultad2');
         dificultad2.anchor.setTo(0.5, 0.5);
-        dificultad3.scale.setTo(0.5);
+        dificultad2.scale.setTo(0.5);
         dificultad2.fixedToCamera = true;
     }
     else if(dificultadCartel == 3){
@@ -1346,7 +1346,7 @@ function abrirBarrera2(){
 }
 
 function endPortal(){
-    if(killCount >= 20 && game.physics.arcade.collide(player, portal)){
+    if(killCount >= 30 && game.physics.arcade.collide(player, portal)){
         portal.kill();
         victoryAtEnd = true;
         endGame()
