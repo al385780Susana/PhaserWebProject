@@ -793,7 +793,7 @@ function endGame() {//                                                          
     // Cleaning...
     clearGameAll();
 
-    victoryAtEnd = score>=levelData.LevelData[levelDifficulty-1].VICTORY_POINTS;
+
 
     // Final animation (a tween)
     let finalTween = game.add.tween(player.scale).to({
@@ -909,8 +909,8 @@ function rotatePlayer(){//                                                      
 
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
-
+    if(!gameOver && enemies.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+        console.log("Normales " + enemies.length);
         let x = Phaser.Math.random(50, 1870);
         let y = Phaser.Math.random(50, 1030);
 
@@ -937,8 +937,8 @@ function createEnemy(){//                                                       
 
 function createEnemyCuadrado(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
-
+    if(!gameOver && enemiesCuadrado.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+        console.log("Cuadrados " + enemiesCuadrado.length);
         let x = Phaser.Math.random(50, 1870);
         let y = Phaser.Math.random(50, 1030);
 
@@ -1264,6 +1264,8 @@ function abrirBarrera2(){
 function endPortal(){
     if(killCount >= 20 && game.physics.arcade.collide(player, portal)){
         portal.kill();
+        victoryAtEnd = true;
+        endGame()
 
     }
 }
