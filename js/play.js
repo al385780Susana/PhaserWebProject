@@ -911,15 +911,38 @@ function createEnemy(){//                                                       
 
     if(!gameOver && enemies.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
         console.log("Normales " + enemies.length);
-        let x = Phaser.Math.random(50, 1870);
-        let y = Phaser.Math.random(50, 1030);
+        
+        let x = 0;
+        let y = 0;
 
-        while(957 <= x <= 1351 && y >= 681){
+        if(killCount < 5){
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(50, 1030);
+            y = Phaser.Math.random(1240, 2150);
         }
-
-
+        else if(killCount < 15){
+            x = Phaser.Math.random(50, 1870);
+            y = Phaser.Math.random(565, 2150);
+        }
+        else{
+            x = Phaser.Math.random(50, 1870);
+            y = Phaser.Math.random(50, 2150);
+        }
+        
+        while(x > 957 && x <= 1351 && y >= 681){
+            if(killCount < 5){
+                x = Phaser.Math.random(50, 1870);
+                y = Phaser.Math.random(1240, 2150);
+            }
+            else if(killCount < 15){
+                x = Phaser.Math.random(50, 1870);
+                y = Phaser.Math.random(565, 2150);
+            }
+            else{
+                x = Phaser.Math.random(50, 1870);
+                y = Phaser.Math.random(50, 2150);
+            }
+        }
+        
         enemy = game.add.sprite(x, y, 'enemigoAnimacion');
         enemy.animations.add('enemigoAnimacion');
         enemy.anchor.setTo(0.5, 0.5);
@@ -931,22 +954,45 @@ function createEnemy(){//                                                       
         rotateEnemy(enemy);
         enemies.push(enemy);
     }
-
-
 }
+
 
 function createEnemyCuadrado(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
     if(!gameOver && enemiesCuadrado.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
         console.log("Cuadrados " + enemiesCuadrado.length);
-        let x = Phaser.Math.random(50, 1870);
-        let y = Phaser.Math.random(50, 1030);
 
-        while(957 <= x <= 1351 && y >= 681){
+        let x = 0;
+        let y = 0;
+
+        if(killCount < 5){
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(50, 1030);
+            y = Phaser.Math.random(1240, 2150);
         }
-
+        else if(killCount < 15){
+            x = Phaser.Math.random(50, 1870);
+            y = Phaser.Math.random(565, 2150);
+        }
+        else{
+            x = Phaser.Math.random(50, 1870);
+            y = Phaser.Math.random(50, 2150);
+        }
+        
+        while(x > 957 && x <= 1351 && y >= 681){
+            if(killCount < 5){
+                x = Phaser.Math.random(50, 1870);
+                y = Phaser.Math.random(1240, 2150);
+            }
+            else if(killCount < 15){
+                x = Phaser.Math.random(50, 1870);
+                y = Phaser.Math.random(565, 2150);
+            }
+            else{
+                x = Phaser.Math.random(50, 1870);
+                y = Phaser.Math.random(50, 2150);
+            }
+        }
+       
 
         enemyCuadrado = game.add.sprite(x, y, 'enemigoCuadrado');
         enemyCuadrado.anchor.setTo(0.5, 0.5);
@@ -957,9 +1003,9 @@ function createEnemyCuadrado(){//                                               
         rotateEnemy(enemyCuadrado);
         enemiesCuadrado.push(enemyCuadrado);
     }
-
-
 }
+
+ 
 
 function rotateEnemy(enemigo) {//                                                     Rota el enemigo donde se encuentra el jugador
     var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
