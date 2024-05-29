@@ -28,6 +28,7 @@ function createInit() {
     game.add.image(0, 0, 'mainMenu');
 
     buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
+    buttonD = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
     titulo = game.add.image(405, 70, 'titulo');
     titulo.anchor.setTo(0.5, 0.5);
@@ -65,6 +66,7 @@ function createInit() {
 function updateInit(){
 
     clickComic();
+    clickDance();
 }
 
 function startMovingAnimation() {
@@ -129,4 +131,10 @@ function clickComic(){
     if (buttonC.isDown) {
         game.state.start('comic');
     } 
+}
+
+function clickDance(){
+    if(buttonD.isDown){
+        game.state.start('danceRoom');
+    }
 }

@@ -89,6 +89,7 @@ function loadAssets() {
     game.load.spritesheet('barreraMapa', 'assets/barreraMapa.png', 1920, 30);
     game.load.spritesheet('enemigoAnimacion', 'assets/enemigoanimation.png', 50, 50);
     game.load.spritesheet('portal', 'assets/portal.png', 200, 200);
+    game.load.spritesheet('estela', 'assets/EstelaFinal.png', 50, 50);
 
     game.load.image('player','assets/nave_inicial_0.png' );
     game.load.atlas('playerAtlas','assets/naveDestruccion.png');
@@ -1292,6 +1293,18 @@ function explosionEnemy(enemy){
 
     explosionEnemigo.animations.add('daño');
     explosionEnemigo.animations.play('daño', 15, false, true);
+
+    enemy = game.add.sprite(enemy.x, enemy.y, 'estela');
+    enemy.anchor.setTo(0.5, 0.5);
+    enemy.scale.setTo(1, 1);
+
+    enemy.animations.add('estela');
+    enemy.animations.play('estela', 12, true, false);
+
+    timerEstela = game.time.events.add(Phaser.Timer.SECOND * 2, function() {
+        enemy.kill();
+    }, game);
+
 }
 
 function explosionPlayer(){
@@ -1413,3 +1426,4 @@ function actualizarVida(){
         //Moribundo
     }
 }
+

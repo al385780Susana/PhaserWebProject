@@ -5,7 +5,7 @@ let danceRoomState = {
 };
 
 function preloadDanceRoom() {
-    game.load.image('background', 'assets/fondoGrande.png');
+    game.load.image('background', 'assets/FondoDance.png');
 }
 
 function createDanceRoom() {
