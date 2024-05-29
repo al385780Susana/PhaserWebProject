@@ -27,6 +27,8 @@ function createInit() {
 
     game.add.image(0, 0, 'mainMenu');
 
+    buttonC = game.input.keyboard.addKey(Phaser.Keyboard.C);
+
     titulo = game.add.image(405, 70, 'titulo');
     titulo.anchor.setTo(0.5, 0.5);
 
@@ -60,7 +62,10 @@ function createInit() {
     addButtonHoverEffect(btnTuto);
 }
 
-function updateInit(){}
+function updateInit(){
+
+    clickComic();
+}
 
 function startMovingAnimation() {
     var animNave = game.add.tween(Nave.position);
@@ -118,4 +123,10 @@ function clickTutorial() {
 function clickDificultad(){
     btnStart.inputEnabled = false;
     game.state.start('seleccionDificultad');
+}
+
+function clickComic(){
+    if (buttonC.isDown) {
+        game.state.start('comic');
+    } 
 }
