@@ -70,6 +70,7 @@ let corazonList;
 let corazon;
 let puedeComprar = true;
 let persecucion;
+let alarmaSonido;
 
 let LevelData;
 
@@ -87,6 +88,7 @@ function loadAssets() {
     game.load.spritesheet('onda', 'assets/onda expansiva.png', 200, 200);
     game.load.spritesheet('barreraMapa', 'assets/barreraMapa.png', 1920, 30);
     game.load.spritesheet('enemigoAnimacion', 'assets/enemigoanimation.png', 50, 50);
+    game.load.spritesheet('portal', 'assets/portal.png', 200, 200);
 
     game.load.image('player','assets/nave_inicial_0.png' );
     game.load.atlas('playerAtlas','assets/naveDestruccion.png');
@@ -106,7 +108,6 @@ function loadAssets() {
     game.load.image('corazon', 'assets/corazon.png');
     game.load.image('recarga', 'assets/recargaMunicion.png');
     game.load.image('enemigoCuadrado', 'assets/enemigoCuadrado.png');
-    game.load.image('portal', 'assets/portal.png');
     game.load.image('alarma', 'assets/peligro.png');
     game.load.image('dificultad1', 'assets/dificultad1.png');
     game.load.image('dificultad2', 'assets/dificultad2.png');
@@ -118,7 +119,7 @@ function loadAssets() {
     game.load.audio('RecogerMoneda', 'assets/snds/Moneda.mp3');
     game.load.audio('RecogerBala', 'assets/snds/BalasCaidas.mp3');
     game.load.audio('MusicaJuego', 'assets/snds/MusicaJuego.mp3');
-
+    game.load.audio('Alarma', 'assets/snds/Alarma.mp3');
 }
 
 
@@ -132,6 +133,7 @@ function initialiseGame() {
     musicaFondo.volume = 0.25;
     musicaFondo.loop = true;
     musicaFondo.play();
+
 
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -218,8 +220,11 @@ function initialiseGame() {
     //MAPA
 
     portal = game.add.sprite(960, 100, 'portal');
+    portal.animations.add('portal');
     portal.anchor.setTo(0.5, 0.5);
     portal.scale.setTo(0.5, 0.5);
+    portal.animations.play('portal', 8, true, false);
+
     game.physics.arcade.enable(portal);
     portal.body.immovable = true;
 
@@ -489,7 +494,7 @@ function inSafeZone(){
         estar = true;
         console.log('Esta dentro de la ZS');
 
-        if (!contadorZS) {     
+        if (!contadorZS) {
 
             contadorZS = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
                 clearGameAll();
@@ -500,6 +505,11 @@ function inSafeZone(){
                 alarma = game.add.image(0, 0, 'alarma');
                 alarma.fixedToCamera = true;
                 alarma.alpha = 0;
+                alarmaSonido = game.add.sound('Alarma');
+                alarmaSonido.volume = 0.5;
+                alarmaSonido.loop = true;
+                alarmaSonido.play();
+
                 var tween = game.add.tween(alarma).to({ alpha: 1 }, 300, Phaser.Easing.Linear.None, true, 0, -1, true);
             }, game);
         }
@@ -516,6 +526,9 @@ function inSafeZone(){
         if (alarma) {
             alarma.kill();
             alarma = null;
+            if(alarmaSonido){
+                alarmaSonido.stop();
+            }
         }
 
         if (contadorZS) {
