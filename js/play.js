@@ -5,6 +5,7 @@
 
 let levelDifficulty = 3;
 let gameOver = false;
+let paused = false;
 let victoryAtEnd = false;
 
 
@@ -41,6 +42,11 @@ let bullet;
 let bulletList;
 let alarma;
 
+
+let recargaMunicion;
+let recargaMunicion2;
+let recargaMunicion3;
+
 let enemyBlast;
 let enemyGranada;
 let enemieBlastList;
@@ -68,23 +74,30 @@ let puedeComprar = true;
 let persecucion;
 let alarmaSonido;
 
+//JSON
 let LevelData;
 let jsonLvl;
+
 let jsonPlayer;
 let jsonEnemy;
+
+let jsonBarr;
+let jsonMuro;
+let jsonTecho;
+
 let jsonTextoFondo;
 let jsonBulletHUD;
 let jsonMonedaHUD;
 let jsonRecarga;
 let jsonDificultadHUD;
+
 let jsonCorazon;
 let jsonSprint;
 let jsonSuerte;
 let jsonEscudo;
 let jsonPortal;
-let jsonBarr;
-let jsonMuro;
-let jsonTecho;
+
+let enemyVelocity;
 
 
 //CARGAR IMAGENES
@@ -145,6 +158,8 @@ function initialiseGame() {
     jsonEnemy = jsonLvl.ENEMY;
 
 
+    enemyVelocity = jsonEnemy.velocity;
+
     musicaFondo = game.sound.add('MusicaJuego');
     musicaFondo.volume = 0.25;
     musicaFondo.loop = true;
@@ -181,6 +196,15 @@ function initialiseGame() {
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
 
+    recargaMunicion2 = game.add.sprite(jsonRecarga.x1, jsonRecarga.y1 , 'recarga');
+    recargaMunicion2.anchor.setTo(0.5, 0.5);
+    recargaMunicion2.scale.setTo(1.5,1.5);
+    game.physics.arcade.enable(recargaMunicion2);
+
+    recargaMunicion3 = game.add.sprite(jsonRecarga.x2, jsonRecarga.y2 , 'recarga');
+    recargaMunicion3.anchor.setTo(0.5, 0.5);
+    recargaMunicion3.scale.setTo(1.5,1.5);
+    game.physics.arcade.enable(recargaMunicion3);
 
     //ALARMA
     alarma = game.add.image(0, 0, 'alarma');
@@ -362,6 +386,10 @@ function gameUpdate() {
     if (gameOver) {
         return;
     }
+    else if(paused){
+        updateText();
+        wallsCollision();
+    }
     else{
 
         if(buttonShift.isDown && compraVelocidad == true){
@@ -382,6 +410,7 @@ function gameUpdate() {
         }
 
         manageColision();//             Tiene en cuenta la colisión del jugador
+        wallsCollision();//    Colisiones que no se pausan para evitar bugs
         updateText();//                 Actualiza los valores de municion y dinero.
 
         abrirBarrera();
@@ -463,25 +492,68 @@ function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador
 }
 */
 
+function wallsCollision(){
+    if(enemy){
+        for(let i = 0; i <= enemies.length; i++){
+            game.physics.arcade.collide(techoSeguro, enemies[i]);
+            game.physics.arcade.collide(muroSeguro, enemies[i]);
+            game.physics.arcade.collide(muroSeguro2, enemies[i]);
+        }
+    }
+
+    if(enemyCuadrado){
+        for(let i = 0; i <= enemiesCuadrado.length; i++){
+            game.physics.arcade.collide(techoSeguro, enemiesCuadrado[i]);
+            game.physics.arcade.collide(muroSeguro, enemiesCuadrado[i]);
+            game.physics.arcade.collide(muroSeguro2, enemiesCuadrado[i]);
+        }
+    }
+
+    if(enemyBlast){
+        for(let i = 0; i <= enemieBlastList.length; i++){
+            if(!gameOver && !paused) {game.physics.arcade.collide(player,enemieBlastList[i], ataqueRecibido, null, game);}
+            game.physics.arcade.collide(techoSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro2, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
+        }
+    }
+
+    if(enemyGranada){
+        for(let i = 0; i <= enemieGranadaList.length; i++){
+            if(!gameOver && !paused){game.physics.arcade.collide(player,enemieGranadaList[i], ataqueRecibido, null, game);}
+            game.physics.arcade.collide(techoSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
+            game.physics.arcade.collide(muroSeguro2, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
+        }
+    }
+
+}
+
 function enemiesMovement() {
     enemies.forEach(function(enemy) {
-        // Calcula la distancia entre el enemigo y el jugador
-        distanciaJugador = Phaser.Math.distance(player.x, player.y, enemy.x, enemy.y);
+        if(!gameOver && !paused){
+            // Calcula la distancia entre el enemigo y el jugador
+            distanciaJugador = Phaser.Math.distance(player.x, player.y, enemy.x, enemy.y);
 
-        // Comprueba si el jugador está dentro del rango de visión
-        if (distanciaJugador <= jsonEnemy.rango) {
-            // Mueve el enemigo hacia el jugador
-            enemy.animations.play('enemigoAnimacion', 14, true, true);
-            moveTo(enemy, player.x, player.y, jsonEnemy.velocity);
-            persecucion = true;
-            /*
-            enemy.animations.add('enemigoAnimacion');
-            enemy.animations.play('enemigoAnimacion', 14, false, true);
-            */
+            // Comprueba si el jugador está dentro del rango de visión
+            if (distanciaJugador <= jsonEnemy.rango) {
+                // Mueve el enemigo hacia el jugador
+                enemy.animations.play('enemigoAnimacion', 14, true, true);
+                moveTo(enemy, player.x, player.y, enemyVelocity);
+                persecucion = true;
+                /*
+                enemy.animations.add('enemigoAnimacion');
+                enemy.animations.play('enemigoAnimacion', 14, false, true);
+                */
+            }
+            else{
+                persecucion = false;
+            }
         }
         else{
             persecucion = false;
         }
+
         // Si el jugador está fuera del rango de visión, el enemigo no se mueve
         if (!persecucion) {
             enemy.body.velocity.setTo(0);
@@ -494,9 +566,9 @@ function enemiesMovement() {
 }
 
 function inSafeZone(){
-    if( jsonMuro.x0 <= player.x && player.x <= jsonMuro.x1 && player.y >= jsonMuro.y){
+    if( jsonMuro.x0 <= player.x && player.x <= jsonMuro.x1 && player.y >= jsonTecho.y){
         estar = true;
-        console.log('Esta dentro de la ZS');
+        console.log('Esta dentro de la ZS y = '+player.y+" , x: "+player.x);
 
         if (!contadorZS) {
 
@@ -525,7 +597,7 @@ function inSafeZone(){
         estar = false;
         
         puedeComprar = true;
-        console.log('NO ESTA DENTRO DE ZS');
+        console.log('NO ESTA DENTRO DE ZS y' + player.y + ", x "+player.x);
 
         if (alarma) {
             alarma.kill();
@@ -560,7 +632,7 @@ function idle(){
 }
 
 function enemiesShoot(){//                                                          El enemigo dispara en dirección del jugador
-    if(enemy && !gameOver){
+    if(enemy && !gameOver&&!paused){
         enemies.forEach(function(enemy) {
             tiempo = Phaser.Math.random(500, 3000);
             if(enemy){
@@ -586,7 +658,7 @@ function enemiesShoot(){//                                                      
 }
 
 function enemiesShootCuadrado(){//                                                          El enemigo dispara en dirección del jugador
-    if(enemyCuadrado && !gameOver){
+    if(enemyCuadrado && !gameOver && !paused){
         enemiesCuadrado.forEach(function(enemyCuadrado) {
             tiempo = Phaser.Math.random(1000, 3000);
             if(enemyCuadrado){
@@ -668,49 +740,78 @@ function manageColision(){//                                                    
         }
     }
 
-    if(enemyBlast){
-        for(let i = 0; i <= enemieBlastList.length; i++){
-            game.physics.arcade.collide(player,enemieBlastList[i], ataqueRecibido, null, game);
-            game.physics.arcade.collide(techoSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
-            game.physics.arcade.collide(muroSeguro, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
-            game.physics.arcade.collide(muroSeguro2, enemieBlastList[i], function() {destroyEnemyBlast(enemieBlastList[i]); }, null, game);
-        }
-    }
 
-    if(enemyGranada){
-        for(let i = 0; i <= enemieGranadaList.length; i++){
-            game.physics.arcade.collide(player,enemieGranadaList[i], ataqueRecibido, null, game);
-            game.physics.arcade.collide(techoSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
-            game.physics.arcade.collide(muroSeguro, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
-            game.physics.arcade.collide(muroSeguro2, enemieGranadaList[i], function() {destroyEnemyBlast(enemieGranadaList[i]); }, null, game);
-        }
-    }
-
-    if(enemy){
-        for(let i = 0; i <= enemies.length; i++){
-            game.physics.arcade.collide(techoSeguro, enemies[i]);
-            game.physics.arcade.collide(muroSeguro, enemies[i]);
-            game.physics.arcade.collide(muroSeguro2, enemies[i]);
-        }
-    }
-
-    if(enemyCuadrado){
-        for(let i = 0; i <= enemiesCuadrado.length; i++){
-            game.physics.arcade.collide(techoSeguro, enemiesCuadrado[i]);
-            game.physics.arcade.collide(muroSeguro, enemiesCuadrado[i]);
-            game.physics.arcade.collide(muroSeguro2, enemiesCuadrado[i]);
-        }
-    }
 
     if(game.physics.arcade.overlap(player, recargaMunicion)){
-        if(municionActual < jsonPlayer.municionInicial){
-            municionActual = jsonPlayer.municionActual;
+        if(municionActual < jsonPlayer.municionInicial){            
+            paused = true;
+
+            player.body.velocity.x = player.body.velocity.y = 0;
+            let recargandoTween = game.add.tween(player.scale).to({
+                x: 2,
+                y: 2
+            }, 500,
+            Phaser.Easing.Cubic.Out, true, 0, 2, true);
+    
+        recargandoTween.onComplete.add(function(){
+                paused = false;
+            }, game)
+        
+            municionActual = jsonPlayer.municionInicial;
             recargaMunicion.scale.setTo(1.0, 1.0);
         }
     }
     else{
         recargaMunicion.scale.setTo(1.5, 1.5);
     }
+
+    if(game.physics.arcade.overlap(player, recargaMunicion2)){
+        if(municionActual < jsonPlayer.municionInicial){            
+            paused = true;
+
+            player.body.velocity.x = player.body.velocity.y = 0;
+            let recargandoTween = game.add.tween(player.scale).to({
+                x: 2,
+                y: 2
+            }, 500,
+            Phaser.Easing.Cubic.Out, true, 0, 2, true);
+    
+        recargandoTween.onComplete.add(function(){
+                paused = false;
+            }, game)
+        
+            municionActual = jsonPlayer.municionInicial;
+            recargaMunicion2.scale.setTo(1.0, 1.0);
+        }
+    }
+    else{
+        recargaMunicion2.scale.setTo(1.5, 1.5);
+    }
+
+    
+    if(game.physics.arcade.overlap(player, recargaMunicion3)){
+        if(municionActual < jsonPlayer.municionInicial){            
+            paused = true;
+
+            player.body.velocity.x = player.body.velocity.y = 0;
+            let recargandoTween = game.add.tween(player.scale).to({
+                x: 2,
+                y: 2
+            }, 500,
+            Phaser.Easing.Cubic.Out, true, 0, 2, true);
+    
+        recargandoTween.onComplete.add(function(){
+                paused = false;
+            }, game)
+        
+            municionActual = jsonPlayer.municionInicial;
+            recargaMunicion3.scale.setTo(1.0, 1.0);
+        }
+    }
+    else{
+        recargaMunicion3.scale.setTo(1.5, 1.5);
+    }
+
 
     if(game.physics.arcade.overlap(player, mejoraCorazon)){
 
@@ -818,6 +919,7 @@ function endGame() {//                                                          
     muerte.play();
 
     // Game Over
+    paused = true;
     gameOver = true;
 
     // Stop and reset input
@@ -951,43 +1053,43 @@ function rotatePlayer(){//                                                      
 
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver && enemies.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+    if(!gameOver && !paused && enemies.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
         console.log("Normales " + enemies.length);
         
         let x = 0;
         let y = 0;
 
-        if(killCount < 5){
+        if(killCount < jsonLvl.BARRIER_1_KILLS){
             console.log("estoy generando en 1");
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(1240, 1800);
+            y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
         }
-        else if(killCount < 15){
+        else if(killCount < jsonLvl.BARRIER_2_KILLS){
             console.log("estoy generando en 2");
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(565, 1800);
+            y = Phaser.Math.random(jsonBarr.y1 + 10, jsonTecho.y - 10);
         }
         else{
             console.log("estoy generando en 3");
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(50, 1800);
+            y = Phaser.Math.random(50, jsonTecho.y);
         }
         
-        while((x > 950 && x < 1360) && y > 1790){
+        while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > jsonTecho.y){
             if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
                 x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(1240, 1800);
+                y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
             }
             else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
                 x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(565, 1800);
+                y = Phaser.Math.random(jsonBarr.y1 +10, jsonTecho.y - 10);
             }
             else{
                 console.log("estoy generando en 3");
                 x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(50, 1800);
+                y = Phaser.Math.random(50, jsonTecho.y - 10);
             }
         }
         
@@ -1007,7 +1109,7 @@ function createEnemy(){//                                                       
 
 function createEnemyCuadrado(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver && enemiesCuadrado.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+    if(!gameOver && !paused && enemiesCuadrado.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
         console.log("Cuadrados " + enemiesCuadrado.length);
 
         let x = 0;
@@ -1016,34 +1118,34 @@ function createEnemyCuadrado(){//                                               
         if(killCount < jsonLvl.BARRIER_1_KILLS){
             console.log("estoy generando en 1");
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(1240, 1800);
+            y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
         }
         else if(killCount < jsonLvl.BARRIER_2_KILLS){
             console.log("estoy generando en 2");
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(565, 1800);
+            y = Phaser.Math.random(jsonBarr.y1 + 10, jsonTecho.y - 10);
         }
         else{
             console.log("estoy generando en 3");
             x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(50, 1800);
+            y = Phaser.Math.random(50, jsonTecho.y);
         }
         
-        while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > techoSeguro.y){
+        while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > jsonTecho.y){
             if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
                 x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(1240, 1800);
+                y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
             }
             else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
                 x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(565, 1800);
+                y = Phaser.Math.random(jsonBarr.y1 +10, jsonTecho.y - 10);
             }
             else{
                 console.log("estoy generando en 3");
                 x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(50, 1800);
+                y = Phaser.Math.random(50, jsonTecho.y - 10);
             }
         }
        
