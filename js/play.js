@@ -831,7 +831,7 @@ function endGame() {//                                                          
         player.destroy();
         if (victoryAtEnd) {
             //soundVictory.play();
-            game.state.start('win');
+            game.state.start('comic');
        } else {
             //soundDefeat.play();
             game.state.start('gameOver');

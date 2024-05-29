@@ -24,5 +24,7 @@ function startGame() {
     game.state.add('win', winState);
     game.state.add('tutorial', tutorialState);
     game.state.add('creditos', creditosState);
+    game.state.add('danceRoom', danceRoomState);
+    game.state.add('comic', comicState);
     game.state.start('init');
 }
