@@ -47,7 +47,6 @@ let enemieBlastList;
 let enemieGranadaList;
 
 let municionActual;
-municionActual
 let score = 0;
 let dineroTotal = 0;
 let killCount = 0;
@@ -61,10 +60,7 @@ let playerIdleAnimation;
 let estar;
 let contadorZS;
 let compraVelocidad;
-let valorEscudo;
-let valorCorazon;
-let valorSprint;
-let valorSuerte;
+
 let mejoraSuerteCompra;
 let corazonList;
 let corazon;
@@ -73,6 +69,22 @@ let persecucion;
 let alarmaSonido;
 
 let LevelData;
+let jsonLvl;
+let jsonPlayer;
+let jsonEnemy;
+let jsonTextoFondo;
+let jsonBulletHUD;
+let jsonMonedaHUD;
+let jsonRecarga;
+let jsonDificultadHUD;
+let jsonCorazon;
+let jsonSprint;
+let jsonSuerte;
+let jsonEscudo;
+let jsonPortal;
+let jsonBarr;
+let jsonMuro;
+let jsonTecho;
 
 
 //CARGAR IMAGENES
@@ -80,7 +92,6 @@ function loadAssets() {
 //Info nivel
     game.load.text('levelJSON','assets/levelData/levelData.json');
 
-    //game.load.image('sky', 'assets/sky.png');
     game.load.spritesheet('playerAnimation', 'assets/NaveDestruccion.png', 50, 50);
     game.load.spritesheet('explosion', 'assets/explosion.png', 50, 50);
     game.load.spritesheet('granada', 'assets/granada.png', 10, 10);
@@ -128,6 +139,11 @@ function loadAssets() {
 function initialiseGame() {
 
     levelData = JSON.parse(game.cache.getText('levelJSON'));
+    jsonLvl = levelData.LevelData[levelDifficulty-1];
+    
+    jsonPlayer = jsonLvl.PLAYER;
+    jsonEnemy = jsonLvl.ENEMY;
+
 
     musicaFondo = game.sound.add('MusicaJuego');
     musicaFondo.volume = 0.25;
@@ -142,21 +158,25 @@ function initialiseGame() {
     let bg = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'fondoGrande');
     bg.scrollFactorX = 0.7;
     bg.scrollFactorY = 0.7;
-    //CARGAMOS LOS ASSETS EN EL JUEGO
 
-    //game.add.sprite(0,0,'sky');
-    textoFondo = game.add.text(400, 300, killCount, { font: '04B_19', fontSize: '100px', fill: '#000000' });
+    //CARGAMOS LOS ASSETS EN EL JUEGO
+    jsonTextoFondo = jsonLvl.TEXTO_FONDO;
+    jsonBulletHUD = jsonLvl.BULLET_HUD;
+    jsonMonedaHUD = jsonLvl.MONEDA_HUD;
+
+    textoFondo = game.add.text(jsonTextoFondo.x, jsonTextoFondo.y, killCount, { font: '04B_19', fontSize: '100px', fill: '#000000' });
     textoFondo.alpha = 0.2;
     textoFondo.anchor.setTo(0.5);
-    bulletHUD = game.add.sprite(725,525, 'bulletHUD');
+    bulletHUD = game.add.sprite(jsonBulletHUD.sprite.x,jsonBulletHUD.sprite.y, 'bulletHUD');
     bulletHUD.scale.setTo(1.5);
-    monedaHUD = game.add.sprite(0,525, 'monedaHUD');
+    monedaHUD = game.add.sprite(jsonMonedaHUD.sprite.x,jsonMonedaHUD.sprite.y, 'monedaHUD');
     monedaHUD.scale.setTo(1.5);
 
 
 
     //RECARGA MUNICIÓN
-    recargaMunicion = game.add.sprite(1300, 1870 , 'recarga');
+    jsonRecarga = jsonLvl.RECARGA_MUNICION;
+    recargaMunicion = game.add.sprite(jsonRecarga.x0, jsonRecarga.y0 , 'recarga');
     recargaMunicion.anchor.setTo(0.5, 0.5);
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
@@ -168,58 +188,50 @@ function initialiseGame() {
     alarma.alpha = 0;
     
     //DIFICULTAD
-    dificultadCartel = levelData.LevelData[levelDifficulty-1].DIFICULTAD;
-    if(dificultadCartel == 1){
-        dificultad1 = game.add.sprite(110, 25 , 'dificultad1');
-        dificultad1.anchor.setTo(0.5, 0.5);
-        dificultad1.scale.setTo(0.5);
-        dificultad1.fixedToCamera = true;
+    jsonDificultadHUD = jsonLvl.DIFICULTAD_HUD;
 
-    }
-    else if(dificultadCartel == 2){
-        dificultad2 = game.add.sprite(110, 25 , 'dificultad2');
-        dificultad2.anchor.setTo(0.5, 0.5);
-        dificultad2.scale.setTo(0.5);
-        dificultad2.fixedToCamera = true;
-    }
-    else if(dificultadCartel == 3){
-        dificultad3 = game.add.sprite(110, 25 , 'dificultad3');
-        dificultad3.anchor.setTo(0.5, 0.5);
-        dificultad3.scale.setTo(0.5);
-        dificultad3.fixedToCamera = true;
-    }
+    let dificultadHUD = game.add.sprite(jsonDificultadHUD.x, jsonDificultadHUD.y, jsonDificultadHUD.sprite);
+    dificultadHUD.anchor.setTo(0.5, 0.5);
+    dificultadHUD.scale.setTo(0.5);
+    dificultadHUD.fixedToCamera = true;
     
 
     //MEJORAS
 
-    mejoraCorazonTexto = game.add.text(1045, 2120, '5' , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraCorazon = game.add.sprite(1053, 2100,'corazon');
+    jsonCorazon = jsonLvl.MEJORAS.CORAZON;
+    jsonSprint = jsonLvl.MEJORAS.SPRINT;
+    jsonSuerte = jsonLvl.MEJORAS.SUERTE;
+    jsonEscudo = jsonLvl.MEJORAS.ESCUDO;
+
+    mejoraCorazonTexto = game.add.text(jsonCorazon.texto.x, jsonCorazon.texto.y, jsonCorazon.precio , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraCorazon = game.add.sprite(jsonCorazon.x, jsonCorazon.y,'corazon');
     mejoraCorazon.anchor.setTo(0.5, 0.5);
     mejoraCorazon.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraCorazon);
 
     /*
-    mejoraEscudo = game.add.sprite(1053, 2100, 'mejoraEscudo');
+    mejoraEscudo = game.add.sprite(jsonEscudo.x, jsonEscudo.y, 'mejoraEscudo');
     mejoraEscudo.anchor.setTo(0.5, 0.5);
     mejoraEscudo.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraEscudo);
     */
 
-    mejoraSprintTexto = game.add.text(1145, 2120, '10', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraSprint = game.add.sprite(1159, 2100, 'mejoraSprint');
+    mejoraSprintTexto = game.add.text(jsonSprint.texto.x, jsonSprint.texto.y, jsonSprint.precio, { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSprint = game.add.sprite(jsonSprint.x, jsonSprint.y, 'mejoraSprint');
     mejoraSprint.anchor.setTo(0.5, 0.5);
     mejoraSprint.scale.setTo(0.85,0.85);
     game.physics.arcade.enable(mejoraSprint);
 
-    mejoraSuerteTexto = game.add.text(1245, 2120, '15', { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
-    mejoraSuerte = game.add.sprite(1259, 2100, 'mejoraSuerte');
+    mejoraSuerteTexto = game.add.text(jsonSuerte.texto.x, jsonSuerte.texto.y, jsonSuerte.precio, { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
+    mejoraSuerte = game.add.sprite(jsonSuerte.x, jsonSuerte.y, 'mejoraSuerte');
     mejoraSuerte.anchor.setTo(0.5, 0.5);
     mejoraSuerte.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraSuerte);
 
     //MAPA
+    jsonPortal = jsonLvl.PORTAL;
 
-    portal = game.add.sprite(960, 100, 'portal');
+    portal = game.add.sprite(jsonPortal.x, jsonPortal.y, 'portal');
     portal.animations.add('portal');
     portal.anchor.setTo(0.5, 0.5);
     portal.scale.setTo(0.5, 0.5);
@@ -228,29 +240,33 @@ function initialiseGame() {
     game.physics.arcade.enable(portal);
     portal.body.immovable = true;
 
-    barreraMapa = game.add.sprite(0, 1240, 'barreraMapa');  //1240
+    jsonBarr = jsonLvl.BARRERA;
+    barreraMapa = game.add.sprite(jsonBarr.x, jsonBarr.y0, 'barreraMapa');  //1240
     barreraMapa.animations.add('laser');
     barreraMapa.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa);
     barreraMapa.body.immovable = true;
 
-    barreraMapa2 = game.add.sprite(0, 565, 'barreraMapa'); //565
+    barreraMapa2 = game.add.sprite(jsonBarr.x, jsonBarr.y1, 'barreraMapa'); //565
     barreraMapa2.animations.add('laser');
     barreraMapa2.animations.play('laser', 4, true, false );
     game.physics.arcade.enable(barreraMapa2);
     barreraMapa2.body.immovable = true;
 
-    muroSeguro = game.add.sprite(960,2000, 'muroZonaSegura');
+    jsonMuro = jsonLvl.ZONA_SEGURA;
+    muroSeguro = game.add.sprite(jsonMuro.x0,jsonMuro.y, 'muroZonaSegura');
     muroSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro);
     muroSeguro.body.immovable = true;
 
-    muroSeguro2 = game.add.sprite(1360,2000, 'muroZonaSegura');
+    muroSeguro2 = game.add.sprite(jsonMuro.x1,jsonMuro.y, 'muroZonaSegura');
     muroSeguro2.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(muroSeguro2);
     muroSeguro2.body.immovable = true;
 
-    techoSeguro = game.add.sprite(1160,1800, 'techoZonaSegura');
+
+    jsonTecho = jsonLvl.TECHO_SEGURO;
+    techoSeguro = game.add.sprite(jsonTecho.x,jsonTecho.y, 'techoZonaSegura');
     techoSeguro.anchor.setTo(0.5, 0.5);
     game.physics.arcade.enable(techoSeguro);
     techoSeguro.body.immovable = true;
@@ -273,9 +289,8 @@ function initialiseGame() {
 
     setTimeout(function(){game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);}, 500);
 
-
     //DAMOS LOS VALORES
-    playerHealth = levelData.LevelData[levelDifficulty-1].PLAYER_HEALTH;
+    playerHealth = jsonPlayer.maxHealth;
     click = game.input.mousePointer;
 
     //LISTAS
@@ -287,16 +302,15 @@ function initialiseGame() {
     enemiesCuadrado = [];
     corazonList = [];
 
-    //NUMERICO
-    municionActual = levelData.LevelData[levelDifficulty-1].MUNICION_INICIAL;
+    //INICIALIZACION VALORES NUMERICOS
+    municionActual = jsonPlayer.municionInicial;
+
+    //VARIABLES NUMERICAS
     contador = 0;
     contador2 = 0;
     dineroTotal = 0;
     killCount = 0;
     score = 0;
-    valorCorazon = 5;
-    valorSprint = 10;
-    valorSuerte = 15;
     mejoraSuerteCompra = 0;
 
     //BOOL
@@ -308,7 +322,7 @@ function initialiseGame() {
     corazonesRespawn();
 
     //HUD---------------------------------------------------------------
-    dineroTotalText = game.add.text(65, GAME_STAGE_HEIGHT - 50,
+    dineroTotalText = game.add.text(jsonMonedaHUD.texto.x, GAME_STAGE_HEIGHT - 50,
         dineroTotal, {
             font: '04B_19',
             fontSize: '32px',
@@ -317,7 +331,7 @@ function initialiseGame() {
 
     dineroTotalText.fixedToCamera = true;
 
-    bulletTotalText = game.add.text(700, GAME_STAGE_HEIGHT - 50,
+    bulletTotalText = game.add.text(jsonBulletHUD.texto.x, GAME_STAGE_HEIGHT - 50,
         municionActual, {
             font: '04B_19',
             fontSize: '32px',
@@ -351,7 +365,7 @@ function gameUpdate() {
     else{
 
         if(buttonShift.isDown && compraVelocidad == true){
-            velocidadExtra = 150;
+            velocidadExtra = jsonSprint.aumento;
         }
         else{
             velocidadExtra = 0;
@@ -430,30 +444,20 @@ function updateText(){//                                                        
         dineroTotalText.setText(dineroTotal);
         bulletTotalText.setText(municionActual);
         textoFondo.setText(killCount);
-       // scoreText.setText(score);
+
 }
 
-
-/*function enemiesMovement(){//                                                       El enemigo se mueve hacia el jugador (sin rango de persecucion)
-    if(enemy){
-            enemies.forEach(function(enemy) {
-                    moveTo(enemy,player.x, player.y,ENEMY_VELOCITY);
-
-            });
-    }
-
-}*/
 
 /*
 function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador está en el rango de persecucion del enemigo o el nivel es 1
     enemies.forEach(function(enemy) {
         if(levelDifficulty>1){
             distanciaJugador = Phaser.Math.distance(player.x,player.y, enemy.x,enemy.y);
-           if(distanciaJugador<=levelData.LevelData[levelDifficulty-1].RANGO_PERSECUCION){
-                moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);
+           if(distanciaJugador<=jsonLvl.RANGO_PERSECUCION){
+                moveTo(enemy,player.x, player.y,jsonLvl.ENEMY_VELOCITY);
            }
         }
-        //else { moveTo(enemy,player.x, player.y,levelData.LevelData[levelDifficulty-1].ENEMY_VELOCITY);}
+        //else { moveTo(enemy,player.x, player.y,jsonLvl.ENEMY_VELOCITY);}
 
     });
 }
@@ -465,10 +469,10 @@ function enemiesMovement() {
         distanciaJugador = Phaser.Math.distance(player.x, player.y, enemy.x, enemy.y);
 
         // Comprueba si el jugador está dentro del rango de visión
-        if (distanciaJugador <= levelData.LevelData[levelDifficulty - 1].RANGO_PERSECUCION) {
+        if (distanciaJugador <= jsonEnemy.rango) {
             // Mueve el enemigo hacia el jugador
             enemy.animations.play('enemigoAnimacion', 14, true, true);
-            moveTo(enemy, player.x, player.y, levelData.LevelData[levelDifficulty - 1].ENEMY_VELOCITY);
+            moveTo(enemy, player.x, player.y, jsonEnemy.velocity);
             persecucion = true;
             /*
             enemy.animations.add('enemigoAnimacion');
@@ -490,7 +494,7 @@ function enemiesMovement() {
 }
 
 function inSafeZone(){
-    if( 957 <= player.x && player.x <= 1351 && player.y >= 1800){
+    if( jsonMuro.x0 <= player.x && player.x <= jsonMuro.x1 && player.y >= jsonMuro.y){
         estar = true;
         console.log('Esta dentro de la ZS');
 
@@ -571,7 +575,7 @@ function enemiesShoot(){//                                                      
                     disparoEnemigo.volume = 0.5;
                     disparoEnemigo.play();
 
-                    moveTo(enemyBlast, posx, posy,levelData.LevelData[levelDifficulty-1].BLAST_VELOCITY);
+                    moveTo(enemyBlast, posx, posy, jsonEnemy.blastVelocity);
                     destroyBlast(5000,enemyBlast);
                 }, game);
             }
@@ -597,7 +601,7 @@ function enemiesShootCuadrado(){//                                              
                     disparoEnemigo.volume = 0.5;
                     disparoEnemigo.play();
 
-                    moveTo(enemyGranada, posx, posy,levelData.LevelData[levelDifficulty-1].BLAST_VELOCITY);
+                    moveTo(enemyGranada, posx, posy, jsonEnemy.blastVelocity);
                     destroyGranada(2000, enemyGranada, player);
                 }, game);
             }
@@ -651,7 +655,7 @@ function manageColision(){//                                                    
     }
 
     if(corazon){
-        if(playerHealth < levelData.LevelData[levelDifficulty - 1].PLAYER_HEALTH){
+        if(playerHealth < jsonPlayer.maxHealth){
             for (let i = 0; i <= corazonList.length; i++){
                 game.physics.arcade.overlap(player,corazonList[i], recogerVida, null, game);
             }
@@ -699,8 +703,8 @@ function manageColision(){//                                                    
     }
 
     if(game.physics.arcade.overlap(player, recargaMunicion)){
-        if(municionActual < 5){
-            municionActual = 5
+        if(municionActual < jsonPlayer.municionInicial){
+            municionActual = jsonPlayer.municionActual;
             recargaMunicion.scale.setTo(1.0, 1.0);
         }
     }
@@ -710,10 +714,10 @@ function manageColision(){//                                                    
 
     if(game.physics.arcade.overlap(player, mejoraCorazon)){
 
-        if(dineroTotal >= valorCorazon && puedeComprar == true){
+        if(dineroTotal >= jsonCorazon.precio && puedeComprar == true){
             mejoraCorazon.kill();
             mejoraCorazonTexto.kill();
-            dineroTotal -= valorCorazon;
+            dineroTotal -= jsonCorazon.precio;
             puedeComprar = false;
         }
 
@@ -729,10 +733,10 @@ function manageColision(){//                                                    
 
     if(game.physics.arcade.overlap(player, mejoraSprint)){
 
-        if(dineroTotal >= valorSprint && puedeComprar == true){
+        if(dineroTotal >= jsonSprint.precio && puedeComprar == true){
             mejoraSprint.kill();
             mejoraSprintTexto.kill();
-            dineroTotal -= valorSprint;
+            dineroTotal -= jsonSprint.precio;
             compraVelocidad = true;
             puedeComprar = false;
         }
@@ -749,11 +753,11 @@ function manageColision(){//                                                    
 
     if(game.physics.arcade.overlap(player, mejoraSuerte )){
 
-        if(dineroTotal >= valorSuerte && puedeComprar == true){
+        if(dineroTotal >= jsonSuerte.precio && puedeComprar == true){
             mejoraSuerte.kill();
             mejoraSuerteTexto.kill();
-            dineroTotal -= valorSuerte;
-            mejoraSuerteCompra = 5;
+            dineroTotal -= jsonSuerte.precio;
+            mejoraSuerteCompra = jsonSuerte.aumento;
             puedeComprar = false;
         }
 
@@ -791,19 +795,19 @@ function playerMovement() {//                                                   
     // Check input for movement
     if (cursors.left.isDown || buttonA.isDown) {
         // Move left
-        player.body.velocity.x = -levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY - velocidadExtra;
+        player.body.velocity.x = -jsonPlayer.velocity - velocidadExtra;
     }
     if (cursors.right.isDown || buttonD.isDown) {
         // Move right
-        player.body.velocity.x = levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY + velocidadExtra;
+        player.body.velocity.x = jsonPlayer.velocity + velocidadExtra;
     }
     if (cursors.up.isDown || buttonW.isDown) {
         // Move up
-        player.body.velocity.y = -levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY - velocidadExtra;
+        player.body.velocity.y = -jsonPlayer.velocity - velocidadExtra;
     }
     if (cursors.down.isDown || buttonS.isDown) {
         // Move down
-        player.body.velocity.y = levelData.LevelData[levelDifficulty-1].PLAYER_VELOCITY + velocidadExtra;
+        player.body.velocity.y = jsonPlayer.velocity + velocidadExtra;
     }
 }
 
@@ -857,8 +861,8 @@ function endGame() {//                                                          
 }
 
 function createPlayer(){//                                                          Crea al jugador principal
-    let x = game.world.centerX +200 ;
-    let y = 2000;
+    let x = game.world.centerX + jsonPlayer.x;
+    let y = jsonPlayer.y;
 
     player = game.add.sprite(x, y, 'playerAnimation', 0);
     player.anchor.setTo(0.5, 0.5);
@@ -970,12 +974,12 @@ function createEnemy(){//                                                       
         }
         
         while((x > 950 && x < 1360) && y > 1790){
-            if(killCount < 5){
+            if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(1240, 1800);
             }
-            else if(killCount < 15){
+            else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(565, 1800);
@@ -1009,12 +1013,12 @@ function createEnemyCuadrado(){//                                               
         let x = 0;
         let y = 0;
 
-        if(killCount < 5){
+        if(killCount < jsonLvl.BARRIER_1_KILLS){
             console.log("estoy generando en 1");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(1240, 1800);
         }
-        else if(killCount < 15){
+        else if(killCount < jsonLvl.BARRIER_2_KILLS){
             console.log("estoy generando en 2");
             x = Phaser.Math.random(50, 1870);
             y = Phaser.Math.random(565, 1800);
@@ -1025,13 +1029,13 @@ function createEnemyCuadrado(){//                                               
             y = Phaser.Math.random(50, 1800);
         }
         
-        while((x > 950 && x < 1360) && y > 1790){
-            if(killCount < 5){
+        while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > techoSeguro.y){
+            if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(1240, 1800);
             }
-            else if(killCount < 15){
+            else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
                 x = Phaser.Math.random(50, 1870);
                 y = Phaser.Math.random(565, 1800);
@@ -1142,7 +1146,7 @@ function destroyBlast(tiempo, blast){//                                         
 function destroyGranada(tiempo, enemyGranada, player){//                                             Destruye el proyectil del jugador
     game.time.events.add(tiempo, function() {
 
-        areaDamageRadius = 200;
+        areaDamageRadius = jsonEnemy.granadaArea;
 
         detectarObjeto(areaDamageRadius, player, enemyGranada);
         enemyGranada.kill();
@@ -1203,7 +1207,7 @@ function recogerBullets(player,bullet){//                                       
 }
 
 function bulletRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
-    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE + mejoraSuerteCompra);
+    numeroRandom = Phaser.Math.between(0, jsonPlayer.suerteInicial + mejoraSuerteCompra);
 
     spawnBullet(xSpawn, ySpawn);
 
@@ -1213,7 +1217,7 @@ function bulletRandom(xSpawn,ySpawn){//                                         
 }
 
 function monedaRandom(xSpawn,ySpawn){//                                             Probabilidad de que aparezca munición extra
-    numeroRandom = Phaser.Math.between(0, levelData.LevelData[levelDifficulty-1].SUERTE + mejoraSuerteCompra);
+    numeroRandom = Phaser.Math.between(0, jsonPlayer.suerteInicial + mejoraSuerteCompra);
 
     if(numeroRandom >= 3){
         spawnMoneda(xSpawn,ySpawn);
@@ -1346,19 +1350,19 @@ function playerHit(){//                                                         
 }
 
 function abrirBarrera(){
-    if(killCount == 5){
+    if(killCount == jsonLvl.BARRIER_1_KILLS){
         barreraMapa.kill();
     }
 }
 
 function abrirBarrera2(){
-    if(killCount == 15){
+    if(killCount == jsonLvl.BARRIER_2_KILLS){
         barreraMapa2.kill();
     }
 }
 
 function endPortal(){
-    if(killCount >= 30 && game.physics.arcade.collide(player, portal)){
+    if(killCount >= jsonLvl.END_PORTAL_KILLS && game.physics.arcade.collide(player, portal)){
         portal.kill();
         victoryAtEnd = true;
         endGame()
@@ -1370,7 +1374,7 @@ function corazonesRespawn(){
 
     let limite = 0;
 
-    while(limite < 10){
+    while(limite < jsonLvl.CORAZONES_MAPA_LIMITE){
 
         let randomx = Phaser.Math.random(50, 1900);
         let randomy = Phaser.Math.random(50, 2180);
@@ -1395,7 +1399,7 @@ function actualizarVida(){
     if(playerHealth<=0){
         endGame();
     }
-    else if(playerHealth > levelData.LevelData[levelDifficulty-1].PLAYER_HEALTH/2){
+    else if(playerHealth > jsonLvl.PLAYER_HEALTH/2){
         //Herido
         player.frame = 0;
 
