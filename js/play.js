@@ -104,7 +104,7 @@ function loadAssets() {
     game.load.image('mejoraSuerte', 'assets/trebol.png');
     game.load.image('mejoraSprint', 'assets/velocidad.png');
     game.load.image('corazon', 'assets/corazon.png');
-    game.load.image('recarga', 'assets/recarga.png');
+    game.load.image('recarga', 'assets/recargaMunicion.png');
     game.load.image('enemigoCuadrado', 'assets/enemigoCuadrado.png');
     game.load.image('portal', 'assets/portal.png');
     game.load.image('alarma', 'assets/peligro.png');
@@ -154,15 +154,11 @@ function initialiseGame() {
 
 
     //RECARGA MUNICIÓN
-    recargaMunicion = game.add.sprite(1300, 1870 , 'bullet');
+    recargaMunicion = game.add.sprite(1300, 1870 , 'recarga');
     recargaMunicion.anchor.setTo(0.5, 0.5);
     recargaMunicion.scale.setTo(1.5,1.5);
     game.physics.arcade.enable(recargaMunicion);
 
-    recargaMunicion2 = game.add.sprite(1298, 1920 , 'recarga');
-    recargaMunicion2.anchor.setTo(0.5, 0.5);
-    recargaMunicion2.scale.setTo(0.75, 0.75);
-    game.physics.arcade.enable(recargaMunicion2);
 
     //ALARMA
     alarma = game.add.image(0, 0, 'alarma');
@@ -693,12 +689,10 @@ function manageColision(){//                                                    
         if(municionActual < 5){
             municionActual = 5
             recargaMunicion.scale.setTo(1.0, 1.0);
-            recargaMunicion2.scale.setTo(0.5, 0.5);
         }
     }
     else{
         recargaMunicion.scale.setTo(1.5, 1.5);
-        recargaMunicion2.scale.setTo(0.75, 0.75);
     }
 
     if(game.physics.arcade.overlap(player, mejoraCorazon)){
