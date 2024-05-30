@@ -4,6 +4,10 @@ let danceRoomState = {
     update: updateDanceRoom
 };
 
+let LevelDataDance;
+let jsonLvlDance;
+let jsonPlayerDance;
+let jsonDance;
 
 let playerDance;
 let playerIdleAnimationDance;
@@ -43,6 +47,11 @@ function preloadDanceRoom() {
 function createDanceRoom() {
     game.add.image(0, 0, 'background');
 
+    levelDataDance = JSON.parse(game.cache.getText('levelJSON'));
+    jsonLvlDance = levelDataDance.LevelData[levelDifficulty-1];
+    
+    jsonPlayerDance = jsonLvlDance.PLAYER;
+    jsonDance = jsonLvlDance.DANCE;
 
     //CARGAMOS Y CONFIGURAMOS EL MUNDO
     game.world.setBounds(0, 0, 1920, 936);
@@ -82,10 +91,13 @@ function updateDanceRoom(){
     if (gameOverDance) {
         return;
     }
+    else if(paused){
+        return;
+    }
     else{
 
         if(buttonShiftDance.isDown){
-            velocidadExtraDance = 80;
+            velocidadExtraDance = jsonDance.velocidadExtra;
         }
         else{
             velocidadExtraDance = 0;
@@ -176,7 +188,7 @@ function updateDanceRoom(){
 
 function createPlayerDance(){//                                                          Crea al jugador principal
     let x = game.world.centerX;
-    let y = 900;
+    let y = jsonPlayerDance.yDance;
 
     playerDance = game.add.sprite(x, y, 'playerAnimation', 0);
     playerDance.anchor.setTo(0.5, 0.5);
@@ -205,19 +217,19 @@ function playerMovementDance() {//                                              
     if (cursorsDance.left.isDown || buttonADance.isDown) {
         // Move left
         console.log('Izquierda');
-        playerDance.body.velocity.x = -150 - velocidadExtraDance;
+        playerDance.body.velocity.x = -jsonPlayerDance.velocity - velocidadExtraDance;
     }
     if (cursorsDance.right.isDown || buttonDDance.isDown) {
         // Move right
-        playerDance.body.velocity.x = 150 + velocidadExtraDance;
+        playerDance.body.velocity.x = jsonPlayerDance.velocity + velocidadExtraDance;
     }
     if (cursorsDance.up.isDown || buttonWDance.isDown) {
         // Move up
-        playerDance.body.velocity.y = -150 - velocidadExtraDance;
+        playerDance.body.velocity.y = -jsonPlayerDance.velocity - velocidadExtraDance;
     }
     if (cursorsDance.down.isDown || buttonSDance.isDown) {
         // Move down
-        playerDance.body.velocity.y = 150 + velocidadExtraDance;
+        playerDance.body.velocity.y = jsonPlayerDance.velocity + velocidadExtraDance;
     }
 }
 
