@@ -716,6 +716,9 @@ function manageColision(){//                                                    
             mejoraCorazonTexto.kill();
             dineroTotal -= valorCorazon;
             puedeComprar = false;
+
+            playerHealth += 5;
+            actualizarVida()
         }
 
         /*

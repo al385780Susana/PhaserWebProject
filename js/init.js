@@ -66,7 +66,7 @@ function createInit() {
 function updateInit(){
 
     clickComic();
-    clickDance();
+    clickBoss();
 }
 
 function startMovingAnimation() {
@@ -133,7 +133,7 @@ function clickComic(){
     } 
 }
 
-function clickDance(){
+function clickBoss(){
     if(buttonD.isDown){
         game.state.start('danceRoom');
     }
