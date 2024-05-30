@@ -121,6 +121,7 @@
             "PLAYER":{
                 "x":200,
                 "y":2000,
+                "yDance":900,
                 "maxHealth":10,
                 "velocity":150,
                 "municionInicial": 7,
@@ -133,6 +134,11 @@
                 "rango": 300,
                 "granadaArea": 200,
                 "blastVelocity": 200
+            },
+            
+            "DANCE":{
+                "velocidadExtra":80
+
             },
 
             "BARRIER_1_KILLS": 5,
@@ -261,6 +267,7 @@
             "PLAYER":{
                 "x":200,
                 "y":2000,
+                "yDance":900,
                 "maxHealth":7,
                 "velocity":150,
                 "municionInicial": 6,
@@ -273,6 +280,11 @@
                 "rango": 300,
                 "granadaArea": 200,
                 "blastVelocity": 200
+            },
+
+            "DANCE":{
+                "velocidadExtra":80
+
             },
 
             "BARRIER_1_KILLS": 5,
@@ -400,6 +412,7 @@
             "PLAYER":{
                 "x":200,
                 "y":2000,
+                "yDance": 900,
                 "maxHealth":6,
                 "velocity":150,
                 "municionInicial": 5,
@@ -412,6 +425,11 @@
                 "rango": 300,
                 "granadaArea": 200,
                 "blastVelocity": 200
+            },
+
+            "DANCE":{
+                "velocidadExtra":80
+
             },
 
             "BARRIER_1_KILLS": 5,
