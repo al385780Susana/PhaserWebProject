@@ -162,7 +162,7 @@ function initialiseGame() {
     enemyVelocity = jsonEnemy.velocity;
 
     musicaFondo = game.sound.add('MusicaJuego');
-    musicaFondo.volume = 0.25;
+    musicaFondo.volume = jsonLvl.CONFIG.MUSIC_VOL;
     musicaFondo.loop = true;
     musicaFondo.play();
 
@@ -170,41 +170,43 @@ function initialiseGame() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //CARGAMOS Y CONFIGURAMOS EL MUNDO
-    game.world.setBounds(0, 0, 1920, 2200);
+    game.world.setBounds(0, 0, jsonLvl.CONFIG.GAME_WORLD.w,  jsonLvl.CONFIG.GAME_WORLD.h);
     let bg = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'fondoGrande');
-    bg.scrollFactorX = 0.7;
-    bg.scrollFactorY = 0.7;
+    bg.scrollFactorX = jsonLvl.CONFIG.SCROLL_FACTOR;
+    bg.scrollFactorY = jsonLvl.CONFIG.SCROLL_FACTOR;
 
     //CARGAMOS LOS ASSETS EN EL JUEGO
     jsonTextoFondo = jsonLvl.TEXTO_FONDO;
     jsonBulletHUD = jsonLvl.BULLET_HUD;
     jsonMonedaHUD = jsonLvl.MONEDA_HUD;
 
-    textoFondo = game.add.text(jsonTextoFondo.x, jsonTextoFondo.y, killCount, { font: '04B_19', fontSize: '100px', fill: '#000000' });
-    textoFondo.alpha = 0.2;
-    textoFondo.anchor.setTo(0.5);
+    textoFondo = game.add.text(jsonTextoFondo.x, jsonTextoFondo.y, killCount, { font: jsonTextoFondo.font, fontSize: jsonTextoFondo.fontSize, fill: jsonTextoFondo.color });
+    textoFondo.alpha = jsonTextoFondo.alpha;
+    textoFondo.anchor.setTo(jsonTextoFondo.anchor);
+
     bulletHUD = game.add.sprite(jsonBulletHUD.sprite.x,jsonBulletHUD.sprite.y, 'bulletHUD');
-    bulletHUD.scale.setTo(1.5);
+    bulletHUD.scale.setTo(jsonBulletHUD.sprite.scale);
+
     monedaHUD = game.add.sprite(jsonMonedaHUD.sprite.x,jsonMonedaHUD.sprite.y, 'monedaHUD');
-    monedaHUD.scale.setTo(1.5);
+    monedaHUD.scale.setTo(jsonMonedaHUD.sprite.scale);
 
 
 
     //RECARGA MUNICIÓN
     jsonRecarga = jsonLvl.RECARGA_MUNICION;
     recargaMunicion = game.add.sprite(jsonRecarga.x0, jsonRecarga.y0 , 'recarga');
-    recargaMunicion.anchor.setTo(0.5, 0.5);
-    recargaMunicion.scale.setTo(1.5,1.5);
+    recargaMunicion.anchor.setTo(jsonRecarga.anchor);
+    recargaMunicion.scale.setTo(jsonRecarga.scale);
     game.physics.arcade.enable(recargaMunicion);
 
     recargaMunicion2 = game.add.sprite(jsonRecarga.x1, jsonRecarga.y1 , 'recarga');
-    recargaMunicion2.anchor.setTo(0.5, 0.5);
-    recargaMunicion2.scale.setTo(1.5,1.5);
+    recargaMunicion2.anchor.setTo(jsonRecarga.anchor);
+    recargaMunicion2.scale.setTo(jsonRecarga.scale);
     game.physics.arcade.enable(recargaMunicion2);
 
     recargaMunicion3 = game.add.sprite(jsonRecarga.x2, jsonRecarga.y2 , 'recarga');
-    recargaMunicion3.anchor.setTo(0.5, 0.5);
-    recargaMunicion3.scale.setTo(1.5,1.5);
+    recargaMunicion3.anchor.setTo(jsonRecarga.anchor);
+    recargaMunicion3.scale.setTo(jsonRecarga.scale);
     game.physics.arcade.enable(recargaMunicion3);
 
     //ALARMA
@@ -216,8 +218,8 @@ function initialiseGame() {
     jsonDificultadHUD = jsonLvl.DIFICULTAD_HUD;
 
     let dificultadHUD = game.add.sprite(jsonDificultadHUD.x, jsonDificultadHUD.y, jsonDificultadHUD.sprite);
-    dificultadHUD.anchor.setTo(0.5, 0.5);
-    dificultadHUD.scale.setTo(0.5);
+    dificultadHUD.anchor.setTo(jsonDificultadHUD.anchor);
+    dificultadHUD.scale.setTo(jsonDificultadHUD.scale);
     dificultadHUD.fixedToCamera = true;
     
 
@@ -230,27 +232,27 @@ function initialiseGame() {
 
     mejoraCorazonTexto = game.add.text(jsonCorazon.texto.x, jsonCorazon.texto.y, jsonCorazon.precio , { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
     mejoraCorazon = game.add.sprite(jsonCorazon.x, jsonCorazon.y,'corazon');
-    mejoraCorazon.anchor.setTo(0.5, 0.5);
-    mejoraCorazon.scale.setTo(0.75,0.75);
+    mejoraCorazon.anchor.setTo(jsonCorazon.anchor);
+    mejoraCorazon.scale.setTo(jsonCorazon.scale);
     game.physics.arcade.enable(mejoraCorazon);
 
     /*
     mejoraEscudo = game.add.sprite(jsonEscudo.x, jsonEscudo.y, 'mejoraEscudo');
-    mejoraEscudo.anchor.setTo(0.5, 0.5);
-    mejoraEscudo.scale.setTo(0.75,0.75);
+    mejoraEscudo.anchor.setTo(jsonEscudo.anchor);
+    mejoraEscudo.scale.setTo(jsonEscudo.scale);
     game.physics.arcade.enable(mejoraEscudo);
     */
 
     mejoraSprintTexto = game.add.text(jsonSprint.texto.x, jsonSprint.texto.y, jsonSprint.precio, { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
     mejoraSprint = game.add.sprite(jsonSprint.x, jsonSprint.y, 'mejoraSprint');
-    mejoraSprint.anchor.setTo(0.5, 0.5);
-    mejoraSprint.scale.setTo(0.85,0.85);
+    mejoraSprint.anchor.setTo(jsonSprint.anchor);
+    mejoraSprint.scale.setTo(jsonSprint.scale);
     game.physics.arcade.enable(mejoraSprint);
 
     mejoraSuerteTexto = game.add.text(jsonSuerte.texto.x, jsonSuerte.texto.y, jsonSuerte.precio, { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
     mejoraSuerte = game.add.sprite(jsonSuerte.x, jsonSuerte.y, 'mejoraSuerte');
-    mejoraSuerte.anchor.setTo(0.5, 0.5);
-    mejoraSuerte.scale.setTo(0.75,0.75);
+    mejoraSuerte.anchor.setTo(jsonSuerte.anchor);
+    mejoraSuerte.scale.setTo(jsonSuerte.scale);
     game.physics.arcade.enable(mejoraSuerte);
 
     //MAPA
@@ -258,9 +260,9 @@ function initialiseGame() {
 
     portal = game.add.sprite(jsonPortal.x, jsonPortal.y, 'portal');
     portal.animations.add('portal');
-    portal.anchor.setTo(0.5, 0.5);
-    portal.scale.setTo(0.5, 0.5);
-    portal.animations.play('portal', 8, true, false);
+    portal.anchor.setTo(jsonPortal.anchor);
+    portal.scale.setTo(jsonPortal.scale);
+    portal.animations.play('portal', jsonPortal.fps, true, false);
 
     game.physics.arcade.enable(portal);
     portal.body.immovable = true;
@@ -280,19 +282,19 @@ function initialiseGame() {
 
     jsonMuro = jsonLvl.ZONA_SEGURA;
     muroSeguro = game.add.sprite(jsonMuro.x0,jsonMuro.y, 'muroZonaSegura');
-    muroSeguro.anchor.setTo(0.5, 0.5);
+    muroSeguro.anchor.setTo(jsonMuro.anchor);
     game.physics.arcade.enable(muroSeguro);
     muroSeguro.body.immovable = true;
 
     muroSeguro2 = game.add.sprite(jsonMuro.x1,jsonMuro.y, 'muroZonaSegura');
-    muroSeguro2.anchor.setTo(0.5, 0.5);
+    muroSeguro2.anchor.setTo(jsonMuro.anchor);
     game.physics.arcade.enable(muroSeguro2);
     muroSeguro2.body.immovable = true;
 
 
     jsonTecho = jsonLvl.TECHO_SEGURO;
     techoSeguro = game.add.sprite(jsonTecho.x,jsonTecho.y, 'techoZonaSegura');
-    techoSeguro.anchor.setTo(0.5, 0.5);
+    techoSeguro.anchor.setTo(jsonTecho.anchor);
     game.physics.arcade.enable(techoSeguro);
     techoSeguro.body.immovable = true;
 
@@ -310,9 +312,9 @@ function initialiseGame() {
     idle();
 
     //CAMERA
-    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 1, 1);
+    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, jsonLvl.CONFIG.CAMERA.CAMERA_LERP, jsonLvl.CONFIG.CAMERA.CAMERA_LERP);
 
-    setTimeout(function(){game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);}, 500);
+    setTimeout(function(){game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, jsonLvl.CONFIG.CAMERA.CAMERA_LERP_TIMEOUT, jsonLvl.CONFIG.CAMERA.CAMERA_LERP_TIMEOUT);}, 500);
 
     //DAMOS LOS VALORES
     playerHealth = jsonPlayer.maxHealth;
@@ -342,25 +344,25 @@ function initialiseGame() {
     control = false;
 
     //CREACION DE ENEMIGOS
-    timeEnemy(3000);
-    timeEnemyCuadrado(4000);
+    timeEnemy(jsonLvl.CONFIG.ENEMY_CREATION_TIME);
+    timeEnemyCuadrado(jsonLvl.CONFIG.ENEMY_CUADRADO_CREATION_TIME);
     corazonesRespawn();
 
     //HUD---------------------------------------------------------------
-    dineroTotalText = game.add.text(jsonMonedaHUD.texto.x, GAME_STAGE_HEIGHT - 50,
+    dineroTotalText = game.add.text(jsonMonedaHUD.texto.x, GAME_STAGE_HEIGHT - jsonMonedaHUD.texto.yOffset,
         dineroTotal, {
-            font: '04B_19',
-            fontSize: '32px',
-            fill: '#fff'
+            font: jsonMonedaHUD.texto.font,
+            fontSize: jsonMonedaHUD.texto.fontSize,
+            fill: jsonMonedaHUD.texto.color
         });
 
     dineroTotalText.fixedToCamera = true;
 
-    bulletTotalText = game.add.text(jsonBulletHUD.texto.x, GAME_STAGE_HEIGHT - 50,
+    bulletTotalText = game.add.text(jsonBulletHUD.texto.x, GAME_STAGE_HEIGHT - jsonBulletHUD.texto.yOffset,
         municionActual, {
-            font: '04B_19',
-            fontSize: '32px',
-            fill: '#fff'
+            font: jsonBulletHUD.texto.font,
+            fontSize: jsonBulletHUD.texto.fontSize,
+            fill: jsonBulletHUD.texto.color
         });
 
     bulletTotalText.fixedToCamera = true;
@@ -438,18 +440,18 @@ function gameUpdate() {
 
         //APARICIÓN DE ENEMIGOS
         contador++;
-        if(contador == 200){
-            timeEnemy(2000);//          Tiempo de reaparición de enemigo
-            timeEnemyCuadrado(4000);
+        if(contador == jsonLvl.CONFIG.TIMER_CONTADOR_RESPAWN){
+            timeEnemy(jsonEnemy.normalReappearTimer);//          Tiempo de reaparición de enemigo
+            timeEnemyCuadrado(jsonEnemy.cuadradoReappearTimer);
             contador = 0;
         };
 
         if(levelDifficulty >= 2){
 
             contador2++;
-            if(contador == 50){
-                timeEnemyShoot(0);//    Tiempo para que disparen los enemigos
-                timeEnemyShootCuadrado(100);
+            if(contador == jsonLvl.CONFIG.TIMER_CONTADOR_DISPARAR){
+                timeEnemyShoot(jsonEnemy.normalShootingDelay);//    Tiempo para que disparen los enemigos
+                timeEnemyShootCuadrado(jsonEnemy.cuadradoShootingDelay);
                 contador2 = 0;
         };
         }
@@ -478,20 +480,6 @@ function updateText(){//                                                        
 }
 
 
-/*
-function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador está en el rango de persecucion del enemigo o el nivel es 1
-    enemies.forEach(function(enemy) {
-        if(levelDifficulty>1){
-            distanciaJugador = Phaser.Math.distance(player.x,player.y, enemy.x,enemy.y);
-           if(distanciaJugador<=jsonLvl.RANGO_PERSECUCION){
-                moveTo(enemy,player.x, player.y,jsonLvl.ENEMY_VELOCITY);
-           }
-        }
-        //else { moveTo(enemy,player.x, player.y,jsonLvl.ENEMY_VELOCITY);}
-
-    });
-}
-*/
 
 function wallsCollision(){
     if(enemy){
@@ -569,16 +557,16 @@ function enemiesMovement() {
 function inSafeZone(){
     if( jsonMuro.x0 <= player.x && player.x <= jsonMuro.x1 && player.y >= jsonTecho.y){
         estar = true;
-        console.log('Esta dentro de la ZS y = '+player.y+" , x: "+player.x);
+        console.log('Esta dentro de la ZS');
 
         if (!contadorZS) {
 
-            contadorZS = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
+            contadorZS = game.time.events.add(Phaser.Timer.SECOND * jsonLvl.CONFIG.TIMER_ZONA_SEGURA, function() {
                 clearGameAll();
                 endGame();
             }, game);
 
-            alarmaEvent = game.time.events.add(Phaser.Timer.SECOND * 7, function() {
+            alarmaEvent = game.time.events.add(Phaser.Timer.SECOND * jsonLvl.CONFIG.TIMER_ALARMA, function() {
                 alarma = game.add.image(0, 0, 'alarma');
                 alarma.fixedToCamera = true;
                 alarma.alpha = 0;
@@ -598,7 +586,7 @@ function inSafeZone(){
         estar = false;
         
         puedeComprar = true;
-        console.log('NO ESTA DENTRO DE ZS y' + player.y + ", x "+player.x);
+        console.log('NO ESTA DENTRO DE ZS y');
 
         if (alarma) {
             alarma.kill();
@@ -635,7 +623,7 @@ function idle(){
 function enemiesShoot(){//                                                          El enemigo dispara en dirección del jugador
     if(enemy && !gameOver&&!paused){
         enemies.forEach(function(enemy) {
-            tiempo = Phaser.Math.random(500, 3000);
+            tiempo = Phaser.Math.random(jsonEnemy.shortShootCadency, jsonEnemy.shootCadency);
             if(enemy){
                 game.time.events.add(tiempo, function() {
 
@@ -645,11 +633,11 @@ function enemiesShoot(){//                                                      
                     posy = player.y;
 
                     disparoEnemigo = game.sound.add('DisparoEnemigo');
-                    disparoEnemigo.volume = 0.5;
+                    disparoEnemigo.volume = jsonLvl.BLAST.volume;
                     disparoEnemigo.play();
 
                     moveTo(enemyBlast, posx, posy, jsonEnemy.blastVelocity);
-                    destroyBlast(5000,enemyBlast);
+                    destroyBlast(jsonLvl.BLAST.longTimer, enemyBlast);
                 }, game);
             }
 
@@ -661,7 +649,7 @@ function enemiesShoot(){//                                                      
 function enemiesShootCuadrado(){//                                                          El enemigo dispara en dirección del jugador
     if(enemyCuadrado && !gameOver && !paused){
         enemiesCuadrado.forEach(function(enemyCuadrado) {
-            tiempo = Phaser.Math.random(1000, 3000);
+            tiempo = Phaser.Math.random(jsonEnemy.shortCuadradoShootCadency, jsonEnemy.shootCadency);
             if(enemyCuadrado){
                 game.time.events.add(tiempo, function() {
 
@@ -671,11 +659,11 @@ function enemiesShootCuadrado(){//                                              
                     posy = player.y;
 
                     disparoEnemigo = game.sound.add('DisparoEnemigo');
-                    disparoEnemigo.volume = 0.5;
+                    disparoEnemigo.volume = jsonLvl.BLAST.volume;
                     disparoEnemigo.play();
 
                     moveTo(enemyGranada, posx, posy, jsonEnemy.blastVelocity);
-                    destroyGranada(2000, enemyGranada, player);
+                    destroyGranada(jsonLvl.GRANADA.timer, enemyGranada, player);
                 }, game);
             }
 
@@ -705,7 +693,7 @@ function clearGameAll(){//                                                      
 function blastManagement(){//                                                       Maneja todos los disparos realizados por el jugador
     if(blast){
         blastArray.forEach(function(blast){
-            destroyBlast(3000);
+            destroyBlast(jsonPlayer.blastDuration);
         })
     }
 }
@@ -759,11 +747,11 @@ function manageColision(){//                                                    
             }, game)
         
             municionActual = jsonPlayer.municionInicial;
-            recargaMunicion.scale.setTo(1.0, 1.0);
+            recargaMunicion.scale.setTo(jsonRecarga.scaleUsing);
         }
     }
     else{
-        recargaMunicion.scale.setTo(1.5, 1.5);
+        recargaMunicion.scale.setTo(jsonRecarga.scale);
     }
 
     if(game.physics.arcade.overlap(player, recargaMunicion2)){
@@ -782,11 +770,11 @@ function manageColision(){//                                                    
             }, game)
         
             municionActual = jsonPlayer.municionInicial;
-            recargaMunicion2.scale.setTo(1.0, 1.0);
+            recargaMunicion2.scale.setTo(jsonRecarga.scaleUsing);
         }
     }
     else{
-        recargaMunicion2.scale.setTo(1.5, 1.5);
+        recargaMunicion2.scale.setTo(jsonRecarga.scale);
     }
 
     
@@ -806,11 +794,11 @@ function manageColision(){//                                                    
             }, game)
         
             municionActual = jsonPlayer.municionInicial;
-            recargaMunicion3.scale.setTo(1.0, 1.0);
+            recargaMunicion3.scale.setTo(jsonRecarga.scaleUsing);
         }
     }
     else{
-        recargaMunicion3.scale.setTo(1.5, 1.5);
+        recargaMunicion3.scale.setTo(jsonRecarga.scale);
     }
 
 
@@ -919,7 +907,7 @@ function playerMovement() {//                                                   
 function endGame() {//                                                              Termina el juego
 
     muerte = game.sound.add('Muerte');
-    muerte.volume = 0.5;
+    muerte.volume = jsonLvl.CONFIG.MUERTE_VOL;
     muerte.play();
 
     // Game Over
@@ -953,10 +941,10 @@ function endGame() {//                                                          
     finalTween.onComplete.add(function () {
         player.destroy();
         if (victoryAtEnd) {
-            //soundVictory.play();
+
             game.state.start('comic');
        } else {
-            //soundDefeat.play();
+
             game.state.start('gameOver');
        }
 
@@ -971,12 +959,12 @@ function createPlayer(){//                                                      
     let y = jsonPlayer.y;
 
     player = game.add.sprite(x, y, 'playerAnimation', 0);
-    player.anchor.setTo(0.5, 0.5);
-    player.scale.setTo(1, 1);
+    player.anchor.setTo(jsonPlayer.anchor);
+    player.scale.setTo(jsonPlayer.scale);
 
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
-    //player.enableBody = true;
+
 }
 
 function createBlast(){//                                                           Crea el blast del juagdor
@@ -984,7 +972,7 @@ function createBlast(){//                                                       
     let y = player.y;
 
     blast = game.add.sprite(x, y, 'blast');
-    blast.anchor.setTo(0.5, 0.5);
+    blast.anchor.setTo(jsonLvl.BLAST.anchor);
     game.physics.arcade.enable(blast);
     blast.body.collideWorldBounds = false;
 
@@ -1000,8 +988,8 @@ function createBlast(){//                                                       
 function createEnemyBlast(posx, posy, enemyAngle){//                                Crea el blast del enemigo
 
     enemyBlast = game.add.sprite(posx, posy, 'enemyBlast');
-    enemyBlast.scale.setTo(0.75, 0.75);
-    enemyBlast.anchor.setTo(0.5, 0.5);
+    enemyBlast.scale.setTo(jsonLvl.BLAST.scale);
+    enemyBlast.anchor.setTo(jsonLvl.BLAST.anchor);
     game.physics.arcade.enable(enemyBlast);
     enemyBlast.body.collideWorldBounds = false;
 
@@ -1015,8 +1003,8 @@ function createEnemyBlast(posx, posy, enemyAngle){//                            
 function createEnemyBlastCuadrado(posx, posy, enemyAngle){//                                Crea el blast del enemigo Cuadrado
 
     enemyGranada = game.add.sprite(posx, posy, 'granada');
-    enemyGranada.scale.setTo(5, 5);
-    enemyGranada.anchor.setTo(0.5, 0.5);
+    enemyGranada.scale.setTo(jsonLvl.GRANADA.scale);
+    enemyGranada.anchor.setTo(jsonLvl.GRANADA.anchor);
     game.physics.arcade.enable(enemyGranada);
     enemyGranada.body.collideWorldBounds = false;
 
@@ -1032,8 +1020,8 @@ function createEnemyBlastCuadrado(posx, posy, enemyAngle){//                    
 
 function spawnMoneda(xSpawn,ySpawn){//                                              Hace aparecer una moneda donde muere un enemigo
     moneda = game.add.sprite(xSpawn, ySpawn, 'moneda');
-    moneda.anchor.setTo(0.5, 0.5);
-    moneda.scale.setTo(0.5, 0.5)
+    moneda.anchor.setTo(jsonLvl.CONFIG.MONEDA.anchor);
+    moneda.scale.setTo(jsonLvl.CONFIG.MONEDA.scale)
     game.physics.arcade.enable(moneda);
     let monedaanimation = game.add.tween(moneda.scale).to({
         x: 0.75,
@@ -1057,7 +1045,7 @@ function rotatePlayer(){//                                                      
 
 function createEnemy(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver && !paused && enemies.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+    if(!gameOver && !paused && enemies.length < jsonLvl.CONFIG.ENEMY_LIMIT){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
         console.log("Normales " + enemies.length);
         
         let x = 0;
@@ -1065,41 +1053,41 @@ function createEnemy(){//                                                       
 
         if(killCount < jsonLvl.BARRIER_1_KILLS){
             console.log("estoy generando en 1");
-            x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
+            x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+            y = Phaser.Math.random(jsonBarr.y0 + jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
         }
         else if(killCount < jsonLvl.BARRIER_2_KILLS){
             console.log("estoy generando en 2");
-            x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(jsonBarr.y1 + 10, jsonTecho.y - 10);
+            x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+            y = Phaser.Math.random(jsonBarr.y1 +  jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
         }
         else{
             console.log("estoy generando en 3");
-            x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(50, jsonTecho.y);
+            x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+            y = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonTecho.y);
         }
         
         while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > jsonTecho.y){
             if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
-                x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
+                x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+                y = Phaser.Math.random(jsonBarr.y0 +  jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
             }
             else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
-                x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(jsonBarr.y1 +10, jsonTecho.y - 10);
+                x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+                y = Phaser.Math.random(jsonBarr.y1 + jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
             }
             else{
                 console.log("estoy generando en 3");
-                x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(50, jsonTecho.y - 10);
+                x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+                y = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonTecho.y - jsonTecho.offset);
             }
         }
         
         enemy = game.add.sprite(x, y, 'enemigoAnimacion');
         enemy.animations.add('enemigoAnimacion');
-        enemy.anchor.setTo(0.5, 0.5);
+        enemy.anchor.setTo(jsonEnemy.anchor);
 
         enemy.enableBody = true;
         game.physics.arcade.enable(enemy);
@@ -1113,49 +1101,49 @@ function createEnemy(){//                                                       
 
 function createEnemyCuadrado(){//                                                           Genera un enemigo en una posicion aleatoria del canvas inicial
 
-    if(!gameOver && !paused && enemiesCuadrado.length < 5){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
-        console.log("Cuadrados " + enemiesCuadrado.length);
-
+    if(!gameOver && !paused && enemies.length < jsonLvl.CONFIG.ENEMY_LIMIT){ //para que no se creen enemigos adicionales mientras se hace la animación de final de partida
+        console.log("Normales " + enemies.length);
+        
         let x = 0;
         let y = 0;
 
         if(killCount < jsonLvl.BARRIER_1_KILLS){
             console.log("estoy generando en 1");
-            x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
+            x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+            y = Phaser.Math.random(jsonBarr.y0 + jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
         }
         else if(killCount < jsonLvl.BARRIER_2_KILLS){
             console.log("estoy generando en 2");
-            x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(jsonBarr.y1 + 10, jsonTecho.y - 10);
+            x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+            y = Phaser.Math.random(jsonBarr.y1 +  jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
         }
         else{
             console.log("estoy generando en 3");
-            x = Phaser.Math.random(50, 1870);
-            y = Phaser.Math.random(50, jsonTecho.y);
+            x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+            y = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonTecho.y);
         }
         
         while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > jsonTecho.y){
             if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
-                x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
+                x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+                y = Phaser.Math.random(jsonBarr.y0 +  jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
             }
             else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
-                x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(jsonBarr.y1 +10, jsonTecho.y - 10);
+                x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+                y = Phaser.Math.random(jsonBarr.y1 + jsonBarr.offset, jsonTecho.y - jsonTecho.offset);
             }
             else{
                 console.log("estoy generando en 3");
-                x = Phaser.Math.random(50, 1870);
-                y = Phaser.Math.random(50, jsonTecho.y - 10);
+                x = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.w - jsonLvl.CONFIG.GAME_WORLD.generalOffset);
+                y = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonTecho.y - jsonTecho.offset);
             }
         }
-       
+        
 
         enemyCuadrado = game.add.sprite(x, y, 'enemigoCuadrado');
-        enemyCuadrado.anchor.setTo(0.5, 0.5);
+        enemyCuadrado.anchor.setTo(jsonEnemy.anchor);
         enemyCuadrado.enableBody = true;
         game.physics.arcade.enable(enemyCuadrado);
         enemyCuadrado.body.collideWorldBounds = true;
@@ -1224,12 +1212,12 @@ function moveTo(object, targetX, targetY, speed) {//                            
 
 function disparar(){//                                                              Permite el disparo del jugador
     if(click.isDown && control == false && municionActual>0){
-        game.camera.shake(0.0025);
+        game.camera.shake(jsonLvl.CONFIG.CAMERA.SHOOT_SHAKE);
         createBlast();
-        moveTo(blast, game.input.mousePointer.worldX, game.input.mousePointer.worldY, 500);
+        moveTo(blast, game.input.mousePointer.worldX, game.input.mousePointer.worldY, jsonLvl.BLAST.speed);
         control = true;
-        cooldownDisparo(1000);
-        destroyBlast(3000, blast);
+        cooldownDisparo(jsonPlayer.shootCooldown);
+        destroyBlast(jsonLvl.BLAST.shortTimer, blast);
 
         municionActual -= 1;
 
@@ -1257,7 +1245,7 @@ function destroyGranada(tiempo, enemyGranada, player){//                        
         detectarObjeto(areaDamageRadius, player, enemyGranada);
         enemyGranada.kill();
         ondaExpansiva = game.add.sprite(enemyGranada.x, enemyGranada.y,  'onda');
-        ondaExpansiva.anchor.setTo(0.5, 0.5);
+        ondaExpansiva.anchor.setTo(jsonEnemy.ondaAnchor);
 
         ondaExpansiva.animations.add('onda');
         ondaExpansiva.animations.play('onda', 15, false, true);
@@ -1305,7 +1293,7 @@ function recogerVida(player,corazon){//                                         
 function recogerBullets(player,bullet){//                                           Permite recoger la munición
 
     pickBala = game.sound.add('RecogerBala');
-    pickBala.volume = 0.25;
+    pickBala.volume = jsonLvl.CONFIG.BULLET.volume;
     pickBala.play();
 
     bullet.kill();
@@ -1318,7 +1306,7 @@ function bulletRandom(xSpawn,ySpawn){//                                         
     spawnBullet(xSpawn, ySpawn);
 
     if(numeroRandom >= 7){
-        spawnBullet(xSpawn -100,ySpawn -100);
+        spawnBullet(xSpawn - jsonLvl.CONFIG.BULLET.offset2, ySpawn - jsonLvl.CONFIG.BULLET.offset2);
     }
 }
 
@@ -1329,14 +1317,14 @@ function monedaRandom(xSpawn,ySpawn){//                                         
         spawnMoneda(xSpawn,ySpawn);
     }
     if(numeroRandom >= 7){
-        spawnMoneda(xSpawn-50,ySpawn +50);
+        spawnMoneda(xSpawn - jsonLvl.CONFIG.MONEDA.offset,ySpawn + jsonLvl.CONFIG.MONEDA.offset);
     }
 }
 
 function spawnBullet(xSpawn, ySpawn){//                                             Aparece muniución cuando matas a un enemigo
-    bullet = game.add.sprite(xSpawn +50, ySpawn +50, 'bullet');
-    bullet.anchor.setTo(0.5, 0.5);
-    bullet.scale.setTo(0.5, 0.5);
+    bullet = game.add.sprite(xSpawn + jsonLvl.CONFIG.BULLET.offset, ySpawn + jsonLvl.CONFIG.BULLET.offset, 'bullet');
+    bullet.anchor.setTo(jsonLvl.CONFIG.BULLET.anchor);
+    bullet.scale.setTo(jsonLvl.CONFIG.BULLET.scale);
     game.physics.arcade.enable(bullet);
     let bulletanimation = game.add.tween(bullet.scale).to({
         x: 0.75,
@@ -1397,7 +1385,7 @@ function enemyBlastCollideCuadrado(blast, enemyCuadrado) {//                    
 
 function explosionEnemy(enemy){
     explosionEnemigo = game.add.sprite(enemy.x, enemy.y, 'explosionEnemy');
-    explosionEnemigo.anchor.setTo(0.5, 0.5);
+    explosionEnemigo.anchor.setTo(0.5);
     explosionEnemigo.scale.setTo(2, 2);
 
     explosionEnemigo.animations.add('daño');
@@ -1410,7 +1398,7 @@ function explosionEnemy(enemy){
     enemy.animations.add('estela');
     enemy.animations.play('estela', 12, true, false);
 
-    timerEstela = game.time.events.add(Phaser.Timer.SECOND * 2, function() {
+    timerEstela = game.time.events.add(Phaser.Timer.SECOND * jsonLvl.CONFIG.TIMER_ESTELA, function() {
         enemy.kill();
     }, game);
 
@@ -1418,8 +1406,8 @@ function explosionEnemy(enemy){
 
 function explosionPlayer(){
     explosion = game.add.sprite(player.x, player.y, 'explosion');
-    explosion.anchor.setTo(0.5, 0.5);
-    explosion.scale.setTo(2,2)
+    explosion.anchor.setTo(jsonLvl.EXPLOSION.anchor);
+    explosion.scale.setTo(jsonLvl.EXPLOSION.scale)
 
     explosion.animations.add('daño');
     explosion.animations.play('daño', 15, false, true);
@@ -1459,7 +1447,7 @@ function playerHit(){//                                                         
 
     camera = Phaser.camera;
 
-    game.camera.shake(0.015);
+    game.camera.shake(jsonLvl.CONFIG.CAMERA.SHAKE);
     playerHealth -= 1;
 
     explosionPlayer();
@@ -1494,16 +1482,16 @@ function corazonesRespawn(){
 
     while(limite < jsonLvl.CORAZONES_MAPA_LIMITE){
 
-        let randomx = Phaser.Math.random(50, 1900);
-        let randomy = Phaser.Math.random(50, 2180);
+        let randomx = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonLvl.CONFIG.GAME_WORLD.w);
+        let randomy = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonLvl.CONFIG.GAME_WORLD.h - jsonLvl.CONFIG.GAME_WORLD.xOffset);
 
-        while((957 <= randomx && randomx <= 1351) && randomy >= 1800){
-            randomx = Phaser.Math.random(50, 1900);
-            randomy = Phaser.Math.random(50, 2180);
+        while(( jsonMuro.x0 <= randomx && randomx <= jsonMuro.x1) && randomy >= jsonTecho.y){
+            randomx = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset, jsonLvl.CONFIG.GAME_WORLD.w);
+            randomy = Phaser.Math.random(jsonLvl.CONFIG.GAME_WORLD.generalOffset,  jsonLvl.CONFIG.GAME_WORLD.h - jsonLvl.CONFIG.GAME_WORLD.xOffset);
         }
 
         corazon = game.add.sprite(randomx, randomy, 'corazon');
-        corazon.anchor.setTo(0.5, 0.5);
+        corazon.anchor.setTo(jsonCorazon.anchor);
         game.physics.arcade.enable(corazon);
         corazonList.push(corazon);
 
