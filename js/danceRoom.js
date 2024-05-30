@@ -32,6 +32,15 @@ let orbe1Existe = false;
 let orbe2Existe = false;
 let orbe3Existe = false;
 let orbe4Existe = false;
+let enEstado = false;
+let onda;
+let laser;
+let laser2;
+let laser3;
+let laser4;
+let playerSalud = 5;
+let bombaLlena;
+let invulnerabilidad = false;
 
 let controlDance = false;
 let controlGranada = false;
@@ -43,6 +52,9 @@ function preloadDanceRoom() {
     game.load.audio('Disparo', 'assets/snds/Disparo.mp3');
     game.load.image('DANCE', 'assets/DANCE.png');
     game.load.image('hitbox', 'assets/-portal.png');
+    game.load.spritesheet('bombaVacia', 'assets/bombaclat.png', 100, 100);
+    game.load.spritesheet('bombaLlena', 'assets/bobaclatlleno.png', 100, 100);
+    game.load.image('laserVertical', 'assets/laserImagenSolaVertical.png');
 
     game.load.spritesheet('Granada', 'assets/granadaAliado.png', 10, 10);
     game.load.spritesheet('onda', 'assets/onda expansiva.png', 200, 200);
@@ -89,7 +101,6 @@ function createDanceRoom() {
     buttonSpace = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     buttonShiftDance = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 
-    laserDance();
     spawnOrbes();
 
 }
@@ -142,52 +153,11 @@ function updateDanceRoom(){
         manageColisionDance();//             Tiene en cuenta la colisión del jugador
 
 
-
-
-        /*
-        //Si hay un enemigo
-        if(enemy){
-            enemies.forEach(function(enemy){
-                rotateEnemy(enemy);
-            });
-
+        //Estados enemigo
+        if(!enEstado){
+            enEstado = true;
+            game.time.events.add(Phaser.Timer.SECOND * 2, estadosEnemigo, game);
         }
-
-        if(enemyCuadrado){
-            enemiesCuadrado.forEach(function(enemyCuadrado){
-                rotateEnemy(enemyCuadrado);
-            });
-
-        }
-
-        //APARICIÓN DE ENEMIGOS
-        contador++;
-        if(contador == 200){
-            timeEnemy(2000);//          Tiempo de reaparición de enemigo
-            timeEnemyCuadrado(4000);
-            contador = 0;
-        };
-
-        if(levelDifficulty >= 2){
-
-            contador2++;
-            if(contador == 50){
-                timeEnemyShoot(0);//    Tiempo para que disparen los enemigos
-                timeEnemyShootCuadrado(100);
-                contador2 = 0;
-        };
-        }
-
-        //----------------------------------------------------------------------------------
-
-
-
-        //NIVEL DE DIFICULTAD 1-------------------------------------------------------------
-        if(levelDifficulty == 1 || levelDifficulty == 3){
-            enemiesMovement();//        El enemigo se mueve hacia el jugador
-        }
-        //----------------------------------------------------------------------------------
-        */
     }
 
 }
@@ -223,7 +193,7 @@ function playerMovementDance() {//                                              
     // Check input for movement
     if (cursorsDance.left.isDown || buttonADance.isDown) {
         // Move left
-        console.log('Izquierda');
+
         playerDance.body.velocity.x = -150 - velocidadExtraDance;
     }
     if (cursorsDance.right.isDown || buttonDDance.isDown) {
@@ -317,6 +287,8 @@ function manageColisionDance(){
         }
         if(granada){game.physics.arcade.overlap(granada,orbe1, function(){orbe1.kill(); orbe1Existe = false;}, null, game);
         }
+        if(onda){game.physics.arcade.overlap(onda,orbe1, function(){orbe1.kill(); orbe1Existe = false;}, null, game);
+        }
 
     }
     if(orbe2){
@@ -324,11 +296,15 @@ function manageColisionDance(){
         }
         if(granada){game.physics.arcade.overlap(granada,orbe2, function(){orbe2.kill(); orbe2Existe = false;}, null, game);
         }
+        if(onda){game.physics.arcade.overlap(onda,orbe2, function(){orbe2.kill(); orbe2Existe = false;}, null, game);
+        }
     }
     if(orbe3){
         if(blastDance){game.physics.arcade.overlap(blastDance,orbe3, function(){orbe3.kill(); blastDance.kill(); orbe3Existe = false; console.log('orbe3 fuera');}, null, game);
         }
         if(granada){game.physics.arcade.overlap(granada,orbe3, function(){orbe3.kill(); orbe3Existe = false;}, null, game);
+        }
+        if(onda){game.physics.arcade.overlap(onda,orbe3, function(){orbe3.kill(); orbe3Existe = false;}, null, game);
         }
     }
     if(orbe4){
@@ -336,17 +312,62 @@ function manageColisionDance(){
         }
         if(granada){game.physics.arcade.overlap(granada,orbe4, function(){orbe4.kill(); orbe4Existe = false;}, null, game);
         }
+        if(onda){game.physics.arcade.overlap(onda,orbe4, function(){orbe4.kill(); orbe4Existe = false;}, null, game);
+        }
+    }
+
+    if(laser){
+        if(blastDance){game.physics.arcade.overlap(blastDance,laser, function(){blastDance.kill(); console.log('Tocado y hundido');}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,laser, function(){granada.kill();}, null, game);
+        }
+        if(playerDance){game.physics.arcade.overlap(playerDance,laser, function(){golpe(); actualizarVidaDance();}, null, game);
+        }
+    }
+
+    if(laser2){
+        if(blastDance){game.physics.arcade.overlap(blastDance,laser2, function(){blastDance.kill();}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,laser2, function(){granada.kill();}, null, game);
+        }
+        if(playerDance){game.physics.arcade.overlap(playerDance,laser2, function(){golpe(); actualizarVidaDance();}, null, game);
+        }
+    }
+
+    if(laser3){
+        if(blastDance){game.physics.arcade.overlap(blastDance,laser3, function(){blastDance.kill();}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,laser3, function(){granada.kill();}, null, game);
+        }
+        if(playerDance){game.physics.arcade.overlap(playerDance,laser3, function(){golpe(); actualizarVidaDance();}, null, game);
+        }
+    }
+
+    if(laser4){
+        if(blastDance){game.physics.arcade.overlap(blastDance,laser4, function(){blastDance.kill();}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,laser4, function(){granada.kill();}, null, game);
+        }
+        if(playerDance){game.physics.arcade.overlap(playerDance,laser4, function(){golpe(); actualizarVidaDance();}, null, game);
+        }
+    }
+
+    if(bombaLlena){
+        if(playerDance){game.physics.arcade.overlap(playerDance,bombaLlena, function(){golpe(); actualizarVidaDance();}, null, game);
+        }
     }
 
     if (!orbe1Existe && !orbe2Existe && !orbe3Existe && !orbe4Existe) {
-        console.log('Todos los orbes destrozados');
+
         protectoresVivos = false;
     }
 
     if(orbe5 && danceVulnerable){
-        if(blastDance){game.physics.arcade.overlap(blastDance,orbe5, function(){orbe5.kill(); boss.kill(); blastDance.kill();}, null, game);
+        if(blastDance){game.physics.arcade.overlap(blastDance,orbe5, function(){orbe5.kill(); boss.kill(); blastDance.kill(); juegoTerminado();}, null, game);
         }
-        if(granada){game.physics.arcade.overlap(granada,orbe5, function(){orbe5.kill(); boss.kill();}, null, game);
+        if(granada){game.physics.arcade.overlap(granada,orbe5, function(){orbe5.kill(); boss.kill(); juegoTerminado();}, null, game);
+        }
+        if(onda){game.physics.arcade.overlap(onda,orbe5, function(){orbe5.kill(); boss.kill(); juegoTerminado();}, null, game);
         }
     }
 
@@ -373,6 +394,11 @@ function dispararGranada(){
                 onda = game.add.sprite(granada.x, granada.y, 'onda');
                 onda.anchor.setTo(0.5, 0.5);
                 onda.scale.setTo(0.75, 0.75);
+
+                game.physics.arcade.enable(onda);
+                onda.body.collideWorldBounds = false;
+
+
 
                 onda.animations.add('onda');
                 onda.animations.play('onda', 15, false, true);
@@ -420,33 +446,110 @@ function createGranadaResiduo(x, y){//                                          
 
 function laserDance(){
 
-    laser = game.add.sprite(game.world.width/2, game.world.height/2, 'laser');
+    laser = game.add.sprite(game.world.width, game.world.height/2, 'laserVertical');
     laser.anchor.setTo(0.5, 0.5);
-    laser.angle = 45;
     laser.alpha = 0;
-    var tween1 = game.add.tween(laser).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
-    
-    //laser.scale.setTo(0.5,0.5);
-    /*
-    laser.animations.add('laserAnimacion');
-    laser.animations.play('laserAnimacion', 12, true, false);
-    */
-    laser2 = game.add.sprite(game.world.width/2, game.world.height/2, 'laser');
-    laser2.anchor.setTo(0.5, 0.5);
-    laser2.angle = 135;
-    laser2.alpha = 0;
-    var tween2 = game.add.tween(laser2).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+    game.physics.arcade.enable(laser);
+    laser.anchor.setTo(0.5, 0.5);
+    laser.body.collideWorldBounds = false;
 
-    rotarLaser();
+    var tween1 = game.add.tween(laser).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+    moverHorizontal();
+
 }
 
+function laser3Dance(){
+
+    laser3 = game.add.sprite(0, game.world.height/2, 'laserVertical');
+    laser3.anchor.setTo(0.5, 0.5);
+    laser3.alpha = 0;
+    game.physics.arcade.enable(laser3);
+    laser3.anchor.setTo(0.5, 0.5);
+    laser3.body.collideWorldBounds = false;
+
+    var tween1 = game.add.tween(laser3).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+    moverHorizontal2();
+
+}
+
+function laser2Dance(){
+
+    laser2 = game.add.sprite(game.world.width/2, 0, 'laser');
+    laser2.anchor.setTo(0.5, 0.5);
+    laser2.alpha = 0;
+    game.physics.arcade.enable(laser2);
+    laser2.body.collideWorldBounds = false;
+
+    var tween2 = game.add.tween(laser2).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+
+    moverVertical();
+}
+
+function laser4Dance(){
+
+    laser4 = game.add.sprite(game.world.width/2, 950, 'laser');
+    laser4.anchor.setTo(0.5, 0.5);
+    laser4.alpha = 0;
+    game.physics.arcade.enable(laser4);
+    laser4.body.collideWorldBounds = false;
+
+    var tween2 = game.add.tween(laser4).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+
+    moverVertical2();
+}
+
+
+
+function moverHorizontal(){
+    moveTo(laser, 1000, game.world.height/2, 150);
+    tiempoLaser = game.time.events.add(Phaser.Timer.SECOND * 9, function() {
+        var tween1 = game.add.tween(laser).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+    }, game);
+    tiempoLaser = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
+        laser.kill();
+    }, game);
+
+}
+
+function moverHorizontal2(){
+    moveTo(laser3, 2000, game.world.height/2, 150);
+    tiempoLaser3 = game.time.events.add(Phaser.Timer.SECOND * 9, function() {
+        var tween3 = game.add.tween(laser3).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+    }, game);
+    tiempoLaser3 = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
+        laser3.kill();
+    }, game);
+
+}
+
+function moverVertical(){
+    moveTo(laser2, game.world.width/2, 1000, 150);
+    tiempoLaser2 = game.time.events.add(Phaser.Timer.SECOND * 4, function() {
+        var tween2 = game.add.tween(laser2).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+    }, game);
+    tiempoLaser2 = game.time.events.add(Phaser.Timer.SECOND * 5, function() {
+        laser2.kill();
+    }, game);
+}
+
+function moverVertical2(){
+    moveTo(laser4, game.world.width/2, 0, 150);
+    tiempolaser4 = game.time.events.add(Phaser.Timer.SECOND * 4, function() {
+        var tween2 = game.add.tween(laser4).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+    }, game);
+    tiempolaser4 = game.time.events.add(Phaser.Timer.SECOND * 5, function() {
+        laser4.kill();
+    }, game);
+}
+/*
 function rotarLaser(){
 
-    game.time.events.loop(Phaser.Timer.SECOND / 60, function() {
+
+    tiempoRotacion1 = game.time.events.loop(Phaser.Timer.SECOND / 60, function() {
         laser.angle += rotationSpeed / 60; // Actualizar el ángulo del láser
     }, this);
 
-    game.time.events.loop(Phaser.Timer.SECOND / 60, function() {
+    tiempoRotacion2 = game.time.events.loop(Phaser.Timer.SECOND / 60, function() {
         laser2.angle += rotationSpeed / 60; // Actualizar el ángulo del láser
     }, this);
 
@@ -461,17 +564,18 @@ function rotarLaser(){
         }, game);
     }, game);
 }
+*/
 
 function protectoresEstado(){
 
     if((!orbe1Existe && !orbe2Existe && !orbe3Existe && !orbe4Existe)){
-        console.log('Protectores muertos, dance debil');
+
         danceVulnerable = true;
         //FALTA MANAGE COLLISION
         vulnerabilidad = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
             //DANCE VULNERABLE
             if((!orbe1Existe && !orbe2Existe && !orbe3Existe && !orbe4Existe)){
-                console.log('Dance vuelve a la carga');
+ 
 
 
                 protectoresVivos = true;
@@ -484,13 +588,13 @@ function protectoresEstado(){
         }, game);
     }
     else{
-        console.log('Protectores vivos');
+
     }
 }
 
 function spawnOrbes(){
 
-    console.log('Protectores creados');
+
 
     orbe1Existe = true;
     orbe2Existe = true;
@@ -525,6 +629,146 @@ function spawnOrbes(){
 }
 
 
+function bombaclat(){
+
+    i = 0;
+    executeIteration();
+}
+
+function executeIteration() {
+    console.log('Dentro for');
+
+    // Haz el trabajo de la iteración aquí
+    randomX = Phaser.Math.random(-70, 70);
+    randomY = Phaser.Math.random(-70, 70);
+
+    bombaVacia = game.add.sprite(playerDance.x + randomX, playerDance.y + randomY, 'bombaVacia');
+    bombaVacia.scale.setTo(1.5, 1.5);
+    bombaVacia.anchor.setTo(0.5, 0.5);
+    bombaVacia.animations.add('bombaVacia');
+    bombaVacia.animations.play('bombaVacia', 6, true, false);
+
+    tiempoRellenar = game.time.events.add(Phaser.Timer.SECOND * 1, rellenarBombaclat, game);
+    // Incrementa el contador y programa la próxima iteración después de 3 segundos si no se ha completado
+    if (++i < 5) {
+        tiempoSiguienteIteracion = game.time.events.add(Phaser.Timer.SECOND * 2, executeIteration, game);
+    }
+}
+
+function rellenarBombaclat(){
+    console.log('Relleno');
+    bombaVacia.kill();
+
+    bombaLlena = game.add.sprite(bombaVacia.x, bombaVacia.y, 'bombaLlena');
+    bombaLlena.scale.setTo(1.5, 1.5);
+    bombaLlena.anchor.setTo(0.5, 0.5);
+    game.physics.arcade.enable(bombaLlena);
+
+    bombaLlena.animations.add('bombaLlena');
+    bombaLlena.animations.play('bombaLlena', 6, true, false);
+    //pasando = game.time.events.add(Phaser.Timer.SECOND * 3, game);
+    var tween1 = game.add.tween(bombaLlena).to({ alpha: 0 }, 3000, Phaser.Easing.Linear.None, true);
+
+}
+
+function estadosEnemigo(){
+
+    randomValor = Math.floor(Phaser.Math.random(0, 5));
+    console.log('randomValor:', randomValor);
+
+    switch(randomValor){
+        case 0:
+            bombaclat();
+            console.log('Lanza bombas');
+            setTimeout(function() {
+                enEstado = false;
+                console.log('Continuando después de 10 segundos');
+            }, 10000);
+            break;
+
+        case 1:
+            laserDance();
+            console.log('Laser derecha');
+            setTimeout(function() {
+                enEstado = false;
+                console.log('Continuando después de 10 segundos');
+            }, 8000);
+            break;
+
+        case 2:
+            laser2Dance();
+            console.log('Laser arriba');
+            setTimeout(function() {
+                enEstado = false;
+                console.log('Continuando después de 10 segundos');
+            }, 8000);
+            break;
+
+        case 3:
+            laser3Dance();
+            console.log('Laser izquierda');
+            setTimeout(function() {
+                enEstado = false;
+                console.log('Continuando después de 10 segundos');
+            }, 8000);
+            break;
+
+        case 4:
+            laser4Dance();
+            console.log('Laser abajo');
+            setTimeout(function() {
+                enEstado = false;
+                console.log('Continuando después de 10 segundos');
+            }, 8000);
+            break;
+
+        default:
+            console.log('Nada de nada');
+    }
+
+}
+
+function actualizarVidaDance(){
+    if(playerSalud<=0){
+        juegoTerminadoMal();
+    }
+    else if(playerSalud > 3){
+        //Herido
+        playerDance.frame = 0;
+
+    }
+    else if(playerSalud == 3){
+        playerDance.frame = 1;
+    }
+    else if(playerSalud == 2){
+        //Muy herido
+        playerDance.frame = 2;
+
+    }
+    else if(playerSalud==1){
+        playerDance.frame = 3;
+        //Moribundo
+    }
+}
+
+function golpe(){
+
+    if (invulnerabilidad == false){
+        playerSalud -= 1;
+        invulnerabilidad = true;
+        tiempoLaser = game.time.events.add(Phaser.Timer.SECOND * 2, function() {
+            invulnerabilidad = false;
+        }, game);
+    }
+
+}
 
 
+function juegoTerminado(){
 
+    game.state.start('win');
+}
+
+function juegoTerminadoMal(){
+    game.state.start('gameOver');
+}
