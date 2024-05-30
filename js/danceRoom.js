@@ -25,6 +25,13 @@ let disparoDance;
 let huecoArma = 2;
 let granada;
 let granadaTween;
+let rotationSpeed = 50;
+let danceVulnerable = false;
+let protectoresVivos;
+let orbe1Existe = false;
+let orbe2Existe = false;
+let orbe3Existe = false;
+let orbe4Existe = false;
 
 let controlDance = false;
 let controlGranada = false;
@@ -35,9 +42,12 @@ function preloadDanceRoom() {
     game.load.image('blast', 'assets/proyectil.png');
     game.load.audio('Disparo', 'assets/snds/Disparo.mp3');
     game.load.image('DANCE', 'assets/DANCE.png');
+    game.load.image('hitbox', 'assets/-portal.png');
 
     game.load.spritesheet('Granada', 'assets/granadaAliado.png', 10, 10);
     game.load.spritesheet('onda', 'assets/onda expansiva.png', 200, 200);
+    game.load.image('laser', 'assets/laserImagenSola.png');
+    game.load.spritesheet('laserAnimacion', 'assets/LaserEnemigo.png', 2200, 100);
 }
 
 function createDanceRoom() {
@@ -50,9 +60,14 @@ function createDanceRoom() {
     bg.scrollFactorX = 0.7;
     bg.scrollFactorY = 0.7;
 
-    dance = game.add.image(game.world.width/2, game.world.height/2, 'DANCE');
-    game.physics.arcade.enable(dance);
-    dance.anchor.setTo(0.5,0.5);
+
+    orbe5 = game.add.sprite(game.world.width/2, game.world.height/2, 'hitbox');
+    orbe5.anchor.setTo(0.5, 0.5);
+    boss = game.add.sprite(game.world.width/2, game.world.height/2, 'DANCE');
+    boss.anchor.setTo(0.5, 0.5);
+
+    game.physics.arcade.enable(orbe5);
+    orbe5.body.collideWorldBounds = false;
 
     clickDance = game.input.mousePointer;
 
@@ -73,6 +88,9 @@ function createDanceRoom() {
     buttonDDance = game.input.keyboard.addKey(Phaser.Keyboard.D);
     buttonSpace = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     buttonShiftDance = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+
+    laserDance();
+    spawnOrbes();
 
 }
 
@@ -119,8 +137,9 @@ function updateDanceRoom(){
             dispararGranada();
         }
 
+        protectoresEstado();
 
-        //manageColision();//             Tiene en cuenta la colisión del jugador
+        manageColisionDance();//             Tiene en cuenta la colisión del jugador
 
 
 
@@ -252,6 +271,7 @@ function createBlastDance(){//                                                  
     blastDance = game.add.sprite(x, y, 'blast');
     blastDance.anchor.setTo(0.5, 0.5);
     blastDance.scale.setTo(0.5, 0.5);
+
     game.physics.arcade.enable(blastDance);
     blastDance.body.collideWorldBounds = false;
 
@@ -284,22 +304,53 @@ function destroyBlastDance(tiempo, blast){//                                    
 }
 
 
-//function manageColision(){//         
-    /*                                               Maneja las colisiones
+function manageColisionDance(){
+    /*
     for (let i = 0; i <= enemies.length; i++){
         if(blast){game.physics.arcade.overlap(blast, enemies[i], enemyBlastCollide, null, game);}
         game.physics.arcade.overlap(player, enemies[i], playerEnemyCollide, null, game);
     }
     */
 
-    /*
-    if(moneda){
-        for (let i = 0; i <= monedasList.length; i++){
-            game.physics.arcade.overlap(player,monedasList[i], recogerMonedas, null, game);
+    if(orbe1){
+        if(blastDance){game.physics.arcade.overlap(blastDance,orbe1, function(){orbe1.kill(); blastDance.kill(); orbe1Existe = false; console.log('Orbe1 fuera');}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,orbe1, function(){orbe1.kill(); orbe1Existe = false;}, null, game);
+        }
+
+    }
+    if(orbe2){
+        if(blastDance){game.physics.arcade.overlap(blastDance,orbe2, function(){orbe2.kill(); blastDance.kill(); orbe2Existe = false;console.log('orbe2 fuera')}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,orbe2, function(){orbe2.kill(); orbe2Existe = false;}, null, game);
         }
     }
-    */
-//}
+    if(orbe3){
+        if(blastDance){game.physics.arcade.overlap(blastDance,orbe3, function(){orbe3.kill(); blastDance.kill(); orbe3Existe = false; console.log('orbe3 fuera');}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,orbe3, function(){orbe3.kill(); orbe3Existe = false;}, null, game);
+        }
+    }
+    if(orbe4){
+        if(blastDance){game.physics.arcade.overlap(blastDance,orbe4, function(){orbe4.kill(); blastDance.kill(); orbe4Existe = false; console.log('orbe4 fuera');}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,orbe4, function(){orbe4.kill(); orbe4Existe = false;}, null, game);
+        }
+    }
+
+    if (!orbe1Existe && !orbe2Existe && !orbe3Existe && !orbe4Existe) {
+        console.log('Todos los orbes destrozados');
+        protectoresVivos = false;
+    }
+
+    if(orbe5 && danceVulnerable){
+        if(blastDance){game.physics.arcade.overlap(blastDance,orbe5, function(){orbe5.kill(); boss.kill(); blastDance.kill();}, null, game);
+        }
+        if(granada){game.physics.arcade.overlap(granada,orbe5, function(){orbe5.kill(); boss.kill();}, null, game);
+        }
+    }
+
+}
 
 function dispararGranada(){
     if(clickDance.isDown && controlGranada == false){
@@ -365,3 +416,115 @@ function createGranadaResiduo(x, y){//                                          
 
     return granada;
 }
+
+
+function laserDance(){
+
+    laser = game.add.sprite(game.world.width/2, game.world.height/2, 'laser');
+    laser.anchor.setTo(0.5, 0.5);
+    laser.angle = 45;
+    laser.alpha = 0;
+    var tween1 = game.add.tween(laser).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+    
+    //laser.scale.setTo(0.5,0.5);
+    /*
+    laser.animations.add('laserAnimacion');
+    laser.animations.play('laserAnimacion', 12, true, false);
+    */
+    laser2 = game.add.sprite(game.world.width/2, game.world.height/2, 'laser');
+    laser2.anchor.setTo(0.5, 0.5);
+    laser2.angle = 135;
+    laser2.alpha = 0;
+    var tween2 = game.add.tween(laser2).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+
+    rotarLaser();
+}
+
+function rotarLaser(){
+
+    game.time.events.loop(Phaser.Timer.SECOND / 60, function() {
+        laser.angle += rotationSpeed / 60; // Actualizar el ángulo del láser
+    }, this);
+
+    game.time.events.loop(Phaser.Timer.SECOND / 60, function() {
+        laser2.angle += rotationSpeed / 60; // Actualizar el ángulo del láser
+    }, this);
+
+    tiempoLaser = game.time.events.add(Phaser.Timer.SECOND * 5, function() {
+        var tween1 = game.add.tween(laser).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+        var tween2 = game.add.tween(laser2).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+
+        tiempoLaser = game.time.events.add(Phaser.Timer.SECOND * 1, function() {
+            laser.kill();
+            laser2.kill();
+
+        }, game);
+    }, game);
+}
+
+function protectoresEstado(){
+
+    if((!orbe1Existe && !orbe2Existe && !orbe3Existe && !orbe4Existe)){
+        console.log('Protectores muertos, dance debil');
+        danceVulnerable = true;
+        //FALTA MANAGE COLLISION
+        vulnerabilidad = game.time.events.add(Phaser.Timer.SECOND * 10, function() {
+            //DANCE VULNERABLE
+            if((!orbe1Existe && !orbe2Existe && !orbe3Existe && !orbe4Existe)){
+                console.log('Dance vuelve a la carga');
+
+
+                protectoresVivos = true;
+                danceVulnerable = false;
+
+                spawnOrbes();
+            }
+
+
+        }, game);
+    }
+    else{
+        console.log('Protectores vivos');
+    }
+}
+
+function spawnOrbes(){
+
+    console.log('Protectores creados');
+
+    orbe1Existe = true;
+    orbe2Existe = true;
+    orbe3Existe = true;
+    orbe4Existe = true;
+
+    orbe1 = game.add.sprite(100, 100, 'DANCE');
+    orbe1.anchor.setTo(0.5, 0.5);
+    orbe1.scale.setTo(0.25, 0.25);
+    game.physics.arcade.enable(orbe1);
+    orbe1.body.collideWorldBounds = false;
+
+    orbe2 = game.add.sprite(game.world.width - 100, 100, 'DANCE');
+    orbe2.anchor.setTo(0.5, 0.5);
+    orbe2.scale.setTo(0.25, 0.25);
+    game.physics.arcade.enable(orbe2);
+    orbe2.body.collideWorldBounds = false;
+
+    orbe3 = game.add.sprite(100, game.world.height - 100, 'DANCE');
+    orbe3.anchor.setTo(0.5, 0.5);
+    orbe3.scale.setTo(0.25, 0.25);
+    game.physics.arcade.enable(orbe3);
+    orbe3.body.collideWorldBounds = false;
+
+    orbe4 = game.add.sprite(game.world.width - 100, game.world.height - 100, 'DANCE');
+    orbe4.anchor.setTo(0.5, 0.5);
+    orbe4.scale.setTo(0.25, 0.25);
+    //orbe4.alpha = 0;
+    //var tween4 = game.add.tween(orbe4).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true);
+    game.physics.arcade.enable(orbe4);
+    orbe4.body.collideWorldBounds = false;
+}
+
+
+
+
+
