@@ -27,8 +27,16 @@ let playState = {
     create: initialiseGame,
     update: gameUpdate
 };
-
-
+//VARIABLES SONIDOS
+let musicVolume = 0.25; 
+//VARIABLES SPAWN CORAZON
+let SpawnCorazonInicioX = 50;
+let SpawnCorazonFinX = 1900;
+let SpawnCorazonInicioY = 50;
+let SpawnCorazonFinY = 2180;
+//VARIABLES MUNDO
+let backgroundX = 1920
+let backgroundY = 2200
 //VARIABLES
 let player;
 let enemy;
@@ -41,6 +49,12 @@ let monedasList;
 let bullet;
 let bulletList;
 let alarma;
+let tiempoGeneradorEnemigos = 200;
+let tiempoGeneradorBlast = 50;
+let aleatorioInicioX = 50;
+let aleatorioFinX = 1870;
+let anguloRotacion = (360 / (2 * Math.PI));
+let totalAngulo = 360;
 
 
 let recargaMunicion;
@@ -162,7 +176,7 @@ function initialiseGame() {
     enemyVelocity = jsonEnemy.velocity;
 
     musicaFondo = game.sound.add('MusicaJuego');
-    musicaFondo.volume = 0.25;
+    musicaFondo.volume = musicVolume;
     musicaFondo.loop = true;
     musicaFondo.play();
 
@@ -170,7 +184,7 @@ function initialiseGame() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //CARGAMOS Y CONFIGURAMOS EL MUNDO
-    game.world.setBounds(0, 0, 1920, 2200);
+    game.world.setBounds(0, 0, backgroundX, backgroundY);
     let bg = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'fondoGrande');
     bg.scrollFactorX = 0.7;
     bg.scrollFactorY = 0.7;
@@ -233,13 +247,6 @@ function initialiseGame() {
     mejoraCorazon.anchor.setTo(0.5, 0.5);
     mejoraCorazon.scale.setTo(0.75,0.75);
     game.physics.arcade.enable(mejoraCorazon);
-
-    /*
-    mejoraEscudo = game.add.sprite(jsonEscudo.x, jsonEscudo.y, 'mejoraEscudo');
-    mejoraEscudo.anchor.setTo(0.5, 0.5);
-    mejoraEscudo.scale.setTo(0.75,0.75);
-    game.physics.arcade.enable(mejoraEscudo);
-    */
 
     mejoraSprintTexto = game.add.text(jsonSprint.texto.x, jsonSprint.texto.y, jsonSprint.precio, { font: '04B_19', fontSize: '30px', fill: '#ffffff' });
     mejoraSprint = game.add.sprite(jsonSprint.x, jsonSprint.y, 'mejoraSprint');
@@ -438,7 +445,7 @@ function gameUpdate() {
 
         //APARICIÓN DE ENEMIGOS
         contador++;
-        if(contador == 200){
+        if(contador == tiempoGeneradorEnemigos){
             timeEnemy(2000);//          Tiempo de reaparición de enemigo
             timeEnemyCuadrado(4000);
             contador = 0;
@@ -447,7 +454,7 @@ function gameUpdate() {
         if(levelDifficulty >= 2){
 
             contador2++;
-            if(contador == 50){
+            if(contador == tiempoGeneradorBlast){
                 timeEnemyShoot(0);//    Tiempo para que disparen los enemigos
                 timeEnemyShootCuadrado(100);
                 contador2 = 0;
@@ -476,22 +483,6 @@ function updateText(){//                                                        
         textoFondo.setText(killCount);
 
 }
-
-
-/*
-function enemiesMovement(){// El enemigo se mueve hacia el jugador si el jugador está en el rango de persecucion del enemigo o el nivel es 1
-    enemies.forEach(function(enemy) {
-        if(levelDifficulty>1){
-            distanciaJugador = Phaser.Math.distance(player.x,player.y, enemy.x,enemy.y);
-           if(distanciaJugador<=jsonLvl.RANGO_PERSECUCION){
-                moveTo(enemy,player.x, player.y,jsonLvl.ENEMY_VELOCITY);
-           }
-        }
-        //else { moveTo(enemy,player.x, player.y,jsonLvl.ENEMY_VELOCITY);}
-
-    });
-}
-*/
 
 function wallsCollision(){
     if(enemy){
@@ -542,10 +533,6 @@ function enemiesMovement() {
                 enemy.animations.play('enemigoAnimacion', 14, true, true);
                 moveTo(enemy, player.x, player.y, enemyVelocity);
                 persecucion = true;
-                /*
-                enemy.animations.add('enemigoAnimacion');
-                enemy.animations.play('enemigoAnimacion', 14, false, true);
-                */
             }
             else{
                 persecucion = false;
@@ -826,13 +813,6 @@ function manageColision(){//                                                    
             actualizarVida()
         }
 
-        /*
-        game.time.events.add(Phaser.Timer.SECOND * 3, function() {
-            console.log('Mejora de escudo');
-            mejoraEscudo.kill();
-            mejoraEscudoTexto.kill();
-        }, this);
-        */
     }
 
 
@@ -845,15 +825,6 @@ function manageColision(){//                                                    
             compraVelocidad = true;
             puedeComprar = false;
         }
-
-        /*
-        game.time.events.add(Phaser.Timer.SECOND * 3, function() {
-            console.log('Mejora de Sprint');
-            mejoraSprint.kill();
-            mejoraSprintTexto.kill();
-            compraVelocidad = true;
-        }, this);
-        */
     }
 
     if(game.physics.arcade.overlap(player, mejoraSuerte )){
@@ -865,14 +836,6 @@ function manageColision(){//                                                    
             mejoraSuerteCompra = jsonSuerte.aumento;
             puedeComprar = false;
         }
-
-        /*
-        game.time.events.add(Phaser.Timer.SECOND * 3, function() {
-            console.log('Mejora de Suerte');
-            mejoraSuerte.kill();
-            mejoraSuerteTexto.kill()
-        }, this);
-        */
     }
 
 
@@ -1045,12 +1008,12 @@ function spawnMoneda(xSpawn,ySpawn){//                                          
 }
 
 function rotatePlayer(){//                                                          Permite que lel jugador rote donde aputna el ratón
-    var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+    var targetAngle = anguloRotacion * game.math.angleBetween(
         player.x, player.y,
         game.input.mousePointer.worldX, game.input.mousePointer.worldY);
 
       if(targetAngle < 0)
-          targetAngle += 360;
+          targetAngle += totalAngulo;
 
     player.angle = targetAngle;
 }
@@ -1065,34 +1028,34 @@ function createEnemy(){//                                                       
 
         if(killCount < jsonLvl.BARRIER_1_KILLS){
             console.log("estoy generando en 1");
-            x = Phaser.Math.random(50, 1870);
+            x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
             y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
         }
         else if(killCount < jsonLvl.BARRIER_2_KILLS){
             console.log("estoy generando en 2");
-            x = Phaser.Math.random(50, 1870);
+            x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
             y = Phaser.Math.random(jsonBarr.y1 + 10, jsonTecho.y - 10);
         }
         else{
             console.log("estoy generando en 3");
-            x = Phaser.Math.random(50, 1870);
+            x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
             y = Phaser.Math.random(50, jsonTecho.y);
         }
         
         while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > jsonTecho.y){
             if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
-                x = Phaser.Math.random(50, 1870);
+                x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
                 y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
             }
             else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
-                x = Phaser.Math.random(50, 1870);
+                x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
                 y = Phaser.Math.random(jsonBarr.y1 +10, jsonTecho.y - 10);
             }
             else{
                 console.log("estoy generando en 3");
-                x = Phaser.Math.random(50, 1870);
+                x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
                 y = Phaser.Math.random(50, jsonTecho.y - 10);
             }
         }
@@ -1121,34 +1084,34 @@ function createEnemyCuadrado(){//                                               
 
         if(killCount < jsonLvl.BARRIER_1_KILLS){
             console.log("estoy generando en 1");
-            x = Phaser.Math.random(50, 1870);
+            x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
             y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
         }
         else if(killCount < jsonLvl.BARRIER_2_KILLS){
             console.log("estoy generando en 2");
-            x = Phaser.Math.random(50, 1870);
+            x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
             y = Phaser.Math.random(jsonBarr.y1 + 10, jsonTecho.y - 10);
         }
         else{
             console.log("estoy generando en 3");
-            x = Phaser.Math.random(50, 1870);
+            x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
             y = Phaser.Math.random(50, jsonTecho.y);
         }
         
         while((x > jsonMuro.x0 && x < jsonMuro.x1) && y > jsonTecho.y){
             if(killCount < jsonLvl.BARRIER_1_KILLS){
                 console.log("estoy generando en 1");
-                x = Phaser.Math.random(50, 1870);
+                x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
                 y = Phaser.Math.random(jsonBarr.y0 + 10, jsonTecho.y - 10);
             }
             else if(killCount < jsonLvl.BARRIER_2_KILLS){
                 console.log("estoy generando en 2");
-                x = Phaser.Math.random(50, 1870);
+                x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
                 y = Phaser.Math.random(jsonBarr.y1 +10, jsonTecho.y - 10);
             }
             else{
                 console.log("estoy generando en 3");
-                x = Phaser.Math.random(50, 1870);
+                x = Phaser.Math.random(aleatorioInicioX, aleatorioFinX);
                 y = Phaser.Math.random(50, jsonTecho.y - 10);
             }
         }
@@ -1168,12 +1131,12 @@ function createEnemyCuadrado(){//                                               
  
 
 function rotateEnemy(enemigo) {//                                                     Rota el enemigo donde se encuentra el jugador
-    var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+    var targetAngle = anguloRotacion * game.math.angleBetween(
         enemigo.x, enemigo.y,
         player.x, player.y);
 
     if (targetAngle < 0)
-        targetAngle += 360;
+        targetAngle += totalAngulo;
 
     enemigo.angle = targetAngle;
 }
@@ -1191,10 +1154,6 @@ function timeEnemy(tiempo){//                                                   
 function timeEnemyCuadrado(tiempo){//                                                       Tiempo de creación de enemigos
     game.time.events.add(tiempo, function() {
         createEnemyCuadrado();
-        /*
-        tiempoDisparo = Phaser.Math.random(1000, 5000);
-        if(levelDifficulty==2){timeEnemyShoot(tiempoDisparo);}
-        */
     }, game);
 }
 
@@ -1494,12 +1453,12 @@ function corazonesRespawn(){
 
     while(limite < jsonLvl.CORAZONES_MAPA_LIMITE){
 
-        let randomx = Phaser.Math.random(50, 1900);
-        let randomy = Phaser.Math.random(50, 2180);
+        let randomx = Phaser.Math.random(SpawnCorazonInicioX, SpawnCorazonFinX);
+        let randomy = Phaser.Math.random(SpawnCorazonInicioY, SpawnCorazonFinY);
 
         while((957 <= randomx && randomx <= 1351) && randomy >= 1800){
-            randomx = Phaser.Math.random(50, 1900);
-            randomy = Phaser.Math.random(50, 2180);
+            randomx = Phaser.Math.random(SpawnCorazonInicioX, SpawnCorazonFinX);
+            randomy = Phaser.Math.random(SpawnCorazonInicioY, SpawnCorazonFinY);
         }
 
         corazon = game.add.sprite(randomx, randomy, 'corazon');
