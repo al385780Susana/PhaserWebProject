@@ -822,7 +822,7 @@ function manageColision(){//                                                    
             dineroTotal -= jsonCorazon.precio;
             puedeComprar = false;
 
-            playerHealth += 5;
+            playerHealth += jsonCorazon.aumento;
             actualizarVida()
         }
 
