@@ -3,161 +3,420 @@
         {  
             "DIFICULTAD":1,
 
-            "SAFE_ZONE_X_LEFT":957,
-            "SAFE_ZONE_X_RIGHT":1351,
-            "SAFE_ZONE_Y":1800,
+            "CORAZONES_MAPA_LIMITE": 15,
 
-            "PORTAL_X":960,
-            "PORTAL_Y":100,
+            "ZONA_SEGURA":{
+                "x0":960,
+                "x1":1360,
+                "y":2000
+            },
 
-            "BARRERA_1_Y":1240,
-            "BARRERA_2_Y":565,
-            "TECHO_SEGURO_X":1160,
+            "TECHO_SEGURO":{
+                "x":1160,
+                "y":1800
+            },
 
-            "TEXTO_FONDO_X":400,
-            "TEXTO_FONDO_Y":300,
-            "BULLET_HUD_X":725,
-            "BULLET_HUD_Y":525,
-            "MONEDA_HUD_X":0,
-            "MONEDA_HUD_Y":525,
+            "BARRERA":{
+                "x":0,
+                "y0":1240,
+                "y1":565
+    
+            },
 
-            "RECARGA_1_X":1300,
-            "RECARGA_1_Y":1870,
-            "RECARGA_2_X":1298,
-            "RECARGA_2_Y":1920,
+            "PORTAL":{
+                "x":960,
+                "y":100
+            },
 
-            "MEJORAS_Y":2100,
-            "MEJORAS_TEXTO_Y":2140,
-            "MEJORA_ESCUDO_X":1053,
-            "MEJORA_ESCUDO_TEXTO_X":1045,
-            "MEJORA_SPRINT_X":1159,
-            "MEJORA_SPRINT_TEXTO_X":1145,
-            "MEJORA_SUERTE_X":1259,
-            "MEJORA_SUERTE_TEXTO_X":1245,
+            "TEXTO_FONDO":{
+                "x":400,
+                "y":300
+            },
 
-            "PLAYER_X_INICIAL":200,
-            "PLAYER_Y_INICIAL": 2000,
-            "VICTORY_POINTS": 500,
-            "PLAYER_VELOCITY": 150,
-            "ENEMY_VELOCITY": 100,
-            "BLAST_VELOCITY": 200,
-            "ENEMY_SHOOT_CADENCY": 3000,
-            "PLAYER_HEALTH": 6, 
-            "RANGO_PERSECUCION": 300,
-            "MUNICION_INICIAL": 7,
-            "SUERTE": 20,
+            "BULLET_HUD":{
+                "texto":{
+                    "x":700
+                },
+                "sprite":{
+                    "x":725,
+                    "y":525
+                }
+
+            },
+            "MONEDA_HUD":{
+                "texto":{                
+                    "x":65
+                },
+                "sprite":{
+                    "x":0,
+                    "y":525
+                }
+
+            },
+            "DIFICULTAD_HUD":{
+                "x":110,
+                "y":25,
+                "sprite":"dificultad1"
+            },
+
+            "RECARGA_MUNICION":{
+                "x0":50,
+                "y0":1870,
+                "x1":50,
+                "y1":950,
+                "x2": 50,
+                "y2": 450
+            },
+
+            "MEJORAS":{
+
+                "ESCUDO":{
+                    "x":1053,
+                    "y": 2100,
+                    "precio": 15,
+                    "texto":{
+                        "x":1045,
+                        "y":2140
+                    }
+                },
+    
+                
+                "SPRINT":{
+                    "x":1159,
+                    "y": 2100,
+                    "precio": 10,
+                    "aumento": 150,
+                    "texto":{
+                        "x":1145,
+                        "y":2140
+        
+                    }
+                },
+    
+                "SUERTE":{
+                    "x":1259,
+                    "y":2100,
+                    "precio":15,
+                    "texto":{
+                        "x":1045,
+                        "y":2140
+                    },
+                    "aumento": 5
+    
+                },
+
+                "CORAZON":{
+                    "x":1053,
+                    "y":2100,
+                    "precio":5,
+                    "texto":{
+                        "x":1245,
+                        "y":2140
+                    },
+                    "aumento":5
+                }
+    
+            },
+
+            "PLAYER":{
+                "x":200,
+                "y":2000,
+                "maxHealth":10,
+                "velocity":150,
+                "municionInicial": 7,
+                "suerteInicial": 20
+            },
+
+            "ENEMY":{
+                "velocity": 100,
+                "shootCadency": 3000,
+                "rango": 300,
+                "granadaArea": 200,
+                "blastVelocity": 200
+            },
+
             "BARRIER_1_KILLS": 5,
             "BARRIER_2_KILLS": 15,
-            "END_PORTAL_KILLS": 20,
-            "GRANADA_AREA_RADIUS": 200
-
+            "END_PORTAL_KILLS": 20
+           
 
         },
         {
             "DIFICULTAD":2,
+            "CORAZONES_MAPA_LIMITE": 10,
 
-            "SAFE_ZONE_X_LEFT":957,
-            "SAFE_ZONE_X_RIGHT":1351,
-            "SAFE_ZONE_Y":1800,
+            "ZONA_SEGURA":{
+                "x0":960,
+                "x1":1360,
+                "y":2000
+            },
 
-            "PORTAL_X":960,
-            "PORTAL_Y":100,
+            "TECHO_SEGURO":{
+                "x":1160,
+                "y":1800
+            },
 
-            "BARRERA_1_Y":1240,
-            "BARRERA_2_Y":565,
-            "TECHO_SEGURO_X":1160,
+            "BARRERA":{
+                "x":0,
+                "y0":1240,
+                "y1":565
+    
+            },
 
-            "TEXTO_FONDO_X":400,
-            "TEXTO_FONDO_Y":300,
-            "BULLET_HUD_X":725,
-            "BULLET_HUD_Y":525,
-            "MONEDA_HUD_X":0,
-            "MONEDA_HUD_Y":525,
+            "PORTAL":{
+                "x":960,
+                "y":100
+            },
 
-            "RECARGA_1_X":1300,
-            "RECARGA_1_Y":1870,
-            "RECARGA_2_X":1298,
-            "RECARGA_2_Y":1920,
+            "TEXTO_FONDO":{
+                "x":400,
+                "y":300
+            },
 
-            "MEJORAS_Y":2120,
-            "MEJORAS_TEXTO_Y":2100,
-            "MEJORA_ESCUDO_X":1045,
-            "MEJORA_ESCUDO_TEXTO_X":1053,
-            "MEJORA_SPRINT_X":1145,
-            "MEJORA_SPRINT_TEXTO_X":1159,
-            "MEJORA_SUERTE_X":1245,
-            "MEJORA_SUERTE_TEXTO_X":1259,
+            "BULLET_HUD":{
+                "texto":{
+                    "x":700
+                },
+                "sprite":{
+                    "x":725,
+                    "y":525
+                }
 
+            },
+            "MONEDA_HUD":{
+                "texto":{                
+                    "x":65
+                },
+                "sprite":{
+                    "x":0,
+                    "y":525
+                }
 
-            "PLAYER_X_INICIAL":200,
-            "PLAYER_Y_INICIAL": 2000,
-            "VICTORY_POINTS": 500,
-            "PLAYER_VELOCITY": 150,
-            "ENEMY_VELOCITY": 100,
-            "BLAST_VELOCITY": 200,
-            "ENEMY_SHOOT_CADENCY": 3000,
-            "PLAYER_HEALTH": 6, 
-            "RANGO_PERSECUCION": 300,
-            "MUNICION_INICIAL": 6,
-            "SUERTE": 15,
+            },
+            "DIFICULTAD_HUD":{
+                "x":110,
+                "y":25,
+                "sprite":"dificultad2"
+            },
+
+            "RECARGA_MUNICION":{
+                "x0":50,
+                "y0":1870,
+                "x1":50,
+                "y1":950,
+                "x2": 50,
+                "y2": 450
+            },
+
+            "MEJORAS":{
+
+                "ESCUDO":{
+                    "x":1053,
+                    "y": 2100,
+                    "precio": 15,
+                    "texto":{
+                        "x":1045,
+                        "y":2140
+                    }
+                },
+    
+                
+                "SPRINT":{
+                    "x":1159,
+                    "y": 2100,
+                    "precio": 10,
+                    "aumento": 150,
+                    "texto":{
+                        "x":1145,
+                        "y":2140
+        
+                    }
+                },
+    
+                "SUERTE":{
+                    "x":1259,
+                    "y":2100,
+                    "precio":15,
+                    "texto":{
+                        "x":1045,
+                        "y":2140
+                    },
+                    "aumento": 5
+    
+                },
+
+                "CORAZON":{
+                    "x":1053,
+                    "y":2100,
+                    "precio":5,
+                    "texto":{
+                        "x":1245,
+                        "y":2140
+                    },
+                    "aumento":5
+                }
+    
+            },
+
+            "PLAYER":{
+                "x":200,
+                "y":2000,
+                "maxHealth":7,
+                "velocity":150,
+                "municionInicial": 6,
+                "suerteInicial": 15
+            },
+
+            "ENEMY":{
+                "velocity": 100,
+                "shootCadency": 3000,
+                "rango": 300,
+                "granadaArea": 200,
+                "blastVelocity": 200
+            },
+
             "BARRIER_1_KILLS": 5,
             "BARRIER_2_KILLS": 15,
-            "END_PORTAL_KILLS": 20,
-            "GRANADA_AREA_RADIUS": 200
-
-
+            "END_PORTAL_KILLS": 20
         },
         {
             "DIFICULTAD":3,
-            "SAFE_ZONE_X_LEFT":957,
-            "SAFE_ZONE_X_RIGHT":1351,
-            "SAFE_ZONE_Y":1800,
 
-            "PORTAL_X":960,
-            "PORTAL_Y":100,
+            "CORAZONES_MAPA_LIMITE": 10,
 
-            "BARRERA_1_Y":1240,
-            "BARRERA_2_Y":565,
-            "TECHO_SEGURO_X":1160,
+            "ZONA_SEGURA":{
+                "x0":960,
+                "x1":1360,
+                "y":2000
+            },
 
-            "TEXTO_FONDO_X":400,
-            "TEXTO_FONDO_Y":300,
-            "BULLET_HUD_X":725,
-            "BULLET_HUD_Y":525,
-            "MONEDA_HUD_X":0,
-            "MONEDA_HUD_Y":525,
+            "TECHO_SEGURO":{
+                "x":1160,
+                "y":1800
+            },
 
-            "RECARGA_1_X":1300,
-            "RECARGA_1_Y":1870,
-            "RECARGA_2_X":1298,
-            "RECARGA_2_Y":1920,
+            "BARRERA":{
+                "x":0,
+                "y0":1240,
+                "y1":565
+    
+            },
 
-            "MEJORAS_Y":2120,
-            "MEJORAS_TEXTO_Y":2100,
-            "MEJORA_ESCUDO_X":1045,
-            "MEJORA_ESCUDO_TEXTO_X":1053,
-            "MEJORA_SPRINT_X":1145,
-            "MEJORA_SPRINT_TEXTO_X":1159,
-            "MEJORA_SUERTE_X":1245,
-            "MEJORA_SUERTE_TEXTO_X":1259,
+            "PORTAL":{
+                "x":960,
+                "y":100
+            },
 
-            
-            "PLAYER_X_INICIAL":200,
-            "PLAYER_Y_INICIAL": 2000,
-            "VICTORY_POINTS": 700,
-            "PLAYER_VELOCITY": 150,
-            "ENEMY_VELOCITY": 100,
-            "BLAST_VELOCITY": 200,
-            "ENEMY_SHOOT_CADENCY": 3000,
-            "PLAYER_HEALTH": 6, 
-            "RANGO_PERSECUCION": 300,
-            "MUNICION_INICIAL": 5,
-            "SUERTE": 10,
+            "TEXTO_FONDO":{
+                "x":400,
+                "y":300
+            },
+
+            "BULLET_HUD":{
+                "texto":{
+                    "x":700
+                },
+                "sprite":{
+                    "x":725,
+                    "y":525
+                }
+
+            },
+            "MONEDA_HUD":{
+                "texto":{                
+                    "x":65
+                },
+                "sprite":{
+                    "x":0,
+                    "y":525
+                }
+
+            },
+            "DIFICULTAD_HUD":{
+                "x":110,
+                "y":25,
+                "sprite":"dificultad3"
+            },
+
+            "RECARGA_MUNICION":{
+                "x0":50,
+                "y0":1870,
+                "x1":50,
+                "y1":950,
+                "x2": 50,
+                "y2": 450
+            },
+
+            "MEJORAS":{
+
+                "ESCUDO":{
+                    "x":1053,
+                    "y": 2100,
+                    "precio": 15,
+                    "texto":{
+                        "x":1045,
+                        "y":2140
+                    }
+                },
+    
+                
+                "SPRINT":{
+                    "x":1159,
+                    "y": 2100,
+                    "precio": 10,
+                    "aumento": 150,
+                    "texto":{
+                        "x":1145,
+                        "y":2140
+        
+                    }
+                },
+    
+                "SUERTE":{
+                    "x":1259,
+                    "y":2100,
+                    "precio":15,
+                    "texto":{
+                        "x":1045,
+                        "y":2140
+                    },
+                    "aumento": 5
+    
+                },
+
+                "CORAZON":{
+                    "x":1053,
+                    "y":2100,
+                    "precio":5,
+                    "texto":{
+                        "x":1245,
+                        "y":2140
+                    },                    
+                    "aumento":5
+                }
+    
+            },
+
+            "PLAYER":{
+                "x":200,
+                "y":2000,
+                "maxHealth":6,
+                "velocity":150,
+                "municionInicial": 5,
+                "suerteInicial": 10
+            },
+
+            "ENEMY":{
+                "velocity": 100,
+                "shootCadency": 3000,
+                "rango": 300,
+                "granadaArea": 200,
+                "blastVelocity": 200
+            },
+
             "BARRIER_1_KILLS": 5,
             "BARRIER_2_KILLS": 15,
-            "END_PORTAL_KILLS": 20,
-            "GRANADA_AREA_RADIUS": 200
-
+            "END_PORTAL_KILLS": 30
 
         }
     ]
