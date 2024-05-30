@@ -394,7 +394,7 @@
                 "scale":0.5,
                 "x":110,
                 "y":25,
-                "sprite":"dificultad1"
+                "sprite":"dificultad2"
             },
 
             "RECARGA_MUNICION":{
@@ -645,7 +645,7 @@
                 "scale":0.5,
                 "x":110,
                 "y":25,
-                "sprite":"dificultad1"
+                "sprite":"dificultad3"
             },
 
             "RECARGA_MUNICION":{
